@@ -2,7 +2,13 @@
 /**
  * Capabilities
  *
- * Grouped skill matrix.
+ * Mirrors the OpenDesign reference exactly:
+ *   - .capability-grid (fixed 4 columns at desktop)
+ *   - .capability { border-top: 1.5px solid var(--fg); padding-top: 18px; }
+ *   - Each card: <span>nn</span> + h3 + body
+ *
+ * The reference page also has a tech-stack definition list immediately after
+ * the capability grid; that lives in WorkingApproach.astro.
  */
 import type { CapabilityGroup } from "~/types/content";
 
@@ -13,61 +19,93 @@ interface Props {
 const { groups } = Astro.props as Props;
 ---
 
-<div class="capabilities">
-  {groups.map((group) => (
-    <section class="capabilities__group" aria-labelledby={`cap-${group.heading.hr}`}>
-      <h3 class="capabilities__heading" id={`cap-${group.heading.hr}`}>
-        <span data-view="hr">{group.heading.hr}</span>
-        <span data-view="engineering">{group.heading.engineering}</span>
-      </h3>
-      <ul class="capabilities__list">
-        {group.skills.map((skill) => (
-          <li class="capabilities__item">
-            <span class="capabilities__label">{skill.label}</span>
-            {skill.hint && (
-              <span class="capabilities__hint">
-                <span data-view="hr">{skill.hint.hr}</span>
-                <span data-view="engineering">{skill.hint.engineering}</span>
-              </span>
-            )}
-          </li>
-        ))}
-      </ul>
-    </section>
-  ))}
-</div>
+<section class="capability-region" aria-label="Kompetenzen">
+  <div class="capability-grid">
+    {groups.map((group, idx) => (
+      <article class="capability">
+        <span class="capability-no">{String(idx + 1).padStart(2, "0")}</span>
+        <h3>
+          <span data-view="hr">{group.heading.hr}</span>
+          <span data-view="engineering">{group.heading.engineering}</span>
+        </h3>
+        <ul class="capability-items">
+          {group.skills.map((skill) => (
+            <li>
+              <span class="capability-label">{skill.label}</span>
+              {skill.hint && (
+                <span class="capability-hint">
+                  <span data-view="hr">{skill.hint.hr}</span>
+                  <span data-view="engineering">{skill.hint.engineering}</span>
+                </span>
+              )}
+            </li>
+          ))}
+        </ul>
+      </article>
+    ))}
+  </div>
+</section>
 
 <style>
-  .capabilities {
+  .capability-region {
+    display: block;
+  }
+  .capability-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: var(--space-5);
+    grid-template-columns: repeat(4, 1fr);
+    gap: 28px;
   }
-  .capabilities__group {
-    border: 1px solid var(--hairline);
-    border-radius: var(--radius-lg);
-    background: var(--surface-raised);
-    padding: var(--space-5);
-    box-shadow: var(--shadow-card);
+  .capability {
+    border-top: 1.5px solid var(--fg);
+    padding-top: 18px;
   }
-  .capabilities__heading {
-    font-size: var(--type-h3);
-    margin: 0 0 var(--space-4) 0;
-    border-bottom: 1px solid var(--hairline);
-    padding-bottom: var(--space-2);
+  .capability-no,
+  .capability h3 {
+    letter-spacing: 0.12em;
+    font-family: var(--font-mono);
+    color: var(--accent);
   }
-  .capabilities__list {
+  .capability-no {
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .capability h3 {
+    margin: 14px 0 0;
+    font-size: 18px;
+    letter-spacing: -0.01em;
+    font-family: var(--font-display);
+    font-weight: 600;
+    color: var(--fg);
+    line-height: 1.25;
+  }
+  .capability-items {
     display: flex;
     flex-direction: column;
-    gap: var(--space-3);
+    gap: 10px;
+    margin-top: 14px;
   }
-  .capabilities__label {
+  .capability-label {
+    display: inline-block;
     font-weight: 600;
+    color: var(--fg);
+    font-size: 15px;
   }
-  .capabilities__hint {
-    color: var(--ink-muted);
-    font-size: var(--type-body-sm);
+  .capability-hint {
     display: block;
     margin-top: 2px;
+    color: var(--fg-soft);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 900px) {
+    .capability-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (max-width: 560px) {
+    .capability-grid {
+      grid-template-columns: 1fr;
+    }
   }
 </style>

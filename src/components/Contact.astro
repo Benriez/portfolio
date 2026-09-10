@@ -2,73 +2,104 @@
 /**
  * Contact
  *
- * Resolved contact items only. Unresolved items are excluded from the
- * rendered list so no literal placeholders reach production.
+ * Mirrors the OpenDesign reference:
+ *   `.contact-actions` is a horizontal flex row of mono-uppercase button-style
+ *   links, each with a 1px rule border, 40px min-height, transparent by
+ *   default and filled on hover.
+ *
+ * Items that the call site marks `visible: false` are simply omitted from the
+ * rendered list, which is the reference's behaviour for unresolved items.
  */
 import type { ContactItem } from "~/types/content";
 
 interface Props {
   readonly items: ContactItem[];
+  readonly heading: { hr: string; engineering: string };
+  readonly printLabel?: string;
 }
 
-const { items } = Astro.props as Props;
+const { items, heading, printLabel = "CV / Print" } = Astro.props as Props;
 const visible = items.filter((item) => item.visible);
 ---
 
-<address class="contact">
-  <ul class="contact__list">
-    {visible.map((item) => (
-      <li class="contact__item">
-        <span class="contact__label">{item.label}</span>
-        <a class="contact__link" href={item.href}>
+<section class="contact-region" aria-labelledby="contact-region-title">
+  <div class="contact-grid">
+    <div>
+      <p class="section-kicker">
+        <span data-view="hr">Kontakt</span>
+        <span data-view="engineering">Contact</span>
+      </p>
+      <h2 id="contact-region-title">
+        <span data-view="hr">{heading.hr}</span>
+        <span data-view="engineering">{heading.engineering}</span>
+      </h2>
+    </div>
+    <div class="contact-actions">
+      {visible.map((item) => (
+        <a href={item.href} rel="noopener">
           {item.href.replace(/^mailto:|^tel:|^https?:\/\//, "")}
         </a>
-      </li>
-    ))}
-  </ul>
-  <p class="contact__location">
-    <span data-view="hr">Darmstadt · Deutschland</span>
-    <span data-view="engineering">Darmstadt, Germany</span>
-  </p>
-</address>
+      ))}
+      <button type="button" data-print>
+        {printLabel}
+      </button>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>("[data-print]").forEach((b) => {
+    b.addEventListener("click", () => window.print());
+  });
+</script>
 
 <style>
-  .contact {
-    font-style: normal;
+  .contact-region {
+    display: block;
   }
-  .contact__list {
+  .contact-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: var(--space-4);
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr);
+    gap: clamp(34px, 7vw, 90px);
+    align-items: start;
   }
-  .contact__item {
+  .contact-region h2 {
+    font-size: clamp(34px, 5vw, 64px);
+    line-height: 1.02;
+    letter-spacing: -0.04em;
+    font-weight: 600;
+  }
+  .contact-actions {
     display: flex;
-    flex-direction: column;
-    gap: 4px;
-    border-top: 1px solid var(--hairline);
-    padding-top: var(--space-3);
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: flex-start;
   }
-  .contact__label {
-    font-size: var(--type-caption);
-    color: var(--ink-subtle);
+  .contact-actions a,
+  .contact-actions button {
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--rule);
+    padding: 10px 13px;
+    background: transparent;
+    color: var(--fg-soft);
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    font-family: var(--font-mono);
+    text-decoration: none;
   }
-  .contact__link {
-    font-size: var(--type-h3);
-    color: var(--ink-strong);
-    text-decoration-color: var(--hairline-strong);
+  .contact-actions a:hover,
+  .contact-actions button:hover {
+    border-color: var(--fg);
+    color: var(--fg);
+    text-decoration: none;
   }
-  .contact__link:hover,
-  .contact__link:focus-visible {
-    text-decoration-color: var(--accent);
-    color: var(--accent);
-  }
-  .contact__location {
-    margin-top: var(--space-6);
-    color: var(--ink-muted);
-    font-family: var(--font-mono);
-    font-size: var(--type-body-sm);
+  @media (max-width: 900px) {
+    .contact-grid {
+      grid-template-columns: 1fr;
+    }
   }
 </style>

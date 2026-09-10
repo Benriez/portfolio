@@ -1,13 +1,22 @@
 ---
+/**
+ * Single-page index.
+ *
+ * Section order mirrors the OpenDesign reference exactly:
+ *   1. Hero
+ *   2. #projects (Auswahl / Selected work)
+ *   3. #flagship inside .flagship-section is rendered by BodiRuntimeVisualization
+ *   4. #experience (two-col career + education aside)
+ *   5. #capabilities (4-col grid + tech-stack definition)
+ *   6. #approach (Arbeitsweise / About)
+ *   7. #contact
+ */
 import BaseLayout from "~/layouts/BaseLayout.astro";
 import Hero from "~/components/Hero.astro";
 import SectionHeader from "~/components/SectionHeader.astro";
 import ProjectEntry from "~/components/ProjectEntry.astro";
-import ExperienceTimeline from "~/components/ExperienceTimeline.astro";
 import Capabilities from "~/components/Capabilities.astro";
 import WorkingApproach from "~/components/WorkingApproach.astro";
-import Education from "~/components/Education.astro";
-import Contact from "~/components/Contact.astro";
 import BodiRuntimeVisualization from "~/features/bodi-runtime/BodiRuntimeVisualization.astro";
 
 import { projects } from "~/data/projects";
@@ -15,11 +24,15 @@ import { experience } from "~/data/experience";
 import { capabilities } from "~/data/capabilities";
 import { techStack } from "~/data/tech-stack";
 import { education } from "~/data/education";
+import ExperienceTimeline from "~/components/ExperienceTimeline.astro";
+import Contact from "~/components/Contact.astro";
 import type { ContactItem, ViewMode } from "~/types/content";
 
 const title = "Engineering Portfolio — Ben Riederer";
 const description =
-  "Engineering Portfolio von Ben Riederer — kleine Plattformen, datengetriebene Werkzeuge und ein visualisiertes Laufzeit-Modell.";
+  "Engineering Portfolio of Ben Riederer — small platforms, data-driven tools, and a working model of an agent runtime.";
+
+const initialMode: ViewMode = "hr";
 
 const contacts: ContactItem[] = [
   {
@@ -30,7 +43,7 @@ const contacts: ContactItem[] = [
   },
   {
     id: "location",
-    label: "Darmstadt · Deutschland",
+    label: "Standort",
     href: "https://maps.google.com/?q=Darmstadt%2C+Germany",
     visible: true,
   },
@@ -54,149 +67,196 @@ const contacts: ContactItem[] = [
   },
 ];
 
-const mode: ViewMode = "hr";
-
-export function getStaticPaths(): never[] {
-  return [];
-}
+const projectIndex: Record<string, { index: string; flagship: boolean }> = {
+  "agent-garden": { index: "Flagship", flagship: true },
+  kaimuk: { index: "2024", flagship: false },
+  operational: { index: "2022–2023", flagship: false },
+};
 ---
 
-<BaseLayout title={title} description={description} mode={mode}>
+<BaseLayout title={title} description={description} mode={initialMode}>
   <Hero />
 
-  <section class="section section--bordered" id="projects" aria-labelledby="projects-h">
+  <section class="section section-bordered" id="projects" aria-labelledby="projects-h">
     <div class="container">
       <SectionHeader
         id="projects-h"
-        eyebrow={{ hr: "Auswahl", engineering: "Selected work" }}
+        eyebrow={{ hr: "Ausgewählte Projekte", engineering: "Selected work" }}
         title={{
-          hr: "Drei Projekte, an denen die Arbeitsweise sichtbar wird.",
-          engineering: "Three projects that show how the work is built.",
-        }}
-        lede={{
-          hr: "Jedes Projekt steht für eine konkrete Engineering-Haltung: kleine Plattformen, klare Datenflüsse, auditierbare Läufe.",
-          engineering:
-            "Each project stands for a concrete engineering stance: small platforms, clear data flows, auditable runs.",
+          hr: "Drei Systeme, an denen Engineering-Haltung sichtbar wird.",
+          engineering: "Three systems where engineering posture is observable.",
         }}
       />
-      <div>
-        {projects.map((project) => (
-          <ProjectEntry project={project} />
-        ))}
-      </div>
+      <ol class="work-list">
+        {projects.map((project) => {
+          const meta = projectIndex[project.id] ?? {
+            index: project.period.start,
+            flagship: false,
+          };
+          return (
+            <li class="work-list-item">
+              <ProjectEntry
+                title={project.title}
+                index={meta.index}
+                isFlagship={meta.flagship}
+                meta={{
+                  hr: `${meta.index} · ${project.role.hr}`,
+                  engineering: `${meta.index} · ${project.role.engineering}`,
+                }}
+                sub={{
+                  hr: project.role.hr,
+                  engineering: project.role.engineering,
+                }}
+                lead={project.summary}
+                role={
+                  project.impact && project.impact.length > 0
+                    ? {
+                        hr: project.impact[0]?.hr ?? "",
+                        engineering: project.impact[0]?.engineering ?? "",
+                      }
+                    : undefined
+                }
+                points={project.impact.slice(1)}
+                stack={project.stack}
+              />
+            </li>
+          );
+        })}
+      </ol>
     </div>
   </section>
 
-  <section class="section section--alt" id="experience" aria-labelledby="experience-h">
+  <BodiRuntimeVisualization attemptMax={3} />
+
+  <section class="section section-bordered" id="experience" aria-labelledby="experience-h">
     <div class="container">
-      <SectionHeader
-        id="experience-h"
-        eyebrow={{ hr: "Werdegang", engineering: "Experience" }}
-        title={{
-          hr: "Verantwortung wächst mit dem Verständnis für das System.",
-          engineering: "Responsibility that scales with how well the system is understood.",
-        }}
-        lede={{
-          hr: "Vom Werkstudenten bis zur eigenverantwortlichen Auslieferung — Stationen mit echter Endverantwortung.",
-          engineering:
-            "From a working student to end-to-end delivery — stations where accountability rested with me.",
-        }}
-      />
-      <ExperienceTimeline entries={experience} />
+      <ExperienceTimeline entries={experience} education={education} />
     </div>
   </section>
 
-  <section class="section section--bordered" id="capabilities" aria-labelledby="capabilities-h">
+  <section class="section section-bordered" id="capabilities" aria-labelledby="capabilities-h">
     <div class="container">
       <SectionHeader
         id="capabilities-h"
-        eyebrow={{ hr: "Fähigkeiten", engineering: "Capabilities" }}
+        eyebrow={{ hr: "Kompetenzen", engineering: "Capabilities" }}
         title={{
           hr: "Was das Engineering-Werkzeugkasten heute zuverlässig liefert.",
           engineering: "What the day-to-day engineering toolkit reliably delivers.",
         }}
-        lede={{
-          hr: "Vier Bereiche, in denen ich wiederholt Projekte umgesetzt habe — geordnet nach Reife, nicht nach Mode.",
-          engineering:
-            "Four areas where I have repeatedly delivered — ordered by maturity, not by fashion.",
-        }}
       />
       <Capabilities groups={capabilities} />
+      <WorkingApproach
+        title={{
+          hr: "Bevorzugte Werkzeuge",
+          engineering: "Working approach",
+        }}
+        rows={techStack.map((g) => ({
+          label: g.heading,
+          items: g.items,
+        }))}
+      />
     </div>
   </section>
 
-  <section class="section section--alt" id="runtime" aria-labelledby="runtime-h">
-    <div class="container">
-      <SectionHeader
-        id="runtime-h"
-        eyebrow={{ hr: "Laufzeit", engineering: "Runtime" }}
-        title={{
-          hr: "Ein laufzeitfähiges Modell statt einer Folie.",
-          engineering: "A working model, not a slide.",
-        }}
-        lede={{
-          hr: "Diese Visualisierung läuft im Browser — Recovery, Supervisor und begrenzte Versuche sind nicht nur Wörter, sondern sichtbar gemachte Entscheidungen.",
-          engineering:
-            "This visualization runs in the browser — recovery, supervisor, and bounded attempts are not just words, but decisions made visible.",
-        }}
-      />
-      <BodiRuntimeVisualization attemptMax={3} />
+  <section class="section section-bordered" id="approach" aria-labelledby="approach-h">
+    <div class="container two-col">
+      <div>
+        <p class="section-kicker">
+          <span data-view="hr">Arbeitsweise</span>
+          <span data-view="engineering">Approach</span>
+        </p>
+        <h2 class="approach-title">
+          <span data-view="hr">Systemisch denken, präzise bauen, zuverlässig betreiben.</span>
+          <span data-view="engineering">
+            Systems thinking, precise building, reliable operation.
+          </span>
+        </h2>
+      </div>
+      <div class="approach-list">
+        <p>
+          <span data-view="hr">
+            Ich arbeite an der Schnittstelle zwischen Produktanforderung, Softwarearchitektur und
+            laufendem Betrieb. Wichtig ist nicht nur, dass ein Feature funktioniert, sondern wie es
+            sich bei Fehlern, Deployments und echten Nutzungsbedingungen verhält.
+          </span>
+          <span data-view="engineering">
+            I work at the intersection of product requirements, software architecture, and
+            operations. What matters is not just that a feature works, but how it behaves under
+            failure, deployment, and real-world conditions.
+          </span>
+        </p>
+        <p>
+          <span data-view="hr">
+            Meine Arbeit verbindet Requirements Engineering, Root-Cause Analysis, Recovery Thinking
+            und Production Ownership. Konzept, Implementierung und Betrieb gehören zusammen.
+          </span>
+          <span data-view="engineering">
+            My work connects requirements engineering, root-cause analysis, recovery thinking, and
+            production ownership. Concept, implementation, and operations belong together.
+          </span>
+        </p>
+      </div>
     </div>
   </section>
 
-  <section class="section section--bordered" id="stack" aria-labelledby="stack-h">
+  <section
+    class="section section-bordered contact-section"
+    id="contact"
+    aria-labelledby="contact-h"
+  >
     <div class="container">
-      <SectionHeader
-        id="stack-h"
-        eyebrow={{ hr: "Werkzeuge", engineering: "Working approach" }}
-        title={{
-          hr: "Bevorzugte Werkzeuge — minimalistisch, stabil, gut kombinierbar.",
-          engineering: "Preferred tools — minimal, stable, and easy to combine.",
+      <Contact
+        heading={{
+          hr: "Kontakt und Profile",
+          engineering: "Contact and profiles",
         }}
-        lede={{
-          hr: "Statt Frameworks zu sammeln, reduziere ich lieber auf das, was wirklich hilft.",
-          engineering:
-            "Rather than accumulating frameworks, I prefer to reduce to what genuinely helps.",
-        }}
+        items={contacts}
       />
-      <WorkingApproach groups={techStack} />
-    </div>
-  </section>
-
-  <section class="section section--alt" id="education" aria-labelledby="education-h">
-    <div class="container">
-      <SectionHeader
-        id="education-h"
-        eyebrow={{ hr: "Ausbildung", engineering: "Education" }}
-        title={{
-          hr: "Bachelor of Engineering — Informationstechnik, h_da Darmstadt.",
-          engineering: "B.Eng. Information Technology — h_da Darmstadt.",
-        }}
-        lede={{
-          hr: "Software mit ingenieurwissenschaftlichem Hintergrund — zuverlässig und überprüfbar.",
-          engineering: "Software with an engineering background — reliable and verifiable.",
-        }}
-      />
-      <Education entries={education} />
-    </div>
-  </section>
-
-  <section class="section section--bordered" id="contact" aria-labelledby="contact-h">
-    <div class="container">
-      <SectionHeader
-        id="contact-h"
-        eyebrow={{ hr: "Kontakt", engineering: "Contact" }}
-        title={{
-          hr: "Sprechen wir kurz und schriftlich.",
-          engineering: "Reach out — short, written, async-friendly.",
-        }}
-        lede={{
-          hr: "Standort Darmstadt, remote-fähig, mit Vorliebe für asynchrone Zusammenarbeit.",
-          engineering:
-            "Based in Darmstadt, comfortable working remote, prefers async collaboration.",
-        }}
-      />
-      <Contact items={contacts} />
     </div>
   </section>
 </BaseLayout>
+
+<style>
+  .section {
+    padding: clamp(72px, 9vw, 120px) 0;
+    border-top: 1px solid var(--hairline);
+  }
+  .section.contact-section {
+    background: var(--surface);
+  }
+  .work-list {
+    display: grid;
+    gap: 0;
+  }
+  .work-list-item {
+    list-style: none;
+  }
+  .work-list-item:first-child .work-item {
+    border-top: 1.5px solid var(--fg);
+  }
+  .approach-title {
+    margin: 0;
+    font-size: var(--type-h1);
+    line-height: 1.02;
+    letter-spacing: -0.04em;
+    font-weight: 600;
+    max-width: 24ch;
+  }
+  .approach-list {
+    display: grid;
+    gap: 18px;
+  }
+  .approach-list p {
+    margin: 0;
+    font-size: 20px;
+    line-height: 1.45;
+    letter-spacing: -0.02em;
+    color: var(--fg-soft);
+  }
+
+  @media (max-width: 900px) {
+    .two-col {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

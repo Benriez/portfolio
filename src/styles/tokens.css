@@ -1,59 +1,62 @@
 /*
  * Design tokens for the Engineering Portfolio.
  *
- * Hierarchy:
- *   1. Surfaces and ink (warm off-white background, near-black ink).
- *   2. Single restrained indigo accent.
- *   3. Hairline borders and spacing scale.
+ * Mirrors the OpenDesign reference so the public site stays visually
+ * indistinguishable from the approved mockup.
  *
- * All values are HSL or sRGB; we do not use preprocessor color functions.
+ * Where the reference uses `oklch()` directly, we keep it. Where it falls
+ * back to a hex pair, we keep the hex (it is the source of truth for the
+ * CI screenshots). Variables that the reference does not declare (motion,
+ * shadow, radius) are portfolio additions and do not affect parity.
  */
 
 :root {
   /* --- Surfaces --- */
-  --surface-canvas: #faf7f2;
-  --surface-canvas-soft: #f3efe8;
-  --surface-raised: #ffffff;
-  --surface-ink: #131314;
+  --bg: oklch(98% 0.004 80);
+  --surface: oklch(100% 0 0);
 
   /* --- Ink --- */
-  --ink-strong: #131314;
-  --ink-muted: #4b4b4b;
-  --ink-subtle: #6b6b6b;
-  --ink-on-accent: #faf7f2;
-
-  /* --- Accent (single restrained indigo) --- */
-  --accent: #3b2e8b;
-  --accent-soft: #ece9fb;
-  --accent-line: #b9b0e8;
+  --fg: oklch(20% 0.012 260);
+  --fg-soft: oklch(38% 0.014 260);
+  --muted: oklch(55% 0.01 260);
+  --soft: oklch(70% 0.008 260);
 
   /* --- Lines --- */
-  --hairline: rgba(19, 19, 20, 0.08);
-  --hairline-strong: rgba(19, 19, 20, 0.18);
+  --hairline: oklch(92% 0.004 260);
+  --rule: oklch(80% 0.006 260);
 
-  /* --- Type --- */
-  --font-sans:
-    "Inter", "InterVariable", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif;
-  --font-mono:
-    "JetBrains Mono", "JetBrainsMono", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
-    "Liberation Mono", monospace;
+  /* --- Accent --- */
+  --accent: oklch(38% 0.105 268);
 
-  --type-display-1: clamp(2.5rem, 4.2vw, 3.75rem);
-  --type-display-2: clamp(2rem, 3.2vw, 2.75rem);
-  --type-h1: clamp(1.75rem, 2.6vw, 2.25rem);
-  --type-h2: clamp(1.375rem, 2vw, 1.625rem);
-  --type-h3: 1.125rem;
-  --type-body: 1rem;
-  --type-body-sm: 0.9375rem;
-  --type-caption: 0.8125rem;
+  /* --- Layout --- */
+  --max: 1240px;
 
-  --leading-tight: 1.18;
-  --leading-snug: 1.34;
-  --leading-body: 1.62;
+  /* --- Fonts --- */
+  --font-display:
+    "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", system-ui, sans-serif;
+  --font-body:
+    "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "SF Mono", ui-monospace, Menlo, Consolas, monospace;
 
-  /* --- Space scale (8px base) --- */
-  --space-0: 0;
+  /* --- Type scale (semantic) --- */
+  --type-display-1: clamp(46px, 7vw, 88px);
+  --type-h1: clamp(34px, 5vw, 64px);
+  --type-h2: 22px;
+  --type-h3: 18px;
+  --type-body: 16px;
+  --type-body-sm: 15px;
+  --type-caption: 11px;
+
+  /* --- Leading --- */
+  --leading-tight: 1.02;
+  --leading-snug: 1.45;
+  --leading-body: 1.55;
+
+  /* --- Tracking --- */
+  --tracking-display: -0.04em;
+  --tracking-h2: -0.02em;
+
+  /* --- Spacing --- */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -62,35 +65,15 @@
   --space-6: 32px;
   --space-7: 48px;
   --space-8: 64px;
-  --space-9: 96px;
-  --space-10: 128px;
 
-  /* --- Layout --- */
-  --layout-content: 72ch;
-  --layout-wide: 1180px;
-  --layout-gutter: clamp(20px, 4vw, 48px);
-  --layout-rail: 240px;
+  /* --- Color helpers used by mono labels --- */
+  --mono-label: var(--accent);
+  --mono-meta: var(--muted);
+  --mono-soft: var(--soft);
 
-  /* --- Radii & shadows --- */
-  --radius-sm: 4px;
-  --radius-md: 6px;
-  --radius-lg: 10px;
-  --shadow-card: 0 1px 0 var(--hairline);
-  --shadow-pop: 0 6px 24px -16px rgba(19, 19, 20, 0.18);
-
-  /* --- Motion --- */
-  --motion-fast: 140ms;
-  --motion-base: 240ms;
+  /* --- Motion (portfolio additions, not parity-relevant) --- */
+  --motion-fast: 160ms;
+  --motion-base: 220ms;
   --motion-slow: 380ms;
-  --easing-soft: cubic-bezier(0.2, 0.7, 0.2, 1);
-}
-
-@media (prefers-color-scheme: dark) {
-  /*
-   * Editorial engineering aesthetic is intentionally light-only.
-   * We do not auto-flip to a dark scheme; future dark mode will be explicit.
-   */
-  :root {
-    color-scheme: light;
-  }
+  --easing-soft: ease;
 }

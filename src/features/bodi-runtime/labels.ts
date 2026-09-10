@@ -1,10 +1,11 @@
 import type { Aspect, RuntimeLabelSet } from "./types";
 
 /**
- * All textual labels for the BODI runtime visualization.
+ * BODI runtime visualization labels.
  *
- * Each value is available in `hr`, `engineering`, and `neutral` flavors so the
- * same component can serve both modes and a reduced-motion state.
+ * Mirrors the OpenDesign reference (`app.js` LABELS tables):
+ *   HR uses German short labels; Engineering uses English long labels.
+ *   Neutral is a short technical identifier (used on the runtime graphic).
  */
 export const runtimeLabels: RuntimeLabelSet = {
   nodes: {
@@ -51,7 +52,7 @@ export const runtimeLabels: RuntimeLabelSet = {
     recover: {
       id: "recover",
       label: {
-        hr: "Wiederherstellung",
+        hr: "Wiederaufnahme",
         engineering: "Recovery",
         neutral: "Recover",
       },
@@ -69,7 +70,7 @@ export const runtimeLabels: RuntimeLabelSet = {
       label: {
         hr: "Begrenzte Versuche",
         engineering: "Bounded attempts",
-        neutral: "Bounded attempts",
+        neutral: "Bounded",
       },
     },
     persist: {
@@ -84,7 +85,7 @@ export const runtimeLabels: RuntimeLabelSet = {
       id: "continue",
       label: {
         hr: "Fortsetzen",
-        engineering: "Continue",
+        engineering: "Closure / Continue",
         neutral: "Continue",
       },
     },
@@ -99,24 +100,16 @@ export const runtimeLabels: RuntimeLabelSet = {
   },
   phases: {
     normal: {
-      title: {
-        hr: "Normaler Ablauf",
-        engineering: "Normal flow",
-        neutral: "Normal",
-      },
+      title: { hr: "Normaler Ablauf", engineering: "Normal flow", neutral: "Normal" },
       caption: {
-        hr: "Graph-Knoten → Agent Tick → Verifikation → Bestehen → Persistieren → Nächster Graph-Knoten.",
+        hr: "Graph-Knoten → Tick → Verifikation → Bestehen → Persistieren → Fortsetzen.",
         engineering:
           "Graph node → Agent tick → Verification → Pass → Persist → Continue to next graph node.",
         neutral: "Normal flow: tick → verify → pass → persist → continue.",
       },
     },
     recovery: {
-      title: {
-        hr: "Wiederherstellung",
-        engineering: "Recovery",
-        neutral: "Recovery",
-      },
+      title: { hr: "Wiederaufnahme", engineering: "Recovery", neutral: "Recovery" },
       caption: {
         hr:
           "Bei Fehlschlag greifen Recovery und Supervisor ein. Es wird begrenzt oft erneut verifiziert " +
@@ -128,11 +121,7 @@ export const runtimeLabels: RuntimeLabelSet = {
       },
     },
     exhausted: {
-      title: {
-        hr: "Endgültiger Fehler",
-        engineering: "Terminal failure",
-        neutral: "Terminal",
-      },
+      title: { hr: "Endgültiger Fehler", engineering: "Terminal failure", neutral: "Terminal" },
       caption: {
         hr:
           "Wenn das Versuchsbudget aufgebraucht ist, geht der Lauf in einen endgültigen Fehlerzustand über. " +

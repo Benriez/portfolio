@@ -1,45 +1,48 @@
 /*
  * Print stylesheet.
  *
- * The portfolio is meant to be readable when saved as PDF.
- * We collapse the header, remove motion, and prefer hairline anchors.
+ * Mirrors the OpenDesign reference. When the page is printed:
+ *   - The header / hero-actions / skip-link / contact print button disappear
+ *   - The body switches to print-friendly colours
+ *   - Sections keep their hairlines but only between content blocks
+ *   - Both mode variants become visible so a reviewer can compare
  */
 
-@media print {
-  :root {
-    --surface-canvas: #ffffff;
-    --surface-canvas-soft: #ffffff;
-  }
+@page {
+  size: A4;
+  margin: 12mm;
+}
 
+@media print {
   html,
   body {
     background: #fff !important;
     color: #000 !important;
-    font-size: 11pt;
-    line-height: 1.45;
   }
 
-  .skip-link,
-  .site-header__toggle,
-  .site-footer__social,
-  nav[aria-label="Primary"] {
+  .site-header,
+  .hero-actions,
+  .contact-actions button,
+  .skip-link {
     display: none !important;
   }
 
-  a,
-  a:visited {
-    color: #000 !important;
-    text-decoration: underline;
+  .section,
+  .hero {
+    padding: 18mm 0 0;
+    border-top: 1px solid #ddd;
   }
 
-  a[href^="http"]::after {
-    content: " (" attr(href) ")";
-    font-size: 90%;
-    color: #333;
+  .container {
+    width: auto;
   }
 
-  section,
-  article {
+  .work-item,
+  .career-item,
+  .education-list > div,
+  .capability,
+  .case-point,
+  .tech-stack-list > div {
     break-inside: avoid;
     page-break-inside: avoid;
   }
@@ -52,13 +55,12 @@
     color: #000 !important;
   }
 
-  .bodi-runtime,
-  .bodi-runtime * {
-    animation: none !important;
-    transition: none !important;
+  a {
+    color: inherit;
+    text-decoration: none;
   }
 
-  /* Render both modes in print so reviewers see all content */
+  /* Render both modes in print */
   [data-view] {
     display: revert !important;
   }

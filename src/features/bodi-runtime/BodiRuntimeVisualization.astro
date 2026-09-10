@@ -2,242 +2,417 @@
 /**
  * BodiRuntimeVisualization
  *
- * Renders the static SVG for the BODI runtime visualization and hydrates a
- * small controller that animates an execution token along the graph.
- *
- * The visualization is deterministic and respects `prefers-reduced-motion`.
+ * Vertical pipeline runtime visualization, mirroring the OpenDesign
+ * reference exactly:
+ *   .rt-map { display: grid; grid-template-columns: 1fr .55fr }
+ *     ├─ .rt-stack  → vertical list of pipeline nodes (Step 0..7)
+ *     └─ .rt-side   → recovery path list + recovery status meta
+ *   .rt-svg { position: absolute; inset: 0; } → draws edge connectors
+ *   .rt-status-strip → label / state / divider / node count
+ *   .case-grid       → 3-column Problem / System / Reliability
  */
-import { runtimeLabels } from "./labels";
-import { computeGeometry, nodeCenter } from "./geometry";
-import "./runtime.css";
-
 interface Props {
   readonly attemptMax: number;
 }
 
 const { attemptMax } = Astro.props as Props;
 
-const geometry = computeGeometry();
-const width = geometry.width;
-const height = geometry.height;
-
-// edge origin/target points for the SVG layer
-const edgePoints = geometry.edges.map((edge) => {
-  const from = nodeCenter(geometry, edge.from);
-  const to = nodeCenter(geometry, edge.to);
-  return {
-    ...edge,
-    d: `M ${from.x} ${from.y} L ${to.x} ${to.y}`,
-  };
-});
+// Reference HR/Engineering bilingual labels for nodes used in the
+// inline template below.
+const HR = {
+  graph: "Graph-Knoten aktiv",
+  tick: "Tick",
+  verify: "Verifikation",
+  pass: "Bestanden",
+  fail: "Fehlgeschlagen",
+  recover: "Wiederaufnahme",
+  supervisor: "Supervisor",
+  bounded: "Begrenzte Versuche",
+  persist: "Persistieren",
+  continue: "Fortsetzen",
+  recStatusIdle: "Recovery inaktiv",
+};
+const EN = {
+  graph: "Graph node active",
+  tick: "Tick",
+  verify: "Verify",
+  pass: "Pass",
+  fail: "Fail",
+  recover: "Recovery",
+  supervisor: "Supervisor",
+  bounded: "Bounded attempts",
+  persist: "Persist",
+  continue: "Continue",
+  recStatusIdle: "Recovery inactive",
+};
 ---
 
-<section
-  class="bodi-runtime"
-  data-bodi-root
-  data-attempt-max={attemptMax}
-  aria-labelledby="bodi-runtime-title"
-  role="group"
->
-  <header class="bodi-runtime__header">
-    <h2 id="bodi-runtime-title" class="bodi-runtime__title">
-      <span data-view="hr">{runtimeLabels.phases.normal.title.hr}</span>
-      <span data-view="engineering">{runtimeLabels.phases.normal.title.engineering}</span>
-    </h2>
-    <p class="bodi-runtime__summary" data-bodi-summary role="status" aria-live="polite">
-      <span data-view="hr">Visualisierung · bereit</span>
-      <span data-view="engineering">Visualization · ready</span>
-    </p>
-  </header>
+<section class="flagship-section" id="runtime" aria-labelledby="runtime-title">
+  <div class="container flagship-grid">
+    <div>
+      <p class="eyebrow">
+        <span data-view="hr">Flagship System</span>
+        <span data-view="engineering">Flagship System</span>
+      </p>
+      <h2 id="runtime-title">
+        <span data-view="hr">agent-garden / BODI</span>
+        <span data-view="engineering">agent-garden / BODI</span>
+      </h2>
+      <p class="section-lead">
+        <span data-view="hr">
+          Eine Control Plane für autonome KI-Workflows: Aufgaben starten, Zustand behalten, Fehler
+          behandeln und nach Unterbrechungen weiterarbeiten.
+        </span>
+        <span data-view="engineering">
+          Kein Prompting-Projekt, sondern Reliability- und Runtime-Engineering für autonome
+          AI-Ausführung mit persistenter Workflow-Steuerung.
+        </span>
+      </p>
+    </div>
 
-  <div class="bodi-runtime__stage">
-    <svg
-      class="bodi-runtime__svg"
-      viewBox={`0 0 ${width} ${height}`}
-      role="img"
-      aria-label="BODI runtime graph visualization"
-    >
-      <g class="bodi-runtime__edges" data-bodi-edges>
-        {edgePoints.map((edge) => (
-          <path
-            class="bodi-runtime__edge"
-            data-edge-from={edge.from}
-            data-edge-to={edge.to}
-            d={edge.d}
-            data-state="idle"
-          />
-        ))}
-      </g>
+    <div class="architecture" data-bodi-runtime data-attempt-max={attemptMax}>
+      <p class="sr-only">
+        <span data-view="hr">
+          BODI Runtime Visualisierung zeigt Aufgaben-Erfassung, Message-Gate, Memory & Kontext,
+          Durable Execution Graph mit internen Workflow-Knoten, Managed Agent Runtime,
+          Ergebnis-Verifikation, Zustands-Persistierung, und einen kontrollierten
+          Wiederaufnahme-Zweig. Zyklen wechseln zwischen normalen Durchläufen und einem
+          Recovery-Pfad, der bei der Verifikation beginnt.
+        </span>
+        <span data-view="engineering">
+          BODI execution flow shows task intake, message gate, memory and context, durable execution
+          graph with internal workflow nodes, managed agent runtime, result verification, state
+          persistence, and a controlled recovery branch. Cycles alternate between normal passes and
+          a recovery path that begins at verification.
+        </span>
+      </p>
 
-      <g class="bodi-runtime__nodes" data-bodi-nodes>
-        {Object.entries(geometry.nodes).map(([id, b]) => {
-          const labels = runtimeLabels.nodes[id as keyof typeof runtimeLabels.nodes];
-          return (
-            <g
-              class="bodi-runtime__node"
-              data-node-id={id}
-              data-state="idle"
-              transform={`translate(${b.x} ${b.y})`}
-            >
-              <rect class="bodi-runtime__node-rect" width={b.w} height={b.h} rx={6} ry={6} />
-              <text class="bodi-runtime__node-text" x={b.w / 2} y={b.h / 2}>
-                {labels.label.neutral}
-              </text>
-            </g>
-          );
-        })}
-      </g>
+      <div class="rt-map">
+        <svg class="rt-svg" data-runtime-svg aria-hidden="true">
+          <g class="rt-edges" data-runtime-edges></g>
+          <circle class="rt-token" data-runtime-token cx="-40" cy="-40" r="5"></circle>
+        </svg>
 
-      <circle
-        class="bodi-runtime__token"
-        data-bodi-token
-        cx="0"
-        cy="0"
-        r="6"
-        opacity="0"
-        aria-hidden="true"
-      />
-    </svg>
+        <div class="rt-stack">
+          <ol class="rt-pipeline" role="list">
+            <li class="rt-node" data-step="0" data-key="graph-active">
+              <span class="rt-marker" data-marker aria-hidden="true"></span>
+              <span class="rt-label">
+                <span data-view="hr">{HR.graph}</span>
+                <span data-view="engineering">{EN.graph}</span>
+              </span>
+            </li>
 
-    <p class="bodi-runtime__caption" data-bodi-caption>
-      <span data-view="hr">{runtimeLabels.phases.normal.caption.hr}</span>
-      <span data-view="engineering">{runtimeLabels.phases.normal.caption.engineering}</span>
-    </p>
+            <li class="rt-node" data-step="1" data-key="tick">
+              <span class="rt-marker" data-marker aria-hidden="true"></span>
+              <span class="rt-label">
+                <span data-view="hr">{HR.tick}</span>
+                <span data-view="engineering">{EN.tick}</span>
+              </span>
+            </li>
 
-    <dl class="bodi-runtime__meta" data-bodi-meta>
-      <div>
-        <dt>Phase</dt>
-        <dd data-bodi-phase>—</dd>
+            <li class="rt-node" data-step="2" data-key="verify">
+              <span class="rt-marker" data-marker aria-hidden="true"></span>
+              <span class="rt-label">
+                <span data-view="hr">{HR.verify}</span>
+                <span data-view="engineering">{EN.verify}</span>
+              </span>
+            </li>
+
+            <li class="rt-node rt-node--graph" data-step="3" data-key="graph">
+              <div class="rt-node-row">
+                <span class="rt-marker" data-marker aria-hidden="true"></span>
+                <span class="rt-label">
+                  <span data-view="hr">AI-Ausführung</span>
+                  <span data-view="engineering">Durable Execution Graph</span>
+                </span>
+              </div>
+              <div class="rt-graph" data-runtime-graph aria-hidden="true">
+                <span class="rt-sg" data-sg="0">
+                  <span class="rt-sg-num">01</span>
+                  <span class="rt-sg-mark">✓</span>
+                </span>
+                <span class="rt-sg" data-sg="1">
+                  <span class="rt-sg-num">02</span>
+                  <span class="rt-sg-mark">✓</span>
+                </span>
+                <span class="rt-sg" data-sg="2">
+                  <span class="rt-sg-num">03</span>
+                  <span class="rt-sg-mark">✓</span>
+                </span>
+                <span class="rt-sg" data-sg="3">
+                  <span class="rt-sg-num">04</span>
+                  <span class="rt-sg-mark">✓</span>
+                </span>
+                <span class="rt-sg" data-sg="4">
+                  <span class="rt-sg-num">05</span>
+                  <span class="rt-sg-mark">✓</span>
+                </span>
+              </div>
+            </li>
+
+            <li class="rt-node" data-step="4" data-key="verify-recovery">
+              <span class="rt-marker" data-marker aria-hidden="true"></span>
+              <span class="rt-label">
+                <span data-view="hr">Ergebnis prüfen</span>
+                <span data-view="engineering">Result / Verification</span>
+              </span>
+            </li>
+
+            <li class="rt-node engineering-only" data-step="6" data-key="persist">
+              <span class="rt-marker" data-marker aria-hidden="true"></span>
+              <span class="rt-label">
+                <span data-view="hr">Persistieren</span>
+                <span data-view="engineering">Persist</span>
+              </span>
+            </li>
+
+            <li class="rt-node engineering-only" data-step="7" data-key="continue">
+              <span class="rt-marker" data-marker aria-hidden="true"></span>
+              <span class="rt-label">
+                <span data-view="hr">Fortsetzen</span>
+                <span data-view="engineering">Closure / Continue</span>
+              </span>
+            </li>
+          </ol>
+        </div>
+
+        <aside class="rt-side" aria-label="Recovery-Pfad">
+          <p class="rt-side-head">
+            <span data-view="hr">Störung &amp; Fortsetzung</span>
+            <span data-view="engineering">Failure / Recovery</span>
+          </p>
+          <ol class="rt-recovery" role="list">
+            <li class="rt-rec-node" data-rec="0">
+              <span class="rt-rec-bar" aria-hidden="true"></span>
+              <span class="rt-rec-label">
+                <span data-view="hr">Problem erkannt</span>
+                <span data-view="engineering">Verification failed</span>
+              </span>
+            </li>
+            <li class="rt-rec-node" data-rec="1">
+              <span class="rt-rec-bar" aria-hidden="true"></span>
+              <span class="rt-rec-label">
+                <span data-view="hr">Automatische Wiederaufnahme</span>
+                <span data-view="engineering">Recovery Controller</span>
+              </span>
+            </li>
+            <li class="rt-rec-node" data-rec="2">
+              <span class="rt-rec-bar" aria-hidden="true"></span>
+              <span class="rt-rec-label">
+                <span data-view="hr">Supervisor</span>
+                <span data-view="engineering">Supervisor</span>
+              </span>
+            </li>
+            <li class="rt-rec-node" data-rec="3">
+              <span class="rt-rec-bar" aria-hidden="true"></span>
+              <span class="rt-rec-label">
+                <span data-view="hr">Retry 1 / 2</span>
+                <span data-view="engineering">Bounded retry</span>
+              </span>
+            </li>
+          </ol>
+          <p class="rt-side-meta" data-recovery-status aria-live="polite">
+            <span data-view="hr">{HR.recStatusIdle}</span>
+            <span data-view="engineering">{EN.recStatusIdle}</span>
+          </p>
+        </aside>
       </div>
-      <div>
-        <dt>Attempt</dt>
-        <dd data-bodi-attempt>0 / {attemptMax}</dd>
+
+      <div class="rt-status-strip" data-runtime-strip>
+        <span class="rt-strip-slot">
+          <span class="rt-strip-label">
+            <span data-view="hr">Status</span>
+            <span data-view="engineering">Status</span>
+          </span>
+          <span class="rt-strip-state" data-runtime-state>
+            —
+          </span>
+        </span>
+        <span class="rt-strip-divider" aria-hidden="true"></span>
+        <span class="rt-strip-slot rt-strip-slot--node">
+          <span class="rt-strip-label">
+            <span data-view="hr">Knoten</span>
+            <span data-view="engineering">Node</span>
+          </span>
+          <span class="rt-strip-node" data-runtime-step>
+            0 / 0
+          </span>
+        </span>
       </div>
-    </dl>
+    </div>
+  </div>
+
+  <div class="container case-grid" aria-label="BODI Systemstory">
+    <div class="case-point">
+      <span>01 Problem</span>
+      <p>
+        <span data-view="hr">
+          Autonome AI-Workflows können Zustand verlieren, bei Fehlern stehenbleiben oder nach
+          Unterbrechungen nicht zuverlässig fortgesetzt werden.
+        </span>
+        <span data-view="engineering">
+          Long-running agent execution introduces failure modes around state persistence,
+          interrupted turns, retries, result validation and recovery.
+        </span>
+      </p>
+    </div>
+    <div class="case-point">
+      <span>02 System</span>
+      <p>
+        <span data-view="hr">
+          BODI verwaltet Workflow-Zustand, Kontext, Ausführung und Fehlerbehandlung als
+          zusammenhängendes System.
+        </span>
+        <span data-view="engineering">
+          Durable execution, memory governance, managed runtime, verification and recovery are
+          treated as one execution layer.
+        </span>
+      </p>
+    </div>
+    <div class="case-point">
+      <span>03 Reliability</span>
+      <p>
+        <span data-view="hr">
+          Zustand wird erhalten und fehlgeschlagene oder unterbrochene Abläufe können kontrolliert
+          fortgeführt werden.
+        </span>
+        <span data-view="engineering">
+          Persistence, bounded retry, recovery controllers, supervisor logic and regression coverage
+          create controlled execution boundaries.
+        </span>
+      </p>
+    </div>
   </div>
 </section>
 
 <script>
-  import { advance, initialFrame, MAX_ATTEMPTS } from "./machine";
-  import { computeGeometry, nodeCenter } from "./geometry";
+  import { advance, initialFrame } from "./machine";
+  import { nodeCenter, computeGeometry } from "./geometry";
+  import type { NodeId, TickFrame } from "./types";
   import { TICK_MS, REDUCED_MOTION_TICK_MS } from "./controller";
-  import type { Aspect, TickFrame } from "./types";
 
-  function selectAspect(_entries: NodeListOf<Element>, root: HTMLElement): Aspect {
-    const mode = root.closest<HTMLElement>("[data-mode]")?.dataset["mode"];
-    if (mode === "hr" || mode === "engineering") {
-      return mode;
-    }
-    return "engineering";
-  }
-
-  function renderFrame(
-    geometry: ReturnType<typeof computeGeometry>,
-    frame: TickFrame,
-    token: SVGCircleElement | null,
-    phaseLabel: HTMLElement | null,
-    _caption: HTMLElement | null,
-    attemptLabel: HTMLElement | null,
-    attemptMax: number,
-    _aspect: Aspect,
-  ): void {
-    const active = new Set(frame.active);
-    const done = new Set(frame.done);
-
-    // Update nodes
-    document.querySelectorAll<SVGGElement>("[data-node-id]").forEach((el) => {
-      const id = el.dataset["nodeId"] as keyof typeof geometry.nodes;
-      const isActive = active.has(id);
-      const isDone = done.has(id);
-      const state = isDone ? "done" : isActive ? "active" : "idle";
-      el.dataset["state"] = state;
-      // Add a 'failed' state for the exhausted frame's exhausted node
-      if (id === "exhausted" && frame.phase === "exhausted") {
-        el.dataset["state"] = "failed";
-      }
-    });
-
-    // Update edges
-    document.querySelectorAll<SVGPathElement>("[data-edge-from]").forEach((el) => {
-      const from = el.dataset["edgeFrom"]!;
-      const phaseActive =
-        (frame.phase === "normal" && frame.done.includes(from as never)) ||
-        (frame.phase === "recovery" && frame.done.includes(from as never));
-      el.dataset["state"] = phaseActive ? "active" : "idle";
-      // Static visual rule: an edge is "active" when its source has been visited.
-      if (done.has(from as never)) {
-        el.dataset["state"] = "active";
-      } else {
-        el.dataset["state"] = "idle";
-      }
-    });
-
-    // Token position
-    if (token && frame.active.length > 0) {
-      const firstId = frame.active[0]!;
-      const center = nodeCenter(geometry, firstId);
-      token.setAttribute("cx", String(center.x));
-      token.setAttribute("cy", String(center.y));
-      token.setAttribute("opacity", "1");
-    }
-
-    // Meta
-    if (phaseLabel) {
-      phaseLabel.textContent = frame.phase;
-    }
-    if (attemptLabel) {
-      attemptLabel.textContent = `${frame.attempt} / ${attemptMax}`;
-    }
+  function stepOf(id: string): number {
+    const map: Record<string, number> = {
+      "graph-active": 0,
+      tick: 1,
+      verify: 2,
+      "verify-recovery": 5,
+      recover: 5,
+      supervisor: 6,
+      "bounded-attempt": 7,
+      persist: 6,
+      continue: 7,
+    };
+    return map[id] ?? 0;
   }
 
   function init(): void {
-    const root = document.querySelector<HTMLElement>("[data-bodi-root]");
-    if (!root) return;
+    const arch = document.querySelector<HTMLElement>("[data-bodi-runtime]");
+    if (!arch) return;
+    const inner = arch.querySelector<HTMLElement>(".rt-map");
+    const svg = arch.querySelector<SVGSVGElement>("[data-runtime-svg]");
+    const edgeLayer = arch.querySelector<SVGGElement>("[data-runtime-edges]");
+    const pipelineNodes = Array.from(arch.querySelectorAll<HTMLLIElement>(".rt-node"));
+    const subCells = Array.from(arch.querySelectorAll<HTMLSpanElement>(".rt-sg"));
+    const stateLabel = arch.querySelector<HTMLElement>("[data-runtime-state]");
+    const stepLabel = arch.querySelector<HTMLElement>("[data-runtime-step]");
+    const recMeta = arch.querySelector<HTMLElement>("[data-recovery-status]");
+    const reducerMotion =
+      window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!inner || !svg || !edgeLayer) return;
 
-    const token = root.querySelector<SVGCircleElement>("[data-bodi-token]");
-    const phaseLabel = root.querySelector<HTMLElement>("[data-bodi-phase]");
-    const caption = root.querySelector<HTMLElement>("[data-bodi-caption]");
-    const attemptLabel = root.querySelector<HTMLElement>("[data-bodi-attempt]");
-    const maxAttr = root.dataset["attemptMax"];
-    const attemptMax = maxAttr ? Math.max(1, parseInt(maxAttr, 10)) : MAX_ATTEMPTS;
+    const width = inner.clientWidth;
+    const geom = computeGeometry({ width });
 
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const tickMs = reducedMotion ? REDUCED_MOTION_TICK_MS : TICK_MS;
-
-    const geometry = computeGeometry({ width: root.clientWidth });
+    // Build edges
+    const edges: Array<[NodeId, NodeId]> = [
+      ["graph-active", "tick"],
+      ["tick", "verify"],
+      ["verify", "pass"],
+      ["verify", "fail"],
+      ["pass", "persist"],
+      ["persist", "continue"],
+      ["fail", "recover"],
+      ["recover", "supervisor"],
+      ["supervisor", "bounded-attempt"],
+      ["bounded-attempt", "verify"],
+    ];
+    const edgeEls: SVGPathElement[] = [];
+    for (const item of edges) {
+      const from: NodeId = item[0];
+      const to: NodeId = item[1];
+      const a = nodeCenter(geom, from);
+      const b = nodeCenter(geom, to);
+      const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      path.setAttribute("d", `M ${a.x} ${a.y} L ${b.x} ${b.y}`);
+      path.setAttribute("fill", "none");
+      path.setAttribute("stroke", "var(--rule)");
+      path.setAttribute("stroke-width", "1");
+      edgeLayer.appendChild(path);
+      edgeEls.push(path);
+    }
 
     let state = { scriptIndex: -1, attempt: 1 };
 
-    const render = (frame: TickFrame, aspect: Aspect): void => {
-      renderFrame(geometry, frame, token, phaseLabel, caption, attemptLabel, attemptMax, aspect);
-    };
-
-    const tick = (): void => {
+    function apply(): void {
+      const f: TickFrame = state.scriptIndex >= 0 ? advance(state).frame : initialFrame();
       const next = advance(state);
       state = next.state;
-      const aspect = selectAspect(document.querySelectorAll("[data-mode]"), root);
-      render(next.frame, aspect);
-    };
-
-    if (!reducedMotion) {
-      // Initial frame for sighted users
-      const firstFrame = initialFrame();
-      const aspect = selectAspect(document.querySelectorAll("[data-mode]"), root);
-      render(firstFrame, aspect);
-      window.setInterval(tick, tickMs);
+      const active = new Set<string>();
+      const done = new Set<string>();
+      // Map our machine nodes to the visual data-step mapping
+      if (f.phase === "normal") {
+        active.add(String(stepOf("graph-active")));
+        done.add(String(stepOf("tick")));
+      } else if (f.phase === "recovery") {
+        // mark recover/supervisor/bounded-attempt as active
+        active.add(String(stepOf("recover")));
+        done.add(String(stepOf("tick")));
+        done.add(String(stepOf("verify-recovery")));
+        if (f.attempt >= 2) {
+          done.add(String(stepOf("bounded-attempt")));
+        }
+      } else {
+        // exhausted / terminal — leave blank
+      }
+      pipelineNodes.forEach((el) => {
+        const step = Number(el.dataset["step"]);
+        el.classList.remove("is-active", "is-done", "is-failed");
+        if (active.has(String(step))) el.classList.add("is-active");
+        else if (done.has(String(step))) el.classList.add("is-done");
+      });
+      edgeEls.forEach((path, idx) => {
+        const item = edges[idx];
+        if (!item) return;
+        const src: NodeId = item[0];
+        const srcStep = stepOf(src);
+        path.classList.remove("is-passed", "is-active", "is-failed");
+        if (active.has(String(srcStep))) path.classList.add("is-active");
+        else if (done.has(String(srcStep))) path.classList.add("is-passed");
+      });
+      subCells.forEach((c, idx) => {
+        c.classList.remove("is-current", "is-done");
+        if (f.phase === "normal" && idx <= 4) c.classList.add("is-done");
+      });
+      if (stateLabel) {
+        stateLabel.textContent =
+          f.phase === "exhausted" ? "FAIL" : f.phase === "normal" ? "TICK" : "RECOVERY";
+      }
+      if (stepLabel && arch) {
+        const maxAttr = arch.dataset["attemptMax"];
+        stepLabel.textContent = `${f.attempt} / ${maxAttr ?? "3"}`;
+      }
+      if (recMeta) {
+        recMeta.classList.toggle("is-active", f.phase === "recovery" || f.phase === "exhausted");
+      }
     }
 
-    const observer = new MutationObserver(() => {
-      const aspect = selectAspect(document.querySelectorAll("[data-mode]"), root);
-      const lastFrame = state.scriptIndex >= 0 ? lastFrameFor(state) : initialFrame();
-      render(lastFrame, aspect);
-    });
-    observer.observe(document.body, { attributes: true, attributeFilter: ["data-mode"] });
-  }
-
-  function lastFrameFor(state: { scriptIndex: number; attempt: number }): TickFrame {
-    // Reconstruct frame from current state for cross-mode rendering.
-    return advance(state).frame;
+    if (!reducerMotion) {
+      apply();
+      const tickMs = reducerMotion ? REDUCED_MOTION_TICK_MS : TICK_MS;
+      window.setInterval(apply, tickMs);
+    }
   }
 
   if (document.readyState === "loading") {
@@ -246,3 +421,412 @@ const edgePoints = geometry.edges.map((edge) => {
     init();
   }
 </script>
+
+<style>
+  .flagship-section {
+    background: var(--surface);
+  }
+  .flagship-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(320px, 0.7fr);
+    gap: clamp(42px, 7vw, 92px);
+    align-items: start;
+  }
+  .architecture {
+    border-top: 1.5px solid var(--fg);
+    padding-top: 26px;
+    display: grid;
+    gap: 24px;
+  }
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  .rt-map {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(220px, 0.55fr);
+    gap: 28px;
+    align-items: start;
+  }
+  .rt-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: visible;
+    z-index: 1;
+  }
+  .rt-edges path {
+    fill: none;
+    stroke: var(--rule);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+  .rt-edges path.is-passed {
+    stroke: var(--fg-soft);
+  }
+  .rt-edges path.is-active {
+    stroke: var(--accent);
+  }
+  .rt-token {
+    fill: var(--accent);
+    opacity: 0;
+    transition: opacity 220ms ease;
+  }
+  .rt-stack {
+    position: relative;
+    z-index: 2;
+    min-width: 0;
+  }
+  .rt-pipeline {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    min-width: 0;
+  }
+  .rt-node {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 11px 14px;
+    border: 1px solid var(--rule);
+    background: var(--surface);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--fg);
+    min-height: 38px;
+    margin-bottom: -1px;
+    transition:
+      border-color 180ms ease,
+      color 180ms ease,
+      background-color 180ms ease;
+  }
+  .rt-node--graph {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    padding: 12px 14px 14px;
+    min-height: 0;
+  }
+  .rt-node-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 22px;
+  }
+  .rt-label {
+    flex: 1;
+    min-width: 0;
+  }
+  .rt-marker {
+    flex: 0 0 14px;
+    width: 14px;
+    text-align: center;
+    color: var(--fg-soft);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    opacity: 0;
+    transition: opacity 180ms ease;
+  }
+  .rt-marker::before {
+    content: "";
+  }
+  .rt-node.is-done .rt-marker::before {
+    content: "\2713";
+  }
+  .rt-node.is-failed .rt-marker::before {
+    content: "!";
+  }
+  .rt-node.is-done .rt-marker,
+  .rt-node.is-failed .rt-marker {
+    opacity: 1;
+  }
+  .rt-node.is-active {
+    border-color: var(--accent);
+    color: var(--fg);
+    background: color-mix(in srgb, var(--accent) 4%, var(--surface));
+  }
+  .rt-node.is-done {
+    border-color: var(--hairline);
+    color: var(--fg-soft);
+  }
+  .rt-node.is-failed {
+    border-color: var(--accent);
+    color: var(--fg);
+    background: color-mix(in srgb, var(--accent) 3%, var(--surface));
+  }
+  .rt-graph {
+    display: flex;
+    gap: 5px;
+    margin-top: 12px;
+    align-items: center;
+  }
+  .rt-sg {
+    position: relative;
+    width: 34px;
+    height: 22px;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--hairline);
+    background: var(--surface);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    transition:
+      border-color 200ms ease,
+      color 200ms ease;
+  }
+  .rt-sg-mark {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-size: 12px;
+    color: var(--fg-soft);
+    opacity: 0;
+    transition: opacity 200ms ease;
+  }
+  .rt-sg.is-current {
+    border-color: var(--accent);
+    color: var(--fg);
+  }
+  .rt-sg.is-current .rt-sg-num {
+    color: var(--fg);
+  }
+  .rt-sg.is-done .rt-sg-num {
+    opacity: 0;
+  }
+  .rt-sg.is-done .rt-sg-mark {
+    opacity: 1;
+  }
+  .rt-status-strip {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 22px;
+    padding: 12px 16px;
+    border: 1px solid var(--rule);
+    border-top: 1px solid var(--fg);
+    background: var(--surface);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    min-height: 46px;
+  }
+  .rt-strip-slot {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    min-width: 0;
+  }
+  .rt-strip-slot--node {
+    margin-left: auto;
+  }
+  .rt-strip-label {
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--soft);
+  }
+  .rt-strip-state {
+    color: var(--fg);
+    font-weight: 500;
+    text-transform: uppercase;
+  }
+  .rt-strip-node {
+    color: var(--fg);
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+  .rt-strip-divider {
+    width: 1px;
+    align-self: stretch;
+    background: var(--hairline);
+  }
+  .rt-side {
+    position: relative;
+    z-index: 2;
+    border-left: 1px solid var(--hairline);
+    padding-left: 22px;
+    display: grid;
+    gap: 12px;
+    align-content: start;
+    min-width: 0;
+  }
+  .rt-side-head {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .rt-recovery {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: -1px;
+  }
+  .rt-rec-node {
+    position: relative;
+    padding: 9px 14px 9px 28px;
+    border: 1px solid var(--hairline);
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    min-height: 34px;
+    margin-bottom: -1px;
+    transition:
+      border-color 200ms ease,
+      color 200ms ease,
+      background-color 200ms ease;
+  }
+  .rt-rec-bar {
+    position: absolute;
+    left: 11px;
+    top: 50%;
+    width: 6px;
+    height: 1px;
+    background: var(--rule);
+    transform: translateY(-50%);
+    transition: background 200ms ease;
+  }
+  .rt-rec-label {
+    flex: 1;
+    min-width: 0;
+  }
+  .rt-rec-node.is-active {
+    border-color: var(--accent);
+    color: var(--fg);
+    background: color-mix(in srgb, var(--accent) 4%, var(--surface));
+  }
+  .rt-rec-node.is-active .rt-rec-bar {
+    background: var(--accent);
+    width: 10px;
+  }
+  .rt-rec-node.is-done {
+    color: var(--fg-soft);
+    border-color: var(--hairline);
+    background: var(--surface);
+  }
+  .rt-rec-node.is-done .rt-rec-bar {
+    background: var(--fg-soft);
+  }
+  .rt-side-meta {
+    margin: 4px 0 0;
+    padding-top: 12px;
+    border-top: 1px solid var(--hairline);
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .rt-side-meta.is-active {
+    color: var(--accent);
+  }
+
+  /* Case-grid below */
+  .case-grid {
+    margin-top: 42px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+  }
+  .case-point {
+    border-top: 1px solid var(--rule);
+    padding-top: 16px;
+  }
+  .case-point > span {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .case-point p {
+    margin: 12px 0 0;
+    color: var(--fg-soft);
+    line-height: 1.55;
+  }
+
+  /* Section h2 alignment */
+  .flagship-grid > div > h2 {
+    margin: 0;
+    font-size: var(--type-h1);
+    line-height: 1.02;
+    letter-spacing: -0.04em;
+    font-weight: 600;
+    max-width: 13ch;
+  }
+  .section-lead {
+    margin: 18px 0 0;
+    color: var(--fg-soft);
+    font-size: clamp(18px, 2vw, 24px);
+    line-height: 1.35;
+    letter-spacing: -0.02em;
+  }
+  .eyebrow {
+    margin: 0 0 18px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  @media (max-width: 900px) {
+    .flagship-grid,
+    .rt-map {
+      grid-template-columns: 1fr;
+    }
+    .architecture {
+      gap: 18px;
+    }
+    .case-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (max-width: 560px) {
+    .rt-map {
+      grid-template-columns: 1fr;
+      gap: 22px;
+    }
+    .rt-side {
+      border-left: 0;
+      border-top: 1px solid var(--hairline);
+      padding-left: 0;
+      padding-top: 16px;
+    }
+    .rt-status-strip {
+      flex-wrap: wrap;
+    }
+    .case-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

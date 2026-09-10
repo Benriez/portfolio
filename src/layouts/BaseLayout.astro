@@ -28,7 +28,7 @@ const { title, description, mode } = Astro.props as Props;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#faf7f2" />
+    <meta name="theme-color" content="oklch(98% 0.004 80)" />
     <meta name="color-scheme" content="light" />
     <link rel="icon" type="image/svg+xml" href="/portfolio/favicon.svg" />
     <title>{title}</title>
@@ -47,35 +47,16 @@ const { title, description, mode } = Astro.props as Props;
     <SiteFooter />
 
     <script>
+      // Apply ?mode= from URL on initial load. The mode-switch component
+      // (see SiteHeader.astro) handles interactive toggling.
       (function applyModeFromUrl() {
         const allowed = new Set(["hr", "engineering"]);
         const url = new URL(window.location.href);
         const requested = url.searchParams.get("mode");
-        const html = document.documentElement;
-        const body = document.body;
-        let next: "hr" | "engineering" =
-          html.dataset["mode"] === "engineering" ? "engineering" : "hr";
         if (requested && allowed.has(requested)) {
-          next = requested === "engineering" ? "engineering" : "hr";
-          html.dataset["mode"] = next;
-          body.dataset["mode"] = next;
+          document.documentElement.dataset["mode"] = requested;
+          document.body.dataset["mode"] = requested;
         }
-        document.querySelectorAll<HTMLAnchorElement>("[data-mode-toggle]").forEach((el) => {
-          el.addEventListener("click", (event) => {
-            const target = new URL(el.href, window.location.href);
-            event.preventDefault();
-            const other = next === "hr" ? "engineering" : "hr";
-            url.searchParams.set("mode", other);
-            window.history.replaceState({}, "", url.toString());
-            html.dataset["mode"] = other;
-            body.dataset["mode"] = other;
-            next = other;
-            target.pathname = "/portfolio/";
-            document.documentElement.dispatchEvent(
-              new CustomEvent("modechange", { detail: { mode: other } }),
-            );
-          });
-        });
       })();
     </script>
   </body>

@@ -2,7 +2,8 @@
 /**
  * SectionHeader
  *
- * Editorial section heading with eyebrow, headline, and lede.
+ * Editorial section header. Mirrors the reference's `.section-head` pattern
+ * with a full-width eyebrow positioned above the title.
  */
 import type { DualCopy } from "~/types/content";
 
@@ -16,19 +17,17 @@ interface Props {
 const { id, eyebrow, title, lede } = Astro.props as Props;
 ---
 
-<header class="section-header" id={id}>
-  <p class="section-header__eyebrow eyebrow">
+<header class="section-head" id={id}>
+  <p class="section-kicker">
     <span data-view="hr">{eyebrow.hr}</span>
     <span data-view="engineering">{eyebrow.engineering}</span>
   </p>
-
-  <h2 class="section-header__title">
+  <h2>
     <span data-view="hr">{title.hr}</span>
     <span data-view="engineering">{title.engineering}</span>
   </h2>
-
   {lede && (
-    <p class="section-header__lede">
+    <p class="section-lead">
       <span data-view="hr">{lede.hr}</span>
       <span data-view="engineering">{lede.engineering}</span>
     </p>
@@ -36,25 +35,35 @@ const { id, eyebrow, title, lede } = Astro.props as Props;
 </header>
 
 <style>
-  .section-header {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
-    margin-bottom: var(--space-6);
+  .section-head {
+    display: grid;
+    grid-template-columns: minmax(0, 0.82fr) minmax(0, 1fr);
+    gap: clamp(28px, 6vw, 80px);
+    align-items: end;
+    margin-bottom: 42px;
   }
-  .section-header__eyebrow {
+  .section-head .section-kicker {
+    grid-column: 1 / -1;
+    margin-bottom: -18px;
+  }
+  .section-head h2 {
+    font-size: var(--type-h1);
+    line-height: 1.02;
+    letter-spacing: -0.04em;
+    font-weight: 600;
+    max-width: 13ch;
     margin: 0;
   }
-  .section-header__title {
-    font-size: var(--type-display-2);
-    line-height: var(--leading-tight);
-    letter-spacing: -0.015em;
-    max-width: 22ch;
+  .section-lead {
+    margin: 0;
+    color: var(--fg-soft);
+    font-size: clamp(18px, 2vw, 24px);
+    line-height: 1.35;
+    letter-spacing: -0.02em;
   }
-  .section-header__lede {
-    color: var(--ink-muted);
-    font-size: var(--type-h3);
-    line-height: var(--leading-snug);
-    max-width: var(--layout-content);
+  @media (max-width: 900px) {
+    .section-head {
+      grid-template-columns: 1fr;
+    }
   }
 </style>

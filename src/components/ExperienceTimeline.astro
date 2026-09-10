@@ -2,101 +2,145 @@
 /**
  * ExperienceTimeline
  *
- * Single-column timeline of career history with date hairline.
+ * Reference `.two-col` grid:
+ *   - left: career list with time + role + ul bullets
+ *   - right: education-list aside with hairline-divided entries
+ *     (rendered by Education.astro)
+ *
+ * Career `time` uses mono uppercase eyebrow style; bullets use a 6×1px
+ * accent hairline as ::before.
  */
 import type { ExperienceEntry } from "~/types/content";
+import Education from "~/components/Education.astro";
+import type { EducationEntry } from "~/types/content";
 
 interface Props {
   readonly entries: ExperienceEntry[];
+  readonly education: EducationEntry[];
 }
 
-const { entries } = Astro.props as Props;
-
-function fmt(iso: string): string {
-  // Accepts YYYY-MM or YYYY-MM-DD
-  return iso;
-}
+const { entries, education } = Astro.props as Props;
 ---
 
-<ol class="experience">
-  {entries.map((entry) => (
-    <li class="experience__item">
-      <div class="experience__years">
-        <span>
-          {fmt(entry.start)}
-          {" → "}
-          {entry.end ? fmt(entry.end) : "heute · present"}
-        </span>
-      </div>
-      <div class="experience__body">
-        <h3 class="experience__role">
-          <span data-view="hr">{entry.role.hr}</span>
-          <span data-view="engineering">{entry.role.engineering}</span>
-        </h3>
-        <p class="experience__employer">
-          <span data-view="hr">{entry.employer.hr}</span>
-          <span data-view="engineering">{entry.employer.engineering}</span>
-          {" · "}
-          <span data-view="hr">{entry.location.hr}</span>
-          <span data-view="engineering">{entry.location.engineering}</span>
-        </p>
-        {entry.highlights.length > 0 && (
-          <ul class="experience__highlights">
-            {entry.highlights.map((h) => (
-              <li>
-                <span data-view="hr">{h.hr}</span>
-                <span data-view="engineering">{h.engineering}</span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-    </li>
-  ))}
-</ol>
+<div class="two-col">
+  <section class="career-region">
+    <p class="section-kicker">
+      <span data-view="hr">Berufserfahrung</span>
+      <span data-view="engineering">Experience</span>
+    </p>
+    <h2 class="two-col-title">
+      <span data-view="hr">Beruflicher Verlauf</span>
+      <span data-view="engineering">Career timeline</span>
+    </h2>
+    <ol class="career-list">
+      {entries.map((entry) => {
+        const period = entry.end
+          ? `${entry.start} — ${entry.end}`
+          : `${entry.start} — heute · present`;
+        return (
+          <li class="career-item">
+            <time>{period}</time>
+            <h3>
+              <span data-view="hr">{entry.role.hr}</span>
+              <span data-view="engineering">{entry.role.engineering}</span>
+            </h3>
+            <p class="career-employer">
+              <span data-view="hr">{entry.employer.hr}</span>
+              <span data-view="engineering">{entry.employer.engineering}</span>
+              {" · "}
+              <span data-view="hr">{entry.location.hr}</span>
+              <span data-view="engineering">{entry.location.engineering}</span>
+            </p>
+            {entry.highlights.length > 0 && (
+              <ul class="career-bullets">
+                {entry.highlights.map((h) => (
+                  <li class="hr-only">
+                    <span data-view="hr">{h.hr}</span>
+                    <span>{h.hr}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </li>
+        );
+      })}
+    </ol>
+  </section>
+
+  <aside class="education-aside">
+    <p class="section-kicker">
+      <span data-view="hr">Ausbildung</span>
+      <span data-view="engineering">Education</span>
+    </p>
+    <Education entries={education} />
+  </aside>
+</div>
 
 <style>
-  .experience {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-5);
-  }
-  .experience__item {
+  .two-col {
     display: grid;
-    grid-template-columns: 140px 1fr;
-    gap: var(--space-4);
-    padding-top: var(--space-5);
+    grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
+    gap: clamp(42px, 7vw, 92px);
+    align-items: start;
+  }
+  .two-col-title {
+    margin-top: 0;
+    font-size: clamp(34px, 5vw, 64px);
+    line-height: 1.02;
+    letter-spacing: -0.04em;
+    font-weight: 600;
+    max-width: 13ch;
+  }
+  .career-list {
+    display: grid;
+    gap: 0;
+    margin-top: 34px;
+  }
+  .career-item {
+    padding: 24px 0;
     border-top: 1px solid var(--hairline);
+    list-style: none;
   }
-  .experience__years {
+  .career-item time {
     font-family: var(--font-mono);
-    font-size: var(--type-caption);
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--ink-subtle);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: var(--accent);
   }
-  .experience__role {
-    font-size: var(--type-h2);
-    line-height: var(--leading-snug);
-    margin-bottom: var(--space-2);
+  .career-item h3 {
+    margin: 8px 0 0;
+    font-size: 22px;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    font-weight: 600;
   }
-  .experience__employer {
-    color: var(--ink-muted);
-    margin-bottom: var(--space-3);
+  .career-employer {
+    margin: 6px 0 0;
+    color: var(--fg-soft);
   }
-  .experience__highlights {
-    padding-left: var(--space-4);
-    list-style: "— ";
-    color: var(--ink-muted);
-    max-width: var(--layout-content);
+  .career-bullets {
+    list-style: none;
+    margin: 14px 0 0;
+    padding: 0;
+    display: grid;
+    gap: 6px;
   }
-  .experience__highlights li + li {
-    margin-top: var(--space-1);
+  .career-bullets li {
+    position: relative;
+    padding-left: 16px;
   }
-  @media (max-width: 720px) {
-    .experience__item {
+  .career-bullets li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.7em;
+    width: 6px;
+    height: 1px;
+    background: var(--rule);
+  }
+  @media (max-width: 900px) {
+    .two-col {
       grid-template-columns: 1fr;
-      gap: var(--space-2);
     }
   }
 </style>

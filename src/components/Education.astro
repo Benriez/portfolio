@@ -2,7 +2,10 @@
 /**
  * Education
  *
- * Condensed education row.
+ * Reference `.education-list` lives inside a sidebar aside beside the career
+ * list (see ExperienceTimeline.astro). This component renders the
+ * educational entries in the same visual rhythm: hairline divider, 22px
+ * headings, two-line dates, hairline-on-top separation.
  */
 import type { EducationEntry } from "~/types/content";
 
@@ -13,71 +16,61 @@ interface Props {
 const { entries } = Astro.props as Props;
 ---
 
-<dl class="education">
+<dl class="education-list">
   {entries.map((entry) => (
-    <div class="education__row">
-      <dt>
+    <div>
+      <h3>
         <span data-view="hr">{entry.degree.hr}</span>
         <span data-view="engineering">{entry.degree.engineering}</span>
-      </dt>
-      <dd>
-        <p class="education__institution">
-          <span data-view="hr">{entry.institution.hr}</span>
-          <span data-view="engineering">{entry.institution.engineering}</span>
-        </p>
-        <p class="education__focus">
-          <span data-view="hr">{entry.focus.hr}</span>
-          <span data-view="engineering">{entry.focus.engineering}</span>
-        </p>
-        <p class="education__years">
-          {entry.start}
-          {" → "}
-          {entry.end ?? "heute · present"}
-        </p>
-      </dd>
+      </h3>
+      <p class="education-institution">
+        <span data-view="hr">{entry.institution.hr}</span>
+        <span data-view="engineering">{entry.institution.engineering}</span>
+      </p>
+      <p class="education-focus">
+        <span data-view="hr">{entry.focus.hr}</span>
+        <span data-view="engineering">{entry.focus.engineering}</span>
+      </p>
+      <p class="education-period">
+        {entry.start}
+        {" → "}
+        {entry.end ?? "heute · present"}
+      </p>
     </div>
   ))}
 </dl>
 
 <style>
-  .education {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-4);
-  }
-  .education__row {
+  .education-list {
     display: grid;
-    grid-template-columns: 220px 1fr;
-    gap: var(--space-4);
-    padding-top: var(--space-4);
+    gap: 0;
+    margin-top: 34px;
+  }
+  .education-list > div {
+    padding: 24px 0;
     border-top: 1px solid var(--hairline);
   }
-  .education__row dt {
-    font-size: var(--type-h3);
-  }
-  .education__row dd {
-    margin: 0;
-  }
-  .education__institution {
-    color: var(--ink-strong);
+  .education-list h3 {
+    margin: 8px 0 0;
+    font-size: 22px;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
     font-weight: 600;
   }
-  .education__focus {
-    color: var(--ink-muted);
-    margin-top: var(--space-1);
+  .education-institution {
+    margin: 6px 0 0;
+    color: var(--fg-soft);
   }
-  .education__years {
+  .education-focus {
+    margin-top: 6px;
+    color: var(--fg-soft);
+    max-width: 60ch;
+  }
+  .education-period {
     font-family: var(--font-mono);
-    font-size: var(--type-caption);
-    color: var(--ink-subtle);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    margin-top: var(--space-2);
-  }
-  @media (max-width: 720px) {
-    .education__row {
-      grid-template-columns: 1fr;
-      gap: var(--space-1);
-    }
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    margin-top: 10px;
   }
 </style>

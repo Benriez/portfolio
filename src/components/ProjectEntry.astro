@@ -2,151 +2,197 @@
 /**
  * ProjectEntry
  *
- * Editorial project card. Title, role, customer, period, summary, stack, impact.
+ * Editorial project row. Mirrors the reference's 2-column layout:
+ *   .work-item .work-index | .work-body
+ *
+ * Body contains:
+ *   .work-meta   (one-line mono label)
+ *   h3
+ *   .work-sub    (italic role line)
+ *   .work-lead   (HR / Engineering modes)
+ *   .work-points (HR / Engineering bullet lists)
+ *   .stack-line  (Stack label · items)
  */
-import type { ProjectEntry as ProjectEntryData } from "~/types/content";
+import type { DualCopy } from "~/types/content";
 
 interface Props {
-  readonly project: ProjectEntryData;
+  readonly title: string;
+  readonly index: string;
+  readonly isFlagship?: boolean | undefined;
+  readonly meta: { hr: string; engineering: string };
+  readonly sub: DualCopy;
+  readonly lead: DualCopy;
+  readonly role?: { hr: string; engineering: string } | undefined;
+  readonly points?: DualCopy[] | undefined;
+  readonly stack: string[];
 }
 
-const { project } = Astro.props as Props;
-
-const period = project.period.end
-  ? `${project.period.start} → ${project.period.end}`
-  : `${project.period.start} → heute · ${project.period.start} → present`;
+const {
+  title,
+  index,
+  isFlagship = false,
+  meta,
+  sub,
+  lead,
+  role = undefined,
+  points = undefined,
+  stack,
+} = Astro.props as Props;
 ---
 
-<article class="project-entry" aria-labelledby={`project-${project.id}`}>
-  <header class="project-entry__head">
-    <div>
-      <p class="project-entry__eyebrow eyebrow">
-        <span data-view="hr">{project.role.hr}</span>
-        <span data-view="engineering">{project.role.engineering}</span>
+<article class={`work-item${isFlagship ? " flagship-teaser" : ""}`}>
+  <div class="work-index">
+    <span>{index}</span>
+  </div>
+  <div class="work-body">
+    <p class="work-meta">
+      <span data-view="hr">{meta.hr}</span>
+      <span data-view="engineering">{meta.engineering}</span>
+    </p>
+    <h3 class={isFlagship ? "is-flagship" : ""}>{title}</h3>
+    <p class="work-sub">
+      <span data-view="hr">{sub.hr}</span>
+      <span data-view="engineering">{sub.engineering}</span>
+    </p>
+    <p class="work-lead">
+      <span data-view="hr">{lead.hr}</span>
+      <span data-view="engineering">{lead.engineering}</span>
+    </p>
+    {role && (
+      <p class="role-line">
+        <span data-view="hr">{role.hr}</span>
+        <span data-view="engineering">{role.engineering}</span>
       </p>
-      <h3 id={`project-${project.id}`} class="project-entry__title">
-        {project.title}
-      </h3>
-    </div>
-    <p class="project-entry__customer">
-      <span data-view="hr">{project.customer.hr}</span>
-      <span data-view="engineering">{project.customer.engineering}</span>
+    )}
+    {points && points.length > 0 && (
+      <ul class="work-points work-points--hr hr-only">
+        {points.map((p) => (
+          <li>
+            <span>{p.hr}</span>
+          </li>
+        ))}
+      </ul>
+    )}
+    {points && points.length > 0 && (
+      <ul class="work-points work-points--engineering engineering-only">
+        {points.map((p) => (
+          <li>
+            <span>{p.engineering}</span>
+          </li>
+        ))}
+      </ul>
+    )}
+    <p class="stack-line">
+      <span>Stack</span>
+      <span class="stack-items">{stack.join(" · ")}</span>
     </p>
-  </header>
-
-  <p class="project-entry__summary">
-    <span data-view="hr">{project.summary.hr}</span>
-    <span data-view="engineering">{project.summary.engineering}</span>
-  </p>
-
-  {project.impact.length > 0 && (
-    <ul class="project-entry__impact">
-      {project.impact.map((line) => (
-        <li>
-          <span data-view="hr">{line.hr}</span>
-          <span data-view="engineering">{line.engineering}</span>
-        </li>
-      ))}
-    </ul>
-  )}
-
-  <footer class="project-entry__foot">
-    <ul class="project-entry__stack" aria-label="Stack">
-      {project.stack.map((tech) => (
-        <li>{tech}</li>
-      ))}
-    </ul>
-    <p class="project-entry__period">
-      <span>{period}</span>
-      {project.link && (
-        <a href={project.link.href} rel="noopener">
-          <span data-view="hr">↗ {project.link.label.hr}</span>
-          <span data-view="engineering">↗ {project.link.label.engineering}</span>
-        </a>
-      )}
-    </p>
-  </footer>
+  </div>
 </article>
 
 <style>
-  .project-entry {
-    border: 1px solid var(--hairline);
-    border-radius: var(--radius-lg);
-    padding: var(--space-5) var(--space-5);
-    background: var(--surface-raised);
-    box-shadow: var(--shadow-card);
-  }
-  .project-entry + .project-entry {
-    margin-top: var(--space-4);
-  }
-  .project-entry__head {
-    display: flex;
-    gap: var(--space-4);
-    justify-content: space-between;
-    align-items: flex-start;
-    flex-wrap: wrap;
-    margin-bottom: var(--space-3);
-  }
-  .project-entry__eyebrow {
-    margin: 0 0 var(--space-2) 0;
-  }
-  .project-entry__title {
-    font-size: var(--type-h2);
-    line-height: var(--leading-snug);
-  }
-  .project-entry__customer {
-    color: var(--ink-muted);
-    font-size: var(--type-body-sm);
-    max-width: 32ch;
-  }
-  .project-entry__summary {
-    color: var(--ink-strong);
-    margin-block: var(--space-3);
-  }
-  .project-entry__impact {
-    margin: var(--space-3) 0;
-    padding-left: var(--space-4);
-    list-style: "— ";
-    color: var(--ink-muted);
-  }
-  .project-entry__impact li + li {
-    margin-top: var(--space-1);
-  }
-  .project-entry__foot {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: var(--space-3);
-    margin-top: var(--space-4);
-    padding-top: var(--space-4);
+  .work-item {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: clamp(28px, 5vw, 72px);
+    padding: 34px 0;
     border-top: 1px solid var(--hairline);
   }
-  .project-entry__stack {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
+  .work-item:first-of-type {
+    border-top: 1.5px solid var(--fg);
+  }
+  .work-index {
     font-family: var(--font-mono);
-    font-size: var(--type-caption);
-    color: var(--ink-muted);
-  }
-  .project-entry__stack li {
-    border: 1px solid var(--hairline);
-    padding: 4px 10px;
-    border-radius: 999px;
-    background: var(--surface-canvas);
-    color: var(--ink-strong);
-  }
-  .project-entry__period {
-    color: var(--ink-subtle);
-    font-family: var(--font-mono);
-    font-size: var(--type-caption);
-    display: flex;
-    gap: var(--space-3);
-    flex-wrap: wrap;
-    align-items: center;
-  }
-  .project-entry__period a {
+    font-size: 13px;
+    letter-spacing: 0.08em;
     color: var(--accent);
+    font-weight: 500;
+  }
+  .work-body {
+    max-width: 880px;
+  }
+  .work-meta {
+    margin: 0 0 8px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .work-body h3 {
+    margin: 0;
+    font-size: clamp(26px, 3vw, 42px);
+    line-height: 1.08;
+    letter-spacing: -0.035em;
+    font-weight: 600;
+  }
+  .work-body h3.is-flagship {
+    font-size: clamp(34px, 4.6vw, 64px);
+  }
+  .work-sub {
+    margin: 8px 0 0;
+    color: var(--fg-soft);
+    font-size: 18px;
+    font-style: italic;
+  }
+  .work-lead {
+    margin: 18px 0 0;
+    color: var(--fg-soft);
+    max-width: 70ch;
+    font-size: 17px;
+    line-height: 1.55;
+  }
+  .role-line {
+    margin: 14px 0 0;
+    max-width: 72ch;
+    color: var(--fg);
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  .work-points {
+    list-style: none;
+    display: grid;
+    gap: 8px;
+    padding: 0;
+    margin: 18px 0 0;
+  }
+  .work-points li {
+    position: relative;
+    padding-left: 18px;
+    color: var(--fg);
+  }
+  .work-points li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.72em;
+    width: 7px;
+    height: 1px;
+    background: var(--accent);
+  }
+  .stack-line {
+    margin: 20px 0 0;
+    padding-top: 12px;
+    border-top: 1px solid var(--hairline);
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    line-height: 1.7;
+  }
+  .stack-line > span:first-child {
+    color: var(--soft);
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    font-size: 10px;
+    margin-right: 10px;
+  }
+  .stack-items {
+    color: var(--fg-soft);
+  }
+
+  @media (max-width: 900px) {
+    .work-item {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
   }
 </style>

@@ -1,64 +1,85 @@
 ---
 /**
- * WorkingApproach
+ * Tech stack
  *
- * Tech-stack grid.
+ * Mirrors the OpenDesign reference `.tech-stack` definition-list pattern:
+ *   - .tech-stack with rows
+ *   - each row: 150px label column + 1fr content column
+ *   - hairline divider between rows
+ *
+ * See styles.css for the exact selector mapping.
  */
-import type { TechStackGroup } from "~/types/content";
+import type { DualCopy } from "~/types/content";
 
-interface Props {
-  readonly groups: TechStackGroup[];
+interface TechRow {
+  readonly label: DualCopy;
+  readonly items: string[];
 }
 
-const { groups } = Astro.props as Props;
+interface Props {
+  readonly title: { hr: string; engineering: string };
+  readonly rows: TechRow[];
+}
+
+const { title, rows } = Astro.props as Props;
 ---
 
-<div class="tech">
-  {groups.map((group) => (
-    <section class="tech__group" aria-labelledby={`tech-${group.heading.hr}`}>
-      <h3 class="tech__heading" id={`tech-${group.heading.hr}`}>
-        <span data-view="hr">{group.heading.hr}</span>
-        <span data-view="engineering">{group.heading.engineering}</span>
-      </h3>
-      <ul class="tech__items">
-        {group.items.map((item) => (
-          <li>{item}</li>
-        ))}
-      </ul>
-    </section>
-  ))}
-</div>
+<section class="tech-stack" aria-labelledby="tech-stack-title">
+  <h2 id="tech-stack-title" class="visually-hidden">
+    <span data-view="hr">{title.hr}</span>
+    <span data-view="engineering">{title.engineering}</span>
+  </h2>
+  <div class="tech-stack-list">
+    {rows.map((row) => (
+      <div>
+        <strong>
+          <span data-view="hr">{row.label.hr}</span>
+          <span data-view="engineering">{row.label.engineering}</span>
+        </strong>
+        <span class="tech-stack-items">{row.items.join(" · ")}</span>
+      </div>
+    ))}
+  </div>
+</section>
 
 <style>
-  .tech {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: var(--space-5);
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
   }
-  .tech__group {
+  .tech-stack {
+    margin-top: 54px;
     border-top: 1px solid var(--hairline);
-    padding-top: var(--space-3);
   }
-  .tech__heading {
-    font-size: var(--type-caption);
-    color: var(--ink-subtle);
+  .tech-stack-list > div {
+    display: grid;
+    grid-template-columns: 150px 1fr;
+    gap: 24px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--hairline);
+  }
+  .tech-stack-list strong {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
-    font-family: var(--font-mono);
-    margin-bottom: var(--space-2);
+    color: var(--soft);
+    font-weight: 500;
   }
-  .tech__items {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
+  .tech-stack-items {
+    color: var(--fg-soft);
   }
-  .tech__items li {
-    border: 1px solid var(--hairline);
-    border-radius: 6px;
-    padding: 4px 10px;
-    background: var(--surface-canvas);
-    font-family: var(--font-mono);
-    font-size: var(--type-caption);
-    color: var(--ink-strong);
+  @media (max-width: 900px) {
+    .tech-stack-list > div {
+      grid-template-columns: 1fr;
+      gap: 4px;
+    }
   }
 </style>
