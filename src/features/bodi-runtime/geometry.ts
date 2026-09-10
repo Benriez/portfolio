@@ -3,50 +3,50 @@ import type { NodeId, RuntimeGeometry, Bounds } from "./types";
 /**
  * Pure layout of the BODI visualization pipeline.
  *
- * Returns a fixed vertical-pipeline layout that matches the OpenDesign
- * reference exactly. Eight nodes with the reference's data-key ordering
- * (Step 0..7, where Step 3 expands into 5 sub-graph cells 01..05).
+ * The NodeId values match the OpenDesign reference's `data-key` attributes:
+ *   task, gate, memory, graph, runtime, verify, persist, continue, recover,
+ *   fail, bounded-attempt, supervisor, exhausted.
  *
- * No DOM dependencies.
+ * Step indices mirror the reference's `data-step` ordering.
  */
 
 /** Reference data-step ordering (`.rt-node[data-step=...]`). */
 export const STEP_ORDER: ReadonlyArray<NodeId> = [
-  "graph-active",
-  "tick",
+  "task",
+  "gate",
+  "memory",
+  "graph",
+  "runtime",
   "verify",
-  "pass",
-  "fail",
   "recover",
   "supervisor",
   "bounded-attempt",
+  "fail",
   "persist",
   "continue",
   "exhausted",
 ];
 
 /**
- * Layout footprint used by every node. The reference is content-driven
- * (no hard pixel grid) — the BODI runtime stretches to its container, so
- * the geometry is computed in container units rather than absolute pixels.
+ * Layout footprint used by every node.
  */
 const NODE_W = 240;
 const NODE_H = 38;
-const ROW_GAP = 0; /* nodes are stacked tight, separated by hairline borders */
+const ROW_GAP = 0;
 const PAD_X = 0;
 const PAD_Y = 26;
 
 const COLUMN_X = 0;
 const SUB_GRAPH_Y = PAD_Y + 6 * NODE_H + 28;
 
-/** Edges in the reference DAG. */
+/** Edges in the reference DAG (mirrors app.js EDGES). */
 const EDGES: ReadonlyArray<{ from: NodeId; to: NodeId }> = [
-  { from: "graph-active", to: "tick" },
-  { from: "tick", to: "verify" },
-  { from: "verify", to: "pass" },
+  { from: "task", to: "gate" },
+  { from: "gate", to: "memory" },
+  { from: "memory", to: "graph" },
+  { from: "graph", to: "runtime" },
+  { from: "runtime", to: "verify" },
   { from: "verify", to: "fail" },
-  { from: "pass", to: "persist" },
-  { from: "persist", to: "continue" },
   { from: "fail", to: "recover" },
   { from: "recover", to: "supervisor" },
   { from: "supervisor", to: "bounded-attempt" },
@@ -54,16 +54,11 @@ const EDGES: ReadonlyArray<{ from: NodeId; to: NodeId }> = [
   { from: "bounded-attempt", to: "exhausted" },
 ];
 
-/**
- * Compute the BODI runtime geometry. Heights scale with the requested
- * viewport so the side recovery pane aligns on the right rail.
- */
 export function computeGeometry(viewport?: { readonly width: number }): RuntimeGeometry {
   const targetW = viewport?.width ?? 880;
   const widthScale = Math.min(1.4, Math.max(0.9, targetW / 880));
 
   const nodes: Partial<Record<NodeId, Bounds>> = {};
-
   for (const id of STEP_ORDER) {
     const stepIndex = stepIndexOf(id);
     nodes[id] = {
@@ -92,48 +87,48 @@ export function computeGeometry(viewport?: { readonly width: number }): RuntimeG
   };
 }
 
-/** Lookup the step index of a node (0-based). Mirrors reference data-step. */
 function stepIndexOf(id: NodeId): number {
   switch (id) {
-    case "graph-active":
+    case "task":
       return 0;
-    case "tick":
+    case "gate":
       return 1;
-    case "verify":
+    case "memory":
       return 2;
-    case "pass":
+    case "graph":
       return 3;
-    case "fail":
+    case "runtime":
       return 4;
-    case "recover":
+    case "verify":
       return 5;
-    case "supervisor":
+    case "recover":
       return 6;
-    case "bounded-attempt":
+    case "supervisor":
       return 7;
-    case "persist":
+    case "bounded-attempt":
       return 8;
-    case "continue":
+    case "fail":
       return 9;
-    case "exhausted":
+    case "persist":
       return 10;
+    case "continue":
+      return 11;
+    case "exhausted":
+      return 12;
     default:
       return 0;
   }
 }
 
-/** Lookup the bounds of a single node by id. */
 export function nodeBounds(geometry: RuntimeGeometry, id: NodeId): Bounds {
   return geometry.nodes[id];
 }
 
-/** Convenience: center of a node in absolute coordinates. */
 export function nodeCenter(geometry: RuntimeGeometry, id: NodeId): { x: number; y: number } {
   const b = nodeBounds(geometry, id);
   return { x: b.x + b.w / 2, y: b.y + b.h / 2 };
 }
 
-/** Y coordinate where the recovery side panel begins. */
 export function subGraphY(): number {
   return SUB_GRAPH_Y;
 }

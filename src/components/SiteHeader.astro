@@ -9,7 +9,7 @@ import type { ViewMode } from "~/types/content";
 
 interface NavLink {
   href: string;
-  label: { hr: string; engineering: string };
+  label: string;
 }
 
 interface Props {
@@ -18,12 +18,14 @@ interface Props {
 
 const { mode } = Astro.props as Props;
 
+// Reference does NOT have a mode split for nav-link labels: each link
+// shows a single text that does not change with the body mode.
 const links: NavLink[] = [
-  { href: "#projects", label: { hr: "Projekte", engineering: "Projects" } },
-  { href: "#experience", label: { hr: "Werdegang", engineering: "Experience" } },
-  { href: "#capabilities", label: { hr: "Kompetenzen", engineering: "Capabilities" } },
-  { href: "#approach", label: { hr: "Arbeitsweise", engineering: "Approach" } },
-  { href: "#contact", label: { hr: "Kontakt", engineering: "Contact" } },
+  { href: "#work", label: "Projekte" },
+  { href: "#experience", label: "Berufserfahrung" },
+  { href: "#capabilities", label: "Kompetenzen" },
+  { href: "#about", label: "Arbeitsweise" },
+  { href: "#contact", label: "Kontakt" },
 ];
 
 const githubUrl = "https://github.com/Benriez";
@@ -37,10 +39,7 @@ const githubUrl = "https://github.com/Benriez";
 
     <div class="nav-links" aria-label="Sektionen">
       {links.map((link) => (
-        <a href={link.href}>
-          <span data-view="hr">{link.label.hr}</span>
-          <span data-view="engineering">{link.label.engineering}</span>
-        </a>
+        <a href={link.href}>{link.label}</a>
       ))}
     </div>
 

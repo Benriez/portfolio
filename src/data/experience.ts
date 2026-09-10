@@ -55,7 +55,7 @@ const REFERENCE: ReadonlyArray<ReferenceExperience> = [
     subroleLead: {
       hr: "Fachliche Anforderungen aufnehmen und strukturieren, Prioritäten festlegen und gemeinsam mit Anwendern technische Lösungen in die Produktentwicklung überführen.",
       engineering:
-        "Capture and structure business requirements, set priorities, and translate them with users into technical product development.",
+        "Fachliche Anforderungen strukturieren, in technische Lösungen übersetzen, Umsetzung priorisieren und die Weiterentwicklung produktiver Systeme begleiten.",
     },
     subroleSummary:
       "Schnittstelle zwischen Fachanwendern, Geschäftsprozessen und technischer Umsetzung.",
@@ -119,23 +119,19 @@ function periodToIso(period: string): { start: string; end?: string } {
 
 /**
  * Convert the reference data to the canonical ExperienceEntry shape.
- * Sub-role copy is appended to `highlights` for rendering simplicity;
- * the dedicated `<Education>` aside is rendered separately.
+ * Sub-role copy is rendered by ExperienceTimeline from the rich
+ * ReferenceExperience payload exported below; the canonical
+ * ExperienceEntry only carries the top-level career line.
  */
-export const experience: ExperienceEntry[] = REFERENCE.map((r) => {
-  const base: ExperienceEntry = {
-    id: r.id,
-    role: r.role,
-    employer: r.employer,
-    location: r.employer,
-    start: periodToIso(r.period).start,
-    ...(periodToIso(r.period).end ? { end: periodToIso(r.period).end } : {}),
-    highlights: r.highlights,
-  };
-  // No need to inject the sub-role here; ExperienceTimeline renders it
-  // via the rich ReferenceExperience payload exported below.
-  return base;
-});
+export const experience: ExperienceEntry[] = REFERENCE.map((r) => ({
+  id: r.id,
+  role: r.role,
+  employer: r.employer,
+  location: r.employer,
+  start: periodToIso(r.period).start,
+  ...(periodToIso(r.period).end ? { end: periodToIso(r.period).end } : {}),
+  highlights: r.highlights,
+}));
 
 /** Reference-aligned full experience payload used by ExperienceTimeline. */
 export const referenceExperience: ReadonlyArray<ReferenceExperience> = REFERENCE;

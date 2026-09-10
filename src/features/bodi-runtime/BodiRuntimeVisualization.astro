@@ -18,31 +18,27 @@ interface Props {
 const { attemptMax } = Astro.props as Props;
 
 // Reference HR/Engineering bilingual labels for nodes used in the
-// inline template below.
+// inline template below. Mirrors labels.ts exactly.
 const HR = {
-  graph: "Graph-Knoten aktiv",
-  tick: "Tick",
-  verify: "Verifikation",
-  pass: "Bestanden",
-  fail: "Fehlgeschlagen",
-  recover: "Wiederaufnahme",
-  supervisor: "Supervisor",
-  bounded: "Begrenzte Versuche",
-  persist: "Persistieren",
-  continue: "Fortsetzen",
+  task: "Task",
+  gate: "Context",
+  memory: "Workflow",
+  graph: "AI Execution",
+  runtime: "Check Result",
+  verify: "Verification",
+  persist: "Persist State",
+  continue: "Closure / Continue",
   recStatusIdle: "Recovery inaktiv",
 };
 const EN = {
-  graph: "Graph node active",
-  tick: "Tick",
-  verify: "Verify",
-  pass: "Pass",
-  fail: "Fail",
-  recover: "Recovery",
-  supervisor: "Supervisor",
-  bounded: "Bounded attempts",
-  persist: "Persist",
-  continue: "Continue",
+  task: "User / Task",
+  gate: "Message Gate",
+  memory: "Memory / Context",
+  graph: "Durable Execution Graph",
+  runtime: "Managed Agent Runtime",
+  verify: "Result / Verification",
+  persist: "Persist State",
+  continue: "Closure / Continue",
   recStatusIdle: "Recovery inactive",
 };
 ---
@@ -50,20 +46,14 @@ const EN = {
 <section class="flagship-section" id="runtime" aria-labelledby="runtime-title">
   <div class="container flagship-grid">
     <div>
-      <p class="eyebrow">
-        <span data-view="hr">Flagship System</span>
-        <span data-view="engineering">Flagship System</span>
-      </p>
-      <h2 id="runtime-title">
-        <span data-view="hr">agent-garden / BODI</span>
-        <span data-view="engineering">agent-garden / BODI</span>
-      </h2>
+      <p class="eyebrow">Flagship System</p>
+      <h2 id="runtime-title">agent-garden / BODI</h2>
       <p class="section-lead">
-        <span data-view="hr">
+        <span class="hr-only">
           Eine Control Plane für autonome KI-Workflows: Aufgaben starten, Zustand behalten, Fehler
           behandeln und nach Unterbrechungen weiterarbeiten.
         </span>
-        <span data-view="engineering">
+        <span class="engineering-only">
           Kein Prompting-Projekt, sondern Reliability- und Runtime-Engineering für autonome
           AI-Ausführung mit persistenter Workflow-Steuerung.
         </span>
@@ -95,27 +85,27 @@ const EN = {
 
         <div class="rt-stack">
           <ol class="rt-pipeline" role="list">
-            <li class="rt-node" data-step="0" data-key="graph-active">
+            <li class="rt-node" data-step="0" data-key="task">
               <span class="rt-marker" data-marker aria-hidden="true"></span>
               <span class="rt-label">
-                <span data-view="hr">{HR.graph}</span>
-                <span data-view="engineering">{EN.graph}</span>
+                <span data-view="hr">{HR.task}</span>
+                <span data-view="engineering">{EN.task}</span>
               </span>
             </li>
 
-            <li class="rt-node" data-step="1" data-key="tick">
+            <li class="rt-node" data-step="1" data-key="gate">
               <span class="rt-marker" data-marker aria-hidden="true"></span>
               <span class="rt-label">
-                <span data-view="hr">{HR.tick}</span>
-                <span data-view="engineering">{EN.tick}</span>
+                <span data-view="hr">{HR.gate}</span>
+                <span data-view="engineering">{EN.gate}</span>
               </span>
             </li>
 
-            <li class="rt-node" data-step="2" data-key="verify">
+            <li class="rt-node" data-step="2" data-key="memory">
               <span class="rt-marker" data-marker aria-hidden="true"></span>
               <span class="rt-label">
-                <span data-view="hr">{HR.verify}</span>
-                <span data-view="engineering">{EN.verify}</span>
+                <span data-view="hr">{HR.memory}</span>
+                <span data-view="engineering">{EN.memory}</span>
               </span>
             </li>
 
@@ -123,8 +113,8 @@ const EN = {
               <div class="rt-node-row">
                 <span class="rt-marker" data-marker aria-hidden="true"></span>
                 <span class="rt-label">
-                  <span data-view="hr">AI-Ausführung</span>
-                  <span data-view="engineering">Durable Execution Graph</span>
+                  <span data-view="hr">{HR.graph}</span>
+                  <span data-view="engineering">{EN.graph}</span>
                 </span>
               </div>
               <div class="rt-graph" data-runtime-graph aria-hidden="true">
@@ -151,28 +141,30 @@ const EN = {
               </div>
             </li>
 
-            <li class="rt-node" data-step="4" data-key="verify-recovery">
+            <li class="rt-node" data-step="4" data-key="runtime">
               <span class="rt-marker" data-marker aria-hidden="true"></span>
               <span class="rt-label">
-                <span data-view="hr">Ergebnis prüfen</span>
-                <span data-view="engineering">Result / Verification</span>
+                <span data-view="hr">{HR.runtime}</span>
+                <span data-view="engineering">{EN.runtime}</span>
+              </span>
+            </li>
+
+            <li class="rt-node" data-step="5" data-key="verify">
+              <span class="rt-marker" data-marker aria-hidden="true"></span>
+              <span class="rt-label">
+                <span data-view="hr">{HR.verify}</span>
+                <span data-view="engineering">{EN.verify}</span>
               </span>
             </li>
 
             <li class="rt-node engineering-only" data-step="6" data-key="persist">
               <span class="rt-marker" data-marker aria-hidden="true"></span>
-              <span class="rt-label">
-                <span data-view="hr">Persistieren</span>
-                <span data-view="engineering">Persist</span>
-              </span>
+              <span class="rt-label">{HR.persist}</span>
             </li>
 
             <li class="rt-node engineering-only" data-step="7" data-key="continue">
               <span class="rt-marker" data-marker aria-hidden="true"></span>
-              <span class="rt-label">
-                <span data-view="hr">Fortsetzen</span>
-                <span data-view="engineering">Closure / Continue</span>
-              </span>
+              <span class="rt-label">{HR.continue}</span>
             </li>
           </ol>
         </div>
@@ -186,14 +178,14 @@ const EN = {
             <li class="rt-rec-node" data-rec="0">
               <span class="rt-rec-bar" aria-hidden="true"></span>
               <span class="rt-rec-label">
-                <span data-view="hr">Problem erkannt</span>
+                <span data-view="hr">Problem</span>
                 <span data-view="engineering">Verification failed</span>
               </span>
             </li>
             <li class="rt-rec-node" data-rec="1">
               <span class="rt-rec-bar" aria-hidden="true"></span>
               <span class="rt-rec-label">
-                <span data-view="hr">Automatische Wiederaufnahme</span>
+                <span data-view="hr">Recovery</span>
                 <span data-view="engineering">Recovery Controller</span>
               </span>
             </li>
@@ -207,7 +199,7 @@ const EN = {
             <li class="rt-rec-node" data-rec="3">
               <span class="rt-rec-bar" aria-hidden="true"></span>
               <span class="rt-rec-label">
-                <span data-view="hr">Retry 1 / 2</span>
+                <span data-view="hr">Retry</span>
                 <span data-view="engineering">Bounded retry</span>
               </span>
             </li>
@@ -246,41 +238,35 @@ const EN = {
   <div class="container case-grid" aria-label="BODI Systemstory">
     <div class="case-point">
       <span>01 Problem</span>
-      <p>
-        <span data-view="hr">
-          Autonome AI-Workflows können Zustand verlieren, bei Fehlern stehenbleiben oder nach
-          Unterbrechungen nicht zuverlässig fortgesetzt werden.
-        </span>
-        <span data-view="engineering">
-          Long-running agent execution introduces failure modes around state persistence,
-          interrupted turns, retries, result validation and recovery.
-        </span>
+      <p class="hr-only">
+        Autonome AI-Workflows können Zustand verlieren, bei Fehlern stehenbleiben oder nach
+        Unterbrechungen nicht zuverlässig fortgesetzt werden.
+      </p>
+      <p class="engineering-only">
+        Long-running agent execution introduces failure modes around state persistence, interrupted
+        turns, retries, result validation and recovery.
       </p>
     </div>
     <div class="case-point">
       <span>02 System</span>
-      <p>
-        <span data-view="hr">
-          BODI verwaltet Workflow-Zustand, Kontext, Ausführung und Fehlerbehandlung als
-          zusammenhängendes System.
-        </span>
-        <span data-view="engineering">
-          Durable execution, memory governance, managed runtime, verification and recovery are
-          treated as one execution layer.
-        </span>
+      <p class="hr-only">
+        BODI verwaltet Workflow-Zustand, Kontext, Ausführung und Fehlerbehandlung als
+        zusammenhängendes System.
+      </p>
+      <p class="engineering-only">
+        Durable execution, memory governance, managed runtime, verification and recovery are treated
+        as one execution layer.
       </p>
     </div>
     <div class="case-point">
       <span>03 Reliability</span>
-      <p>
-        <span data-view="hr">
-          Zustand wird erhalten und fehlgeschlagene oder unterbrochene Abläufe können kontrolliert
-          fortgeführt werden.
-        </span>
-        <span data-view="engineering">
-          Persistence, bounded retry, recovery controllers, supervisor logic and regression coverage
-          create controlled execution boundaries.
-        </span>
+      <p class="hr-only">
+        Zustand wird erhalten und fehlgeschlagene oder unterbrochene Abläufe können kontrolliert
+        fortgeführt werden.
+      </p>
+      <p class="engineering-only">
+        Persistence, bounded retry, recovery controllers, supervisor logic and regression coverage
+        create controlled execution boundaries.
       </p>
     </div>
   </div>
@@ -294,15 +280,14 @@ const EN = {
 
   function stepOf(id: string): number {
     const map: Record<string, number> = {
-      "graph-active": 0,
-      tick: 1,
-      verify: 2,
-      "verify-recovery": 5,
-      recover: 5,
-      supervisor: 6,
-      "bounded-attempt": 7,
-      persist: 6,
-      continue: 7,
+      task: 0,
+      gate: 1,
+      memory: 2,
+      runtime: 4,
+      verify: 5,
+      recover: 6,
+      supervisor: 7,
+      "bounded-attempt": 8,
     };
     return map[id] ?? 0;
   }
@@ -325,14 +310,14 @@ const EN = {
     const width = inner.clientWidth;
     const geom = computeGeometry({ width });
 
-    // Build edges
+    // Edges per the reference DAG
     const edges: Array<[NodeId, NodeId]> = [
-      ["graph-active", "tick"],
-      ["tick", "verify"],
-      ["verify", "pass"],
+      ["task", "gate"],
+      ["gate", "memory"],
+      ["memory", "graph"],
+      ["graph", "runtime"],
+      ["runtime", "verify"],
       ["verify", "fail"],
-      ["pass", "persist"],
-      ["persist", "continue"],
       ["fail", "recover"],
       ["recover", "supervisor"],
       ["supervisor", "bounded-attempt"],
@@ -361,15 +346,14 @@ const EN = {
       state = next.state;
       const active = new Set<string>();
       const done = new Set<string>();
-      // Map our machine nodes to the visual data-step mapping
       if (f.phase === "normal") {
-        active.add(String(stepOf("graph-active")));
-        done.add(String(stepOf("tick")));
+        active.add(String(stepOf("task")));
+        done.add(String(stepOf("gate")));
       } else if (f.phase === "recovery") {
         // mark recover/supervisor/bounded-attempt as active
         active.add(String(stepOf("recover")));
-        done.add(String(stepOf("tick")));
-        done.add(String(stepOf("verify-recovery")));
+        done.add(String(stepOf("gate")));
+        done.add(String(stepOf("verify")));
         if (f.attempt >= 2) {
           done.add(String(stepOf("bounded-attempt")));
         }

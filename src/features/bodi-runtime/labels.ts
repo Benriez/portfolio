@@ -3,100 +3,67 @@ import type { Aspect, RuntimeLabelSet } from "./types";
 /**
  * BODI runtime visualization labels.
  *
- * Mirrors the OpenDesign reference `app.js` LABELS tables exactly:
- *   HR: short German labels (e.g. "Task", "Context", "Workflow", "AI Ausführung")
- *   Engineering: short English labels (e.g. "User / Task", "Message Gate")
- *   Neutral: short technical identifier (used on the runtime graphic)
+ * Mirrors the OpenDesign reference `index.html` and `app.js` LABELS EXACTLY.
+ * Node keys match the reference's `data-key` attributes:
+ *   task, gate, memory, graph, runtime, verify, persist, continue, recover, fail.
+ *
+ * HR labels are the reference's short German labels.
+ * Engineering labels are the reference's short English labels.
+ * Neutral labels are a single technical identifier used in fallback paths.
  */
 export const runtimeLabels: RuntimeLabelSet = {
   nodes: {
-    "graph-active": {
-      id: "graph-active",
-      label: {
-        hr: "Task",
-        engineering: "User / Task",
-        neutral: "Task",
-      },
+    task: {
+      id: "task",
+      label: { hr: "Task", engineering: "User / Task", neutral: "Task" },
     },
-    tick: {
-      id: "tick",
-      label: {
-        hr: "Context",
-        engineering: "Message Gate",
-        neutral: "Context",
-      },
+    gate: {
+      id: "gate",
+      label: { hr: "Context", engineering: "Message Gate", neutral: "Gate" },
+    },
+    memory: {
+      id: "memory",
+      label: { hr: "Workflow", engineering: "Memory / Context", neutral: "Memory" },
+    },
+    graph: {
+      id: "graph",
+      label: { hr: "AI Execution", engineering: "Durable Execution Graph", neutral: "Graph" },
+    },
+    runtime: {
+      id: "runtime",
+      label: { hr: "Check Result", engineering: "Managed Agent Runtime", neutral: "Runtime" },
     },
     verify: {
       id: "verify",
-      label: {
-        hr: "Workflow",
-        engineering: "Memory / Context",
-        neutral: "Workflow",
-      },
-    },
-    pass: {
-      id: "pass",
-      label: {
-        hr: "AI Ausführung",
-        engineering: "Durable Execution Graph",
-        neutral: "AI Execution",
-      },
-    },
-    fail: {
-      id: "fail",
-      label: {
-        hr: "Ergebnis prüfen",
-        engineering: "Managed Agent Runtime",
-        neutral: "Check Result",
-      },
-    },
-    recover: {
-      id: "recover",
-      label: {
-        hr: "Verifikation",
-        engineering: "Result / Verification",
-        neutral: "Verification",
-      },
-    },
-    supervisor: {
-      id: "supervisor",
-      label: {
-        hr: "Zustand sichern",
-        engineering: "Persist State",
-        neutral: "Persist",
-      },
-    },
-    "bounded-attempt": {
-      id: "bounded-attempt",
-      label: {
-        hr: "Fortsetzen",
-        engineering: "Closure / Continue",
-        neutral: "Continue",
-      },
+      label: { hr: "Verification", engineering: "Result / Verification", neutral: "Verify" },
     },
     persist: {
       id: "persist",
-      label: {
-        hr: "Zustand sichern",
-        engineering: "Persist State",
-        neutral: "Persist",
-      },
+      label: { hr: "Persist State", engineering: "Persist State", neutral: "Persist" },
     },
     continue: {
       id: "continue",
-      label: {
-        hr: "Fortsetzen",
-        engineering: "Closure / Continue",
-        neutral: "Continue",
-      },
+      label: { hr: "Closure / Continue", engineering: "Closure / Continue", neutral: "Continue" },
+    },
+    recover: {
+      id: "recover",
+      label: { hr: "Wiederaufnahme", engineering: "Recovery", neutral: "Recover" },
+    },
+    fail: {
+      id: "fail",
+      label: { hr: "Fehlgeschlagen", engineering: "Fail", neutral: "Fail" },
+    },
+    "bounded-attempt": {
+      id: "bounded-attempt",
+      label: { hr: "Begrenzte Versuche", engineering: "Bounded attempts", neutral: "Bounded" },
+    },
+    supervisor: {
+      id: "supervisor",
+      label: { hr: "Supervisor", engineering: "Supervisor", neutral: "Supervisor" },
     },
     exhausted: {
       id: "exhausted",
-      label: {
-        hr: "Endgültiger Fehler",
-        engineering: "Exhausted failure",
-        neutral: "Exhausted",
-      },
+      label: { hr: "Endgültiger Fehler", engineering: "Exhausted failure", neutral: "Exhausted" },
     },
   },
   phases: {

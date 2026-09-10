@@ -2,8 +2,9 @@
 /**
  * SectionHeader
  *
- * Editorial section header. Mirrors the reference's `.section-head` pattern
- * with a full-width eyebrow positioned above the title.
+ * Editorial section header. The OpenDesign reference uses single-language
+ * (HR) text for eyebrow and h2; we follow that exactly. The optional lede
+ * is the only field that carries a real HR/Engineering mode split.
  */
 import type { DualCopy } from "~/types/content";
 
@@ -18,18 +19,12 @@ const { id, eyebrow, title, lede } = Astro.props as Props;
 ---
 
 <header class="section-head" id={id}>
-  <p class="section-kicker">
-    <span data-view="hr">{eyebrow.hr}</span>
-    <span data-view="engineering">{eyebrow.engineering}</span>
-  </p>
-  <h2>
-    <span data-view="hr">{title.hr}</span>
-    <span data-view="engineering">{title.engineering}</span>
-  </h2>
+  <p class="section-kicker">{eyebrow.hr}</p>
+  <h2>{title.hr}</h2>
   {lede && (
     <p class="section-lead">
-      <span data-view="hr">{lede.hr}</span>
-      <span data-view="engineering">{lede.engineering}</span>
+      <span class="hr-only">{lede.hr}</span>
+      <span class="engineering-only">{lede.engineering}</span>
     </p>
   )}
 </header>

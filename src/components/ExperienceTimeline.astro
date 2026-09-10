@@ -5,9 +5,8 @@
  * Mirrors the OpenDesign reference's `.two-col` grid for the experience
  * section, with the education-list rendered in the right-hand aside.
  *
- * Career `time` uses mono uppercase eyebrow style; bullets use a 6×1px
- * accent hairline as ::before. The sub-role structure (entry 1 only) is
- * rendered as a `.subrole` block.
+ * Single-language content (HR) — the reference does NOT split career
+ * entries into HR/Engineering variants. Sub-role copy is also single-language.
  */
 import type { ExperienceEntry } from "~/types/content";
 import { referenceExperience } from "~/data/experience";
@@ -28,48 +27,28 @@ const { entries } = Astro.props as Props;
       {referenceExperience.map((r) => {
         const entry = entries.find((e) => e.id === r.id);
         if (!entry) return null;
-        const period = entry.end ? `${entry.start} — ${entry.end}` : `${entry.start} — heute`;
+        const period = entry.end ? `${entry.start} - ${entry.end}` : `${entry.start} - heute`;
         return (
           <li class="career-item">
             <time>{period}</time>
-            <h3>
-              <span data-view="hr">{entry.role.hr}</span>
-              <span data-view="engineering">{entry.role.engineering}</span>
-            </h3>
-            <p class="career-employer">
-              <span data-view="hr">{entry.employer.hr}</span>
-              <span data-view="engineering">{entry.employer.engineering}</span>
-            </p>
+            <h3>{entry.role.hr}</h3>
+            <p class="career-employer">{entry.employer.hr}</p>
             {r.highlights.length > 0 && (
               <ul class="career-bullets">
                 {r.highlights.map((h) => (
                   <li>
-                    <span data-view="hr">{h.hr}</span>
-                    <span data-view="engineering">{h.engineering}</span>
+                    <span>{h.hr}</span>
                   </li>
                 ))}
               </ul>
             )}
             {r.subroleTitle && (
               <div class="subrole">
-                <h4>
-                  <span data-view="hr">{r.subroleTitle}</span>
-                  <span data-view="engineering">{r.subroleTitle}</span>
-                </h4>
-                {r.subroleContext && (
-                  <p>
-                    <span data-view="hr">{r.subroleContext}</span>
-                    <span data-view="engineering">{r.subroleContext}</span>
-                  </p>
-                )}
+                <h4>{r.subroleTitle}</h4>
+                {r.subroleContext && <p>{r.subroleContext}</p>}
                 {r.subroleLead && <p class="hr-only">{r.subroleLead.hr}</p>}
                 {r.subroleLead && <p class="engineering-only">{r.subroleLead.engineering}</p>}
-                {r.subroleSummary && (
-                  <p>
-                    <span data-view="hr">{r.subroleSummary}</span>
-                    <span data-view="engineering">{r.subroleSummary}</span>
-                  </p>
-                )}
+                {r.subroleSummary && <p>{r.subroleSummary}</p>}
               </div>
             )}
           </li>
@@ -80,7 +59,7 @@ const { entries } = Astro.props as Props;
 
   <aside class="education-aside">
     <p class="section-kicker">Ausbildung</p>
-    <Education entries={entries} />
+    <Education />
   </aside>
 </div>
 

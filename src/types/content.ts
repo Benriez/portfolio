@@ -23,6 +23,8 @@ export interface Labeled {
 /** A categorized skill tag shown in the capabilities section. */
 export interface SkillItem extends Labeled {
   hint?: DualCopy;
+  /** Optional capability number ("01", "02", ...) used by the mono label. */
+  number?: string;
 }
 
 export interface CapabilityGroup {
@@ -41,14 +43,17 @@ export type ProjectStatus = "shipped" | "ongoing" | "research";
 export interface ProjectEntry {
   id: string;
   title: string;
-  /** 1-line mono-uppercase meta: "2021-2026 · Zwei-Personen-Entwicklerteam" */
+  /** 1-line mono-uppercase meta. For most projects this is single-language;
+   * the HR and Engineering text are identical in those cases. */
   meta: DualCopy;
-  /** 1-line italic sub-title: "B2B-VR-Trainingsplattform für Fahrschulen" */
+  /** 1-line italic sub-title. For most projects single-language; Steuerkompass
+   * and Odoo split HR/Engineering with distinct wording. */
   sub: DualCopy;
-  /** Lead paragraph: 1-2 sentences describing the project. */
+  /** Lead paragraph: 1-2 sentences. Reference splits into hr-only /
+   * engineering-only <p> for most projects. */
   lead: DualCopy;
-  /** Optional 1-line role line below the lead. */
-  roleLine?: DualCopy;
+  /** Optional 1-line role line below the lead. Single-language per reference. */
+  roleLine?: string;
   /** Optional HR-mode bullet list (work-points). */
   pointsHr?: string[];
   /** Optional Engineering-mode bullet list (work-points). */
@@ -58,12 +63,14 @@ export interface ProjectEntry {
   /** Internal status flag for the project's lifecycle. */
   status: ProjectStatus;
   period: { start: IsoDate; end?: IsoDate };
+  /** Monospace left-rail label (e.g. "Flagship", "2021-2026", "2026"). */
+  index: string;
   /** True for the flagship project; renders a larger h3. */
   isFlagship?: boolean;
   /** True for compact entries; reduced padding. */
   compact?: boolean;
-  /** Optional case-study link (e.g. "Case Study ansehen"). */
-  caseLink?: { href: string; label: DualCopy };
+  /** Optional case-study link. Reference label is single-language. */
+  caseLink?: { href: string; label: string };
 }
 
 export interface ExperienceEntry {

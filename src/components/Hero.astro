@@ -9,34 +9,34 @@
  * Engineering variant in the reference HTML). Mode switch re-shows HR.
  */
 interface HeroPanelItem {
-  readonly keyLabel: { hr: string; engineering: string };
+  readonly keyLabel: string;
   readonly valueLabel: { hr: string; engineering: string };
 }
 
 const panel: HeroPanelItem[] = [
   {
-    keyLabel: { hr: "Modus", engineering: "Modus" },
+    keyLabel: "Modus",
     valueLabel: {
       hr: "HR · Produkt, Rolle &amp; Verantwortung",
       engineering: "Engineering · Architektur &amp; technische Tiefe",
     },
   },
   {
-    keyLabel: { hr: "Fokus", engineering: "Fokus" },
+    keyLabel: "Fokus",
     valueLabel: {
       hr: "Software · AI Systems · Production",
       engineering: "Software · AI Systems · Production",
     },
   },
   {
-    keyLabel: { hr: "Erfahrung", engineering: "Erfahrung" },
+    keyLabel: "Erfahrung",
     valueLabel: {
       hr: "Softwareentwicklung seit 2020",
       engineering: "Softwareentwicklung seit 2020",
     },
   },
   {
-    keyLabel: { hr: "Standort", engineering: "Standort" },
+    keyLabel: "Standort",
     valueLabel: {
       hr: "Darmstadt · Deutschland",
       engineering: "Darmstadt · Deutschland",
@@ -77,14 +77,14 @@ const stack = [
         <a class="primary-link" href="#work">
           Projekte ansehen
         </a>
-        <a
+        <button
+          type="button"
           class="text-button hr-only"
-          href="?mode=engineering"
           data-mode-link
           data-set-mode="engineering"
         >
           Engineering-Modus
-        </a>
+        </button>
         <button type="button" class="text-button" data-print>
           CV / Print
         </button>
@@ -100,13 +100,10 @@ const stack = [
     <aside class="hero-panel" aria-label="Kurzprofil">
       {panel.map((item) => (
         <div>
-          <span class="panel-k">
-            <span data-view="hr">{item.keyLabel.hr}</span>
-            <span data-view="engineering">{item.keyLabel.engineering}</span>
-          </span>
+          <span class="panel-k">{item.keyLabel}</span>
           <span class="panel-v">
-            <span data-view="hr" set:html={item.valueLabel.hr} />
-            <span data-view="engineering" set:html={item.valueLabel.engineering} />
+            <span class="hr-only" set:html={item.valueLabel.hr} />
+            <span class="engineering-only" set:html={item.valueLabel.engineering} />
           </span>
         </div>
       ))}

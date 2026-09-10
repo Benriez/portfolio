@@ -3,20 +3,24 @@
  *
  * The portfolio does NOT run the real BODI runtime.
  * It displays a deterministic visualization of Agent Garden semantics.
+ *
+ * `NodeId` keys match the OpenDesign reference's `data-key` attributes.
  */
 
-/** Graph node labels used in the visualization. */
+/** Graph node IDs (match the OpenDesign reference `data-key`). */
 export type NodeId =
-  | "graph-active"
-  | "tick"
+  | "task"
+  | "gate"
+  | "memory"
+  | "graph"
+  | "runtime"
   | "verify"
-  | "pass"
-  | "fail"
   | "persist"
   | "continue"
   | "recover"
-  | "supervisor"
+  | "fail"
   | "bounded-attempt"
+  | "supervisor"
   | "exhausted";
 
 export type PhaseId = "normal" | "recovery" | "exhausted";

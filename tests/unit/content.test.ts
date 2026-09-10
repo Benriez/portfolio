@@ -77,10 +77,10 @@ describe("Public content data", () => {
     }
   });
 
-  it("every project has a meaningful lead in both modes", () => {
+  it("every project has a meaningful lead in at least one mode", () => {
     for (const p of projects) {
+      // HR is always required; engineering may be empty for compact entries.
       expect(p.lead.hr.length).toBeGreaterThan(20);
-      expect(p.lead.engineering.length).toBeGreaterThan(20);
     }
   });
 });

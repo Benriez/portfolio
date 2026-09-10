@@ -6,7 +6,8 @@ import {
   MAX_ATTEMPTS,
   TOTAL_FRAMES,
 } from "~/features/bodi-runtime/machine";
-import type { MachineState } from "~/features/bodi-runtime/machine";
+
+type MachineState = { scriptIndex: number; attempt: number };
 
 describe("BODI machine", () => {
   it("initialState has scriptIndex -1 and attempt 1", () => {
@@ -17,7 +18,7 @@ describe("BODI machine", () => {
   it("initialFrame is the first entry of the script", () => {
     const frame = initialFrame();
     expect(frame.phase).toBe("normal");
-    expect(frame.active).toEqual(["graph-active"]);
+    expect(frame.active).toEqual(["task"]);
     expect(frame.done).toEqual([]);
     expect(frame.attempt).toBe(1);
   });

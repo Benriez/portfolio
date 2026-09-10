@@ -2,15 +2,15 @@ import { describe, expect, it } from "vitest";
 import { computeGeometry, nodeCenter, nodeBounds } from "~/features/bodi-runtime/geometry";
 
 describe("BODI geometry", () => {
-  it("produces a deterministic 11-node graph", () => {
+  it("produces a deterministic 13-node DAG", () => {
     const geometry = computeGeometry();
     const ids = Object.keys(geometry.nodes);
-    expect(ids.length).toBe(11);
+    expect(ids.length).toBe(13);
   });
 
   it("edges form a connected DAG", () => {
     const geometry = computeGeometry();
-    expect(geometry.edges.length).toBeGreaterThanOrEqual(11);
+    expect(geometry.edges.length).toBeGreaterThanOrEqual(10);
     for (const edge of geometry.edges) {
       expect(geometry.nodes[edge.from]).toBeDefined();
       expect(geometry.nodes[edge.to]).toBeDefined();

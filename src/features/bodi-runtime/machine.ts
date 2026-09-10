@@ -1,20 +1,13 @@
-import type { NodeId, PhaseId, TickFrame } from "./types";
+import type { NodeId, TickFrame, PhaseId } from "./types";
 
 /**
- * Pure state machine for the BODI runtime visualization.
+ * Pure state machine for the BODI visualization.
  *
  * No DOM, no timers, no requestAnimationFrame, no I/O.
  * The controller owns all of those concerns; this module exposes
  * a small, exhaustively-testable advance() function that produces
  * the next tick frame deterministically.
  */
-
-export interface MachineState {
-  /** Index into the demo script (each tick produces one frame). */
-  readonly scriptIndex: number;
-  /** Current attempt count (1-based). Visible during the recovery phase. */
-  readonly attempt: number;
-}
 
 /** Maximum retry attempts before exhaustion (matches Agent Garden semantics). */
 export const MAX_ATTEMPTS = 3;
@@ -31,7 +24,7 @@ export const RECOVERY_START = 7;
 export const RECOVERY_PEAK = 9;
 export const RECOVERY_LAST = 10;
 export const EXHAUSTED_INDEX = 11;
-export const TOTAL_FRAMES = 12;
+export const TOTAL_FRAMES = 13;
 
 const SCRIPT: ReadonlyArray<{
   phase: PhaseId;
@@ -39,54 +32,61 @@ const SCRIPT: ReadonlyArray<{
   done: ReadonlyArray<NodeId>;
   attempt: number;
 }> = [
-  // Normal flow
-  { phase: "normal", active: ["graph-active"], done: [], attempt: 1 },
-  { phase: "normal", active: ["tick"], done: ["graph-active"], attempt: 1 },
-  { phase: "normal", active: ["verify"], done: ["graph-active", "tick"], attempt: 1 },
-  { phase: "normal", active: ["pass"], done: ["graph-active", "tick", "verify"], attempt: 1 },
+  // Normal flow: task → gate → memory → graph → runtime → verify
+  { phase: "normal", active: ["task"], done: [], attempt: 1 },
+  { phase: "normal", active: ["gate"], done: ["task"], attempt: 1 },
+  { phase: "normal", active: ["memory"], done: ["task", "gate"], attempt: 1 },
+  { phase: "normal", active: ["graph"], done: ["task", "gate", "memory"], attempt: 1 },
+  { phase: "normal", active: ["runtime"], done: ["task", "gate", "memory", "graph"], attempt: 1 },
+  {
+    phase: "normal",
+    active: ["verify"],
+    done: ["task", "gate", "memory", "graph", "runtime"],
+    attempt: 1,
+  },
+  // Persist + continue are engineering-only nodes
   {
     phase: "normal",
     active: ["persist"],
-    done: ["graph-active", "tick", "verify", "pass"],
+    done: ["task", "gate", "memory", "graph", "runtime", "verify"],
     attempt: 1,
   },
   {
     phase: "normal",
     active: ["continue"],
-    done: ["graph-active", "tick", "verify", "pass", "persist"],
+    done: ["task", "gate", "memory", "graph", "runtime", "verify", "persist"],
     attempt: 1,
   },
+  // Recovery flow: fail → recover → supervisor → bounded-attempt → verify
   {
-    phase: "normal",
-    active: ["graph-active"],
-    done: ["tick", "verify", "pass", "persist", "continue"],
+    phase: "recovery",
+    active: ["recover"],
+    done: ["task", "gate", "memory", "graph", "runtime"],
     attempt: 1,
   },
-  // Recovery flow
-  { phase: "recovery", active: ["recover"], done: ["graph-active", "tick", "verify"], attempt: 1 },
   {
     phase: "recovery",
     active: ["supervisor"],
-    done: ["graph-active", "tick", "verify", "recover"],
+    done: ["task", "gate", "memory", "graph", "runtime", "recover"],
     attempt: 1,
   },
   {
     phase: "recovery",
     active: ["bounded-attempt", "verify"],
-    done: ["graph-active", "tick", "supervisor", "recover"],
+    done: ["task", "gate", "memory", "graph", "supervisor", "recover"],
     attempt: 2,
   },
   {
     phase: "recovery",
     active: ["persist"],
-    done: ["graph-active", "tick", "verify", "recover", "supervisor", "bounded-attempt"],
+    done: ["task", "gate", "memory", "graph", "recover", "supervisor", "bounded-attempt"],
     attempt: 2,
   },
   // Terminal failure
   {
     phase: "exhausted",
     active: ["exhausted"],
-    done: ["graph-active", "tick", "verify", "recover", "supervisor", "bounded-attempt"],
+    done: ["task", "gate", "memory", "graph", "recover", "supervisor", "bounded-attempt"],
     attempt: MAX_ATTEMPTS,
   },
 ];
@@ -97,7 +97,10 @@ const SCRIPT: ReadonlyArray<{
  * Once the script is consumed, the machine loops back to the start so the
  * visualization remains alive on the page without ever mutating global state.
  */
-export function advance(state: MachineState): { state: MachineState; frame: TickFrame } {
+export function advance(state: { scriptIndex: number; attempt: number }): {
+  state: { scriptIndex: number; attempt: number };
+  frame: TickFrame;
+} {
   const nextIndex = (state.scriptIndex + 1) % TOTAL_FRAMES;
   const nextScript = SCRIPT[nextIndex];
   if (!nextScript) {
@@ -115,7 +118,7 @@ export function advance(state: MachineState): { state: MachineState; frame: Tick
 }
 
 /** Initial state of the machine. */
-export const initialState: MachineState = {
+export const initialState = {
   scriptIndex: -1,
   attempt: 1,
 };

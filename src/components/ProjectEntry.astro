@@ -21,10 +21,6 @@ interface Props {
 }
 
 const { project } = Astro.props as Props;
-
-const period = project.period.end
-  ? `${project.period.start} – ${project.period.end}`
-  : `${project.period.start} – heute`;
 ---
 
 <article
@@ -35,7 +31,7 @@ const period = project.period.end
   ]}
 >
   <div class="work-index">
-    <span>{period}</span>
+    <span>{project.index}</span>
   </div>
   <div class="work-body">
     <p class="work-meta">
@@ -51,12 +47,7 @@ const period = project.period.end
       <span data-view="hr">{project.lead.hr}</span>
       <span data-view="engineering">{project.lead.engineering}</span>
     </p>
-    {project.roleLine && (
-      <p class="role-line">
-        <span data-view="hr">{project.roleLine.hr}</span>
-        <span data-view="engineering">{project.roleLine.engineering}</span>
-      </p>
-    )}
+    {project.roleLine && <p class="role-line">{project.roleLine}</p>}
     {project.pointsHr && project.pointsHr.length > 0 && (
       <ul class="work-points hr-only">
         {project.pointsHr.map((p) => (
@@ -79,8 +70,7 @@ const period = project.period.end
     )}
     {project.caseLink && (
       <a class="case-link" href={project.caseLink.href}>
-        <span data-view="hr">{project.caseLink.label.hr}</span>
-        <span data-view="engineering">{project.caseLink.label.engineering}</span>
+        {project.caseLink.label}
       </a>
     )}
   </div>

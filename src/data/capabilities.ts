@@ -80,18 +80,35 @@ const REFERENCE: ReadonlyArray<ReferenceCapability> = [
  * Convert the four reference capabilities into the typed CapabilityGroup
  * shape, keeping each group's content as a single SkillItem for layout
  * parity with the reference (the reference renders one body line per card).
+ *
+ * We expose the capability number as a separate `number` field on the
+ * SkillItem so the layout can render the mono "01" .. "04" label exactly
+ * as the reference does.
  */
-export const capabilities: CapabilityGroup[] = REFERENCE.map((r) => {
-  const skill: { label: string; hint?: { hr: string; engineering: string } } = {
-    label: r.body.hr,
-  };
-  if (r.body.engineering !== r.body.hr) {
-    skill.hint = r.body;
-  }
-  return {
-    heading: r.heading,
-    skills: [skill],
-  };
-});
+export interface CapabilityItemWithNumber {
+  readonly label: string;
+  readonly hint?: { hr: string; engineering: string };
+  readonly number: string;
+}
+
+export const capabilities: (CapabilityGroup & { readonly number: string })[] = REFERENCE.map(
+  (r) => {
+    const skill: CapabilityItemWithNumber = {
+      label: r.body.hr,
+      number: r.number,
+    };
+    if (r.body.engineering !== r.body.hr) {
+      (skill as { hint?: { hr: string; engineering: string } }).hint = {
+        hr: r.body.hr,
+        engineering: r.body.engineering,
+      };
+    }
+    return {
+      number: r.number,
+      heading: r.heading,
+      skills: [skill],
+    };
+  },
+);
 
 export const referenceCapabilities: ReadonlyArray<ReferenceCapability> = REFERENCE;

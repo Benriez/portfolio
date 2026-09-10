@@ -15,10 +15,11 @@ import type { ProjectEntry } from "~/types/content";
 
 const Flagship: ProjectEntry = {
   id: "bodi-agent-garden",
+  index: "Flagship",
   title: "BODI / agent-garden",
   meta: {
     hr: "AI Operator Control Plane · seit 2026",
-    engineering: "AI Operator Control Plane · since 2026",
+    engineering: "AI Operator Control Plane · seit 2026",
   },
   sub: {
     hr: "AI Operator Control Plane",
@@ -35,31 +36,29 @@ const Flagship: ProjectEntry = {
   isFlagship: true,
   caseLink: {
     href: "#flagship",
-    label: { hr: "Case Study ansehen", engineering: "Case study" },
+    label: "Case Study ansehen",
   },
 };
 
 const Fahrschule360: ProjectEntry = {
   id: "fahrschule360",
+  index: "2021-2026",
   title: "Fahrschule360",
   meta: {
     hr: "2021-2026 · Zwei-Personen-Entwicklerteam",
-    engineering: "2021-2026 · Two-person engineering team",
+    engineering: "2021-2026 · Zwei-Personen-Entwicklerteam",
   },
   sub: {
     hr: "B2B-VR-Trainingsplattform für Fahrschulen",
-    engineering: "B2B VR training platform for driving schools",
+    engineering: "B2B-VR-Trainingsplattform für Fahrschulen",
   },
   lead: {
     hr: "Mitentwicklung und langfristige Betreuung einer produktiven Plattform, die VR-Headsets, Backend und Windows-Teacher-App zu einem gemeinsamen Trainingssystem verbindet.",
     engineering:
       "Backend-, Integrations-, Betriebs- und Geräte-Lifecycle-Verantwortung in einem produktiven Django-/VR-System mit Multi-Tenant-Struktur.",
   },
-  roleLine: {
-    hr: "Zwei-Personen-Entwicklerteam · frühe Mitgestaltung von Produkt und Systemarchitektur · langfristige Backend-, Integrations- und Betriebsverantwortung",
-    engineering:
-      "Two-person engineering team · early co-design of product and system architecture · long-term responsibility for backend, integration and operations",
-  },
+  roleLine:
+    "Zwei-Personen-Entwicklerteam · frühe Mitgestaltung von Produkt und Systemarchitektur · langfristige Backend-, Integrations- und Betriebsverantwortung",
   pointsHr: [
     "Produktives B2B-System für Fahrschulen mit Backend, VR-Brillen und Teacher App.",
     "Integration von VR-/Teacher-App-Workflows, Geräte-Lifecycle und Kundeneinsatz.",
@@ -87,24 +86,22 @@ const Fahrschule360: ProjectEntry = {
 
 const ShoppingPong: ProjectEntry = {
   id: "shopping-pong",
+  index: "2026",
   title: "Shopping-Pong",
   meta: {
     hr: "2026 · Zwei-Personen-Team",
-    engineering: "2026 · Two-person team",
+    engineering: "2026 · Zwei-Personen-Team",
   },
   sub: {
     hr: "Automatisierte Laden- & Spielinfrastruktur",
-    engineering: "Automated store and table-tennis venue",
+    engineering: "Automatisierte Laden- & Spielinfrastruktur",
   },
   lead: {
     hr: "Gemeinsame Konzeption, Aufbau, Inbetriebnahme und Betrieb einer automatisierten Tischtennis-Location von Online-Buchung und Payment bis Zutritt, Netzwerk und lokaler Spielsteuerung.",
     engineering:
       "Cyber-physisches System mit Web-/Payment-Schicht, lokaler Venue-Infrastruktur, Android-Kiosk, ESP-Tastern, Smart-Home-Steuerung und CapRover Production.",
   },
-  roleLine: {
-    hr: "Zwei-Personen-Team · Web-, Payment-, Venue-Infrastruktur- und Production-Arbeit",
-    engineering: "Two-person team · web, payment, venue infrastructure and production work",
-  },
+  roleLine: "Zwei-Personen-Team · Web-, Payment-, Venue-Infrastruktur- und Production-Arbeit",
   pointsHr: [
     "Buchung, Payment, digitaler Zutritt und lokaler Betrieb in einem gemeinsamen Venue-System.",
     "Venue-Infrastruktur mit Netzwerk, Kiosk-Terminal, Smart-Home-Licht und Spielsteuerung.",
@@ -133,16 +130,19 @@ const ShoppingPong: ProjectEntry = {
 
 const Steuerkompass: ProjectEntry = {
   id: "steuerkompass",
+  index: "2026",
   title: "Steuerkompass",
-  meta: { hr: "2026", engineering: "2026" },
+  meta: {
+    hr: "",
+    engineering: "",
+  },
   sub: {
     hr: "Privacy-first Desktop-Anwendung",
-    engineering: "Electron / Angular desktop product",
+    engineering: "Electron-/Angular-Desktop-Produkt",
   },
   lead: {
     hr: "Desktop-Anwendung mit Fokus auf lokale Verarbeitung, kontrollierte Release-Artefakte und eine konsistente, zugängliche Benutzeroberfläche.",
-    engineering:
-      "Privacy-first desktop application focused on local processing, controlled release artifacts, and a consistent, accessible user interface.",
+    engineering: "",
   },
   pointsEngineering: [
     "Electron, Angular 17, TypeScript, macOS DMG und fail-closed Artifact Verification.",
@@ -156,16 +156,19 @@ const Steuerkompass: ProjectEntry = {
 
 const OdooAddonSuite: ProjectEntry = {
   id: "odoo-addon-suite",
+  index: "2026",
   title: "Odoo Add-on Suite",
-  meta: { hr: "2026", engineering: "2026" },
+  meta: {
+    hr: "",
+    engineering: "",
+  },
   sub: {
     hr: "ERP-Erweiterung für Geschäftsprozesse",
-    engineering: "Odoo 19 suite with 16 interlocking modules",
+    engineering: "Odoo-19-Suite mit 16 verzahnten Modulen",
   },
   lead: {
     hr: "ERP-Erweiterung für CRM-, Kunden-, Onboarding-, Dokument- und operative Geschäftsprozesse.",
-    engineering:
-      "ERP extension for CRM, customer, onboarding, document and operational business processes.",
+    engineering: "",
   },
   pointsEngineering: ["Python, PostgreSQL, XML, base_automation, Activities und CRM Integration."],
   stack: ["Python", "Odoo", "PostgreSQL", "XML"],
