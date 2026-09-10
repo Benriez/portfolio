@@ -137,6 +137,12 @@ jobs:
       - name: Install Playwright browsers
         run: pnpm test:e2e:install
 
+      - name: Start preview server
+        run: pnpm preview &
+
+      - name: Wait for server
+        run: for i in $(seq 1 30); do curl -sf http://127.0.0.1:4321 && break; sleep 1; done
+
       - name: Run E2E + axe-core smoke
         run: pnpm test:e2e
 
