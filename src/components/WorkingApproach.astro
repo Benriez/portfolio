@@ -2,58 +2,37 @@
 /**
  * Tech stack
  *
- * Mirrors the OpenDesign reference `.tech-stack` definition-list pattern:
- *   - .tech-stack with rows
- *   - each row: 150px label column + 1fr content column
+ * Mirrors the OpenDesign reference's `.tech-stack` definition-list pattern:
+ *   - 150px label column + 1fr content column
  *   - hairline divider between rows
  *
- * See styles.css for the exact selector mapping.
+ * Reads from `referenceTechStack` (the authoritative 4-row payload from
+ * `src/data/tech-stack.ts`) so the rendered text exactly matches the source.
  */
-import type { DualCopy } from "~/types/content";
-
-interface TechRow {
-  readonly label: DualCopy;
-  readonly items: string[];
-}
+import { referenceTechStack } from "~/data/tech-stack";
 
 interface Props {
-  readonly title: { hr: string; engineering: string };
-  readonly rows: TechRow[];
+  title: { hr: string; engineering: string };
 }
 
-const { title, rows } = Astro.props as Props;
+void (Astro.props as Props);
 ---
 
-<section class="tech-stack" aria-labelledby="tech-stack-title">
-  <h2 id="tech-stack-title" class="visually-hidden">
-    <span data-view="hr">{title.hr}</span>
-    <span data-view="engineering">{title.engineering}</span>
-  </h2>
+<section class="tech-stack" aria-label="Technischer Stack">
   <div class="tech-stack-list">
-    {rows.map((row) => (
+    {referenceTechStack.map((group) => (
       <div>
         <strong>
-          <span data-view="hr">{row.label.hr}</span>
-          <span data-view="engineering">{row.label.engineering}</span>
+          <span data-view="hr">{group.heading.hr}</span>
+          <span data-view="engineering">{group.heading.engineering}</span>
         </strong>
-        <span class="tech-stack-items">{row.items.join(" · ")}</span>
+        <span class="tech-stack-items">{group.items.join(" · ")}</span>
       </div>
     ))}
   </div>
 </section>
 
 <style>
-  .visually-hidden {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
-  }
   .tech-stack {
     margin-top: 54px;
     border-top: 1px solid var(--hairline);

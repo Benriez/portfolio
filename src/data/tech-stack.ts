@@ -1,32 +1,90 @@
-import type { TechStackGroup } from "~/types/content";
+import type { DualCopy, TechStackGroup } from "~/types/content";
 
-export const techStack: TechStackGroup[] = [
+/**
+ * Tech-stack groups extracted verbatim from the OpenDesign reference.
+ *
+ * Four groups, in reference order, each with HR + Engineering variants.
+ *
+ *   Primary       · TypeScript · Python · JavaScript · Angular · Django / DRF · Node.js / Express
+ *   AI / Systems   · Agent Orchestration · Durable Execution · Memory Systems · MCP · LLM Integration · Evaluation / Reliability
+ *   Infrastructure · Docker · CapRover · Linux · Windows Server · RDP · PostgreSQL · nginx · DigitalOcean · AWS EC2 / S3
+ *   Additional     · Electron · Odoo · WordPress / PHP · FastAPI · React · Playwright · PowerShell · Raspberry Pi
+ *
+ * The reference renders these as a definition list: a 150px mono-uppercase
+ * label column beside a comma-separated items column.
+ */
+
+interface ReferenceTechStackGroup {
+  readonly id: string;
+  readonly heading: DualCopy;
+  readonly items: ReadonlyArray<string>;
+}
+
+const REFERENCE: ReadonlyArray<ReferenceTechStackGroup> = [
   {
+    id: "primary",
     heading: {
-      hr: "Programmiersprachen",
-      engineering: "Languages",
+      hr: "Primary",
+      engineering: "Primary",
     },
-    items: ["TypeScript", "Node 22", "Python 3.12", "PHP 8", "SQL"],
+    items: ["TypeScript", "Python", "JavaScript", "Angular", "Django / DRF", "Node.js / Express"],
   },
   {
+    id: "ai-systems",
     heading: {
-      hr: "Build- und Test-Werkzeuge",
-      engineering: "Build & test",
+      hr: "AI / Systems",
+      engineering: "AI / Systems",
     },
-    items: ["Astro 7", "Vite", "Vitest 5", "Playwright 1.63", "axe-core", "Prettier", "ESLint 9"],
+    items: [
+      "Agent Orchestration",
+      "Durable Execution",
+      "Memory Systems",
+      "MCP",
+      "LLM Integration",
+      "Evaluation / Reliability",
+    ],
   },
   {
+    id: "infrastructure",
     heading: {
-      hr: "Daten und Persistenz",
-      engineering: "Data & persistence",
+      hr: "Infrastructure",
+      engineering: "Infrastructure",
     },
-    items: ["PostgreSQL", "SQLite", "Airflow", "dbt"],
+    items: [
+      "Docker",
+      "CapRover",
+      "Linux",
+      "Windows Server",
+      "RDP",
+      "PostgreSQL",
+      "nginx",
+      "DigitalOcean",
+      "AWS EC2 / S3",
+    ],
   },
   {
+    id: "additional",
     heading: {
-      hr: "Container & Auslieferung",
-      engineering: "Containers & delivery",
+      hr: "Additional",
+      engineering: "Additional",
     },
-    items: ["Docker Compose", "nginx-proxy", "GitHub Actions", "GitHub Pages"],
+    items: [
+      "Electron",
+      "Odoo",
+      "WordPress / PHP",
+      "FastAPI",
+      "React",
+      "Playwright",
+      "PowerShell",
+      "Raspberry Pi",
+    ],
   },
 ];
+
+export const techStack: TechStackGroup[] = REFERENCE.map((r) => ({
+  heading: r.heading,
+  items: [...r.items],
+}));
+
+export type ReferenceTechStackGroupData = ReferenceTechStackGroup;
+export const referenceTechStack: ReadonlyArray<ReferenceTechStackGroupData> = REFERENCE;

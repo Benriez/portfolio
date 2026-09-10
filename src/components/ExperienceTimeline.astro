@@ -2,41 +2,33 @@
 /**
  * ExperienceTimeline
  *
- * Reference `.two-col` grid:
- *   - left: career list with time + role + ul bullets
- *   - right: education-list aside with hairline-divided entries
- *     (rendered by Education.astro)
+ * Mirrors the OpenDesign reference's `.two-col` grid for the experience
+ * section, with the education-list rendered in the right-hand aside.
  *
  * Career `time` uses mono uppercase eyebrow style; bullets use a 6×1px
- * accent hairline as ::before.
+ * accent hairline as ::before. The sub-role structure (entry 1 only) is
+ * rendered as a `.subrole` block.
  */
 import type { ExperienceEntry } from "~/types/content";
+import { referenceExperience } from "~/data/experience";
 import Education from "~/components/Education.astro";
-import type { EducationEntry } from "~/types/content";
 
 interface Props {
   readonly entries: ExperienceEntry[];
-  readonly education: EducationEntry[];
 }
 
-const { entries, education } = Astro.props as Props;
+const { entries } = Astro.props as Props;
 ---
 
 <div class="two-col">
   <section class="career-region">
-    <p class="section-kicker">
-      <span data-view="hr">Berufserfahrung</span>
-      <span data-view="engineering">Experience</span>
-    </p>
-    <h2 class="two-col-title">
-      <span data-view="hr">Beruflicher Verlauf</span>
-      <span data-view="engineering">Career timeline</span>
-    </h2>
+    <p class="section-kicker">Berufserfahrung</p>
+    <h2>Beruflicher Verlauf</h2>
     <ol class="career-list">
-      {entries.map((entry) => {
-        const period = entry.end
-          ? `${entry.start} — ${entry.end}`
-          : `${entry.start} — heute · present`;
+      {referenceExperience.map((r) => {
+        const entry = entries.find((e) => e.id === r.id);
+        if (!entry) return null;
+        const period = entry.end ? `${entry.start} — ${entry.end}` : `${entry.start} — heute`;
         return (
           <li class="career-item">
             <time>{period}</time>
@@ -47,19 +39,38 @@ const { entries, education } = Astro.props as Props;
             <p class="career-employer">
               <span data-view="hr">{entry.employer.hr}</span>
               <span data-view="engineering">{entry.employer.engineering}</span>
-              {" · "}
-              <span data-view="hr">{entry.location.hr}</span>
-              <span data-view="engineering">{entry.location.engineering}</span>
             </p>
-            {entry.highlights.length > 0 && (
+            {r.highlights.length > 0 && (
               <ul class="career-bullets">
-                {entry.highlights.map((h) => (
-                  <li class="hr-only">
+                {r.highlights.map((h) => (
+                  <li>
                     <span data-view="hr">{h.hr}</span>
-                    <span>{h.hr}</span>
+                    <span data-view="engineering">{h.engineering}</span>
                   </li>
                 ))}
               </ul>
+            )}
+            {r.subroleTitle && (
+              <div class="subrole">
+                <h4>
+                  <span data-view="hr">{r.subroleTitle}</span>
+                  <span data-view="engineering">{r.subroleTitle}</span>
+                </h4>
+                {r.subroleContext && (
+                  <p>
+                    <span data-view="hr">{r.subroleContext}</span>
+                    <span data-view="engineering">{r.subroleContext}</span>
+                  </p>
+                )}
+                {r.subroleLead && <p class="hr-only">{r.subroleLead.hr}</p>}
+                {r.subroleLead && <p class="engineering-only">{r.subroleLead.engineering}</p>}
+                {r.subroleSummary && (
+                  <p>
+                    <span data-view="hr">{r.subroleSummary}</span>
+                    <span data-view="engineering">{r.subroleSummary}</span>
+                  </p>
+                )}
+              </div>
             )}
           </li>
         );
@@ -68,11 +79,8 @@ const { entries, education } = Astro.props as Props;
   </section>
 
   <aside class="education-aside">
-    <p class="section-kicker">
-      <span data-view="hr">Ausbildung</span>
-      <span data-view="engineering">Education</span>
-    </p>
-    <Education entries={education} />
+    <p class="section-kicker">Ausbildung</p>
+    <Education entries={entries} />
   </aside>
 </div>
 
@@ -83,7 +91,7 @@ const { entries, education } = Astro.props as Props;
     gap: clamp(42px, 7vw, 92px);
     align-items: start;
   }
-  .two-col-title {
+  .career-region h2 {
     margin-top: 0;
     font-size: clamp(34px, 5vw, 64px);
     line-height: 1.02;
@@ -137,6 +145,19 @@ const { entries, education } = Astro.props as Props;
     width: 6px;
     height: 1px;
     background: var(--rule);
+  }
+  .subrole {
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid var(--rule);
+  }
+  .subrole h4 {
+    margin: 0;
+    font-size: 18px;
+    letter-spacing: -0.015em;
+  }
+  .subrole p {
+    max-width: 60ch;
   }
   @media (max-width: 900px) {
     .two-col {

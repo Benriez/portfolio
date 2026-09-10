@@ -1,0 +1,64 @@
+---
+/**
+ * Approach
+ *
+ * Mirrors the OpenDesign reference's `.about` section (id="about"):
+ *   .about > .container > .about-grid
+ *     ├─ .section-kicker + h2 (left)
+ *     └─ .approach-list (right, two long paragraphs)
+ */
+---
+
+<section class="approach-section section" id="approach" aria-labelledby="approach-h">
+  <div class="container about-grid">
+    <div>
+      <p class="section-kicker">Arbeitsweise</p>
+      <h2 id="approach-h">Systemisch denken, präzise bauen, zuverlässig betreiben.</h2>
+    </div>
+    <div class="approach-list">
+      <p>
+        Ich arbeite an der Schnittstelle zwischen Produktanforderung, Softwarearchitektur und
+        laufendem Betrieb. Wichtig ist nicht nur, dass ein Feature funktioniert, sondern wie es sich
+        bei Fehlern, Deployments, Zustandswechseln und echten Nutzungsbedingungen verhält.
+      </p>
+      <p>
+        Meine Arbeit verbindet Requirements Engineering, Root-Cause Analysis, Recovery Thinking und
+        Production Ownership. Konzept, Implementierung und Betrieb gehören zusammen.
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .approach-section {
+    background: var(--surface);
+  }
+  .about-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr);
+    gap: clamp(34px, 7vw, 90px);
+  }
+  .approach-section h2 {
+    margin: 0;
+    font-size: clamp(34px, 5vw, 64px);
+    line-height: 1.02;
+    letter-spacing: -0.04em;
+    font-weight: 600;
+  }
+  .approach-list {
+    display: grid;
+    gap: 18px;
+  }
+  .approach-list p {
+    margin: 0;
+    font-size: 20px;
+    line-height: 1.45;
+    letter-spacing: -0.02em;
+    color: var(--fg-soft);
+  }
+  @media (max-width: 900px) {
+    .about-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

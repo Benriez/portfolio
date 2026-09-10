@@ -1,100 +1,141 @@
-import type { ExperienceEntry } from "~/types/content";
+import type { DualCopy, ExperienceEntry } from "~/types/content";
 
-export const experience: ExperienceEntry[] = [
+/**
+ * Career history extracted verbatim from the OpenDesign reference.
+ *
+ * Three entries, in reference order:
+ *
+ *   1. 06/2022 - heute, Selbstständiger Software- & IT-Dienstleister, Darmstadt
+ *      (includes a sub-role: Technischer Produktmanager · Steuerbüro)
+ *   2. 09/2020 - 05/2022, Werkstudent → Full-Stack Developer, Fahrschule360 · Mainz
+ *   3. 19.06.2015 - 31.07.2016, Technischer Produktdesigner, tecsis GmbH · Offenbach
+ *
+ * The sub-role structure is encoded as a `points` field on entry 1: the
+ * reference renders it as a `.subrole` block with h4 + HR/Eng text + summary.
+ */
+
+interface ReferenceExperience {
+  readonly id: string;
+  readonly period: string;
+  readonly role: DualCopy;
+  readonly employer: DualCopy;
+  readonly highlights: DualCopy[];
+  readonly subroleTitle?: string;
+  readonly subroleContext?: string;
+  readonly subroleLead?: DualCopy;
+  readonly subroleSummary?: string;
+}
+
+const REFERENCE: ReadonlyArray<ReferenceExperience> = [
   {
-    id: "freelance-engineering",
-    employer: {
-      hr: "Freelance Engineering",
-      engineering: "Independent engineering practice",
-    },
+    id: "freelance-it",
+    period: "06/2022 - heute",
     role: {
-      hr: "Full-Stack Engineer, Berater",
-      engineering: "Full-stack engineer / fractional consulting",
+      hr: "Selbstständiger Software- & IT-Dienstleister",
+      engineering: "Independent software and IT service provider",
     },
-    location: {
-      hr: "Darmstadt · Deutschland",
-      engineering: "Darmstadt, Germany",
+    employer: {
+      hr: "Darmstadt · Selbstständige Tätigkeit",
+      engineering: "Darmstadt · Independent practice",
     },
-    start: "2023-09",
     highlights: [
       {
-        hr:
-          "Verantwortlich für Konzeption, Aufbau und Betrieb kleiner Web-Plattformen sowie " +
-          "datengetriebener Werkzeuge.",
+        hr: "Full-Stack-Entwicklung und Production-Betrieb von Web- und Business-Systemen.",
         engineering:
-          "End-to-end delivery of small-scale web platforms and data tools: requirements, " +
-          "architecture, implementation, deploy, on-call rotation.",
+          "Full-stack development and production operations of web and business systems.",
       },
       {
-        hr:
-          "Indirekte Zusammenarbeit mit Design, Produktverantwortlichen und Geschäftsführung; " +
-          "Belastbarkeit in Wochenzyklen.",
+        hr: "Betrieb eigener Linux-/Docker-/CapRover-Infrastruktur sowie Windows-RDP-Server für fünf Nutzer mit Benutzer-, Rechte- und Zugriffsverwaltung.",
         engineering:
-          "Cross-functional collaboration with design, product, and operations; " +
-          "comfortable in weekly cadence with explicit deliverable contracts.",
+          "Operation of own Linux / Docker / CapRover infrastructure and a Windows RDP server for five users with user, role and access management.",
+      },
+    ],
+    subroleTitle: "Technischer Produktmanager · Steuerbüro",
+    subroleContext: "Kundenrolle im Rahmen der Selbstständigkeit",
+    subroleLead: {
+      hr: "Fachliche Anforderungen aufnehmen und strukturieren, Prioritäten festlegen und gemeinsam mit Anwendern technische Lösungen in die Produktentwicklung überführen.",
+      engineering:
+        "Capture and structure business requirements, set priorities, and translate them with users into technical product development.",
+    },
+    subroleSummary:
+      "Schnittstelle zwischen Fachanwendern, Geschäftsprozessen und technischer Umsetzung.",
+  },
+  {
+    id: "fahrschule360-ws",
+    period: "09/2020 - 05/2022",
+    role: {
+      hr: "Werkstudent → Full-Stack Developer",
+      engineering: "Working student → full-stack developer",
+    },
+    employer: {
+      hr: "Fahrschule360 · Mainz",
+      engineering: "Fahrschule360 · Mainz",
+    },
+    highlights: [
+      {
+        hr: "Full-Stack-Entwicklung mit JavaScript und Python für Client- und Server-Systeme.",
+        engineering:
+          "Full-stack development with JavaScript and Python for client and server systems.",
+      },
+      {
+        hr: "Mitarbeit an VR-Systemen, Build-/Deployment-Prozessen, Container- und Cloud-Infrastruktur.",
+        engineering:
+          "Contributing to VR systems, build and deployment processes, container and cloud infrastructure.",
       },
     ],
   },
   {
-    id: "industry-engineering",
-    employer: {
-      hr: "Industrieller Mittelstand",
-      engineering: "Industrial SME",
-    },
+    id: "tecsis-design",
+    period: "19.06.2015 - 31.07.2016",
     role: {
-      hr: "Engineer für Daten- und Produktionssysteme",
-      engineering: "Engineer · data + production systems",
+      hr: "Technischer Produktdesigner",
+      engineering: "Technical product designer",
     },
-    location: {
-      hr: "Metropolregion Rhein-Main",
-      engineering: "Rhine-Main metropolitan region",
+    employer: {
+      hr: "tecsis GmbH · Offenbach",
+      engineering: "tecsis GmbH · Offenbach",
     },
-    start: "2020-02",
-    end: "2023-08",
     highlights: [
       {
-        hr:
-          "Operational Data Pipelines und angeschlossene BI-Auswertungen von der Maschine bis " +
-          "zur Werksleitung konzipiert und betrieben.",
+        hr: "Konstruktion elektromechanischer Baugruppen, technische Zeichnungen und struktur-/mechanische Analysen einschließlich FEM.",
         engineering:
-          "Owned end-to-end delivery of operational data pipelines and BI dashboards " +
-          "from PLC/MES telemetry to executive surfaces.",
-      },
-      {
-        hr:
-          "Begleitende Software-Wartung für interne Werkzeuge mit Schwerpunkt auf messbarer " +
-          "Reduktion wiederkehrender Störungen.",
-        engineering:
-          "Maintenance of internal tooling; tracked reduction of recurring incidents through " +
-          "structured post-mortems and small refactors.",
-      },
-    ],
-  },
-  {
-    id: "study-research-assistantship",
-    employer: {
-      hr: "Hochschule Darmstadt (h_da)",
-      engineering: "Hochschule Darmstadt (h_da)",
-    },
-    role: {
-      hr: "Wissenschaftliche Hilfskraft",
-      engineering: "Student research assistant",
-    },
-    location: {
-      hr: "Darmstadt · Deutschland",
-      engineering: "Darmstadt, Germany",
-    },
-    start: "2019-04",
-    end: "2021-09",
-    highlights: [
-      {
-        hr:
-          "Mitarbeit in Forschungs- und Lehrprojekten mit Fokus auf zuverlässige Software im " +
-          "ingenieurwissenschaftlichen Kontext.",
-        engineering:
-          "Contributed to research / teaching projects with a focus on reliable software " +
-          "in engineering contexts; reproducible evaluations and short technical notes.",
+          "Design of electromechanical assemblies, technical drawings and structural / mechanical analyses including FEM.",
       },
     ],
   },
 ];
+
+/** Convert "06/2022 - heute" → { start: "06/2022", end: undefined }. */
+function periodToIso(period: string): { start: string; end?: string } {
+  const [start, end] = period.split(" - ").map((s) => s.trim());
+  if (!start) {
+    return { start: period };
+  }
+  if (!end || end === "heute" || end === "today") {
+    return { start };
+  }
+  return { start, end };
+}
+
+/**
+ * Convert the reference data to the canonical ExperienceEntry shape.
+ * Sub-role copy is appended to `highlights` for rendering simplicity;
+ * the dedicated `<Education>` aside is rendered separately.
+ */
+export const experience: ExperienceEntry[] = REFERENCE.map((r) => {
+  const base: ExperienceEntry = {
+    id: r.id,
+    role: r.role,
+    employer: r.employer,
+    location: r.employer,
+    start: periodToIso(r.period).start,
+    ...(periodToIso(r.period).end ? { end: periodToIso(r.period).end } : {}),
+    highlights: r.highlights,
+  };
+  // No need to inject the sub-role here; ExperienceTimeline renders it
+  // via the rich ReferenceExperience payload exported below.
+  return base;
+});
+
+/** Reference-aligned full experience payload used by ExperienceTimeline. */
+export const referenceExperience: ReadonlyArray<ReferenceExperience> = REFERENCE;

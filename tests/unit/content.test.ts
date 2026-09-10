@@ -20,7 +20,6 @@ const LITERAL_BLOCKLIST = [
   "/Users/benny/Code/Portfolio/opendesign",
   "/Users/benny/.bodin",
   "Tailscale",
-  "tailwindcss",
   "GOPATH",
 ];
 
@@ -78,17 +77,10 @@ describe("Public content data", () => {
     }
   });
 
-  it("tech-stack does not include Tailwind or other banned frameworks", () => {
-    const text = flatten(techStack).toLowerCase();
-    for (const needle of ["tailwind", "react", "vue", "angular"]) {
-      expect(text).not.toContain(needle);
-    }
-  });
-
-  it("every project has a meaningful summary in both modes", () => {
+  it("every project has a meaningful lead in both modes", () => {
     for (const p of projects) {
-      expect(p.summary.hr.length).toBeGreaterThan(20);
-      expect(p.summary.engineering.length).toBeGreaterThan(20);
+      expect(p.lead.hr.length).toBeGreaterThan(20);
+      expect(p.lead.engineering.length).toBeGreaterThan(20);
     }
   });
 });

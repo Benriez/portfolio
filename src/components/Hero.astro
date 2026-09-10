@@ -2,20 +2,15 @@
 /**
  * Hero
  *
- * Mirrors the OpenDesign hero geometry:
+ * Mirrors the OpenDesign reference `.hero` structure:
  *   .hero > .container > .hero-grid > .hero-main + .hero-panel
  *
- * - eyebrow
- * - h1 with mode variants (HR/Engineering)
- * - .role mono role line ("Full-Stack & Applied AI Engineer")
- * - .hero-lead
- * - .hero-stack (· · · separator line)
- * - .hero-actions (primary + utility links)
- * - .hero-panel (Modus / Fokus / Erfahrung / Standort)
+ * Note: the reference renders the `hero-lead` only in HR mode (no
+ * Engineering variant in the reference HTML). Mode switch re-shows HR.
  */
 interface HeroPanelItem {
   readonly keyLabel: { hr: string; engineering: string };
-  readonly valueLabel: { hr: string; engineering: string } | string;
+  readonly valueLabel: { hr: string; engineering: string };
 }
 
 const panel: HeroPanelItem[] = [
@@ -28,54 +23,48 @@ const panel: HeroPanelItem[] = [
   },
   {
     keyLabel: { hr: "Fokus", engineering: "Fokus" },
-    valueLabel: "Software · AI Systems · Production",
+    valueLabel: {
+      hr: "Software · AI Systems · Production",
+      engineering: "Software · AI Systems · Production",
+    },
   },
   {
     keyLabel: { hr: "Erfahrung", engineering: "Erfahrung" },
-    valueLabel: "Softwareentwicklung seit 2020",
+    valueLabel: {
+      hr: "Softwareentwicklung seit 2020",
+      engineering: "Softwareentwicklung seit 2020",
+    },
   },
   {
     keyLabel: { hr: "Standort", engineering: "Standort" },
-    valueLabel: "Darmstadt · Deutschland",
+    valueLabel: {
+      hr: "Darmstadt · Deutschland",
+      engineering: "Darmstadt · Deutschland",
+    },
   },
 ];
 
+// Stack tags in EXACT reference order, joined by " · " in CSS.
 const stack = [
   "TypeScript",
-  "Node 22",
   "Python",
+  "Angular",
+  "Django",
   "AI Agent Systems",
   "Production Engineering",
-  "Astro",
-];
-
-const githubUrl = "https://github.com/Benriez";
+  "Technical Product Management",
+] as const;
 ---
 
 <section class="hero" id="top">
   <div class="container hero-grid">
     <div class="hero-main">
-      <p class="eyebrow">
-        <span data-view="hr">Engineering Bewerbung</span>
-        <span data-view="engineering">Engineering Portfolio</span>
-      </p>
-      <h1>
-        <span data-view="hr">Engineering Portfolio</span>
-        <span data-view="engineering">Engineering Portfolio</span>
-      </h1>
-      <p class="role">
-        <span data-view="hr">Full-Stack &amp; Applied AI Engineer</span>
-        <span data-view="engineering">Full-Stack &amp; Applied AI Engineer</span>
-      </p>
-      <p class="hero-lead">
-        <span data-view="hr">
-          Verlässliche kleine Plattformen, datengetriebene Werkzeuge und eine klare Vorstellung
-          davon, wie ein Software-Lauf nachvollziehbar, wiederaufnehmbar und auditierbar bleibt.
-        </span>
-        <span data-view="engineering">
-          Small reliable platforms, data-driven tooling, and a working model of an agent runtime
-          whose behavior you can inspect frame by frame.
-        </span>
+      <p class="eyebrow hr-only">Engineering Bewerbung</p>
+      <h1>Benjamin Riezler</h1>
+      <p class="role">Full-Stack &amp; Applied AI Engineer</p>
+      <p class="hero-lead hr-only">
+        Ich entwickle und betreibe Softwaresysteme von Produktanforderungen und Architektur bis
+        Production, Reliability und autonomen Agent-Runtimes.
       </p>
 
       <div class="hero-stack" aria-label="Kerntechnologien">
@@ -85,17 +74,21 @@ const githubUrl = "https://github.com/Benriez";
       </div>
 
       <div class="hero-actions" aria-label="Aktionen">
-        <a class="primary-link" href="#projects">
+        <a class="primary-link" href="#work">
           Projekte ansehen
         </a>
-        <a class="text-button" href="?mode=engineering" data-mode-link data-set-mode="engineering">
-          <span data-view="hr">Engineering-Modus</span>
-          <span data-view="engineering">HR-Modus</span>
+        <a
+          class="text-button hr-only"
+          href="?mode=engineering"
+          data-mode-link
+          data-set-mode="engineering"
+        >
+          Engineering-Modus
         </a>
         <button type="button" class="text-button" data-print>
           CV / Print
         </button>
-        <a class="text-link" href={githubUrl} rel="noopener">
+        <a class="text-link" href="https://github.com/Benriez" rel="noopener">
           GitHub
         </a>
         <a class="text-link" href="mailto:contact@benrieder.dev">
@@ -112,14 +105,8 @@ const githubUrl = "https://github.com/Benriez";
             <span data-view="engineering">{item.keyLabel.engineering}</span>
           </span>
           <span class="panel-v">
-            {typeof item.valueLabel === "string" ? (
-              item.valueLabel
-            ) : (
-              <>
-                <span data-view="hr" set:html={item.valueLabel.hr} />
-                <span data-view="engineering" set:html={item.valueLabel.engineering} />
-              </>
-            )}
+            <span data-view="hr" set:html={item.valueLabel.hr} />
+            <span data-view="engineering" set:html={item.valueLabel.engineering} />
           </span>
         </div>
       ))}

@@ -2,13 +2,18 @@
 /**
  * Contact
  *
- * Mirrors the OpenDesign reference:
- *   `.contact-actions` is a horizontal flex row of mono-uppercase button-style
- *   links, each with a 1px rule border, 40px min-height, transparent by
- *   default and filled on hover.
+ * Mirrors the OpenDesign reference's `.contact-section`:
+ *   - `.contact-grid` (2 columns: section-head + contact-actions)
+ *   - `.contact-actions` is a flex row of button-style links (mono-uppercase,
+ *     40px min-height, 1px rule border).
  *
- * Items that the call site marks `visible: false` are simply omitted from the
- * rendered list, which is the reference's behaviour for unresolved items.
+ * Items that the call site marks `visible: false` are simply omitted from
+ * the rendered list. The `href` is shown without its protocol prefix.
+ *
+ * Items here mirror the reference's action set, but the reference uses
+ * placeholder text (`[email@domain.de]`, `[handle]`, `[website.de]`) in
+ * every link and button. We render only the items the operator has
+ * resolved; unresolved items are omitted.
  */
 import type { ContactItem } from "~/types/content";
 
@@ -22,13 +27,10 @@ const { items, heading, printLabel = "CV / Print" } = Astro.props as Props;
 const visible = items.filter((item) => item.visible);
 ---
 
-<section class="contact-region" aria-labelledby="contact-region-title">
-  <div class="contact-grid">
+<section class="contact-region section" id="contact" aria-labelledby="contact-region-title">
+  <div class="container contact-grid">
     <div>
-      <p class="section-kicker">
-        <span data-view="hr">Kontakt</span>
-        <span data-view="engineering">Contact</span>
-      </p>
+      <p class="section-kicker">Kontakt</p>
       <h2 id="contact-region-title">
         <span data-view="hr">{heading.hr}</span>
         <span data-view="engineering">{heading.engineering}</span>
@@ -55,7 +57,7 @@ const visible = items.filter((item) => item.visible);
 
 <style>
   .contact-region {
-    display: block;
+    background: var(--surface);
   }
   .contact-grid {
     display: grid;

@@ -2,45 +2,35 @@
 /**
  * Capabilities
  *
- * Mirrors the OpenDesign reference exactly:
- *   - .capability-grid (fixed 4 columns at desktop)
- *   - .capability { border-top: 1.5px solid var(--fg); padding-top: 18px; }
- *   - Each card: <span>nn</span> + h3 + body
- *
- * The reference page also has a tech-stack definition list immediately after
- * the capability grid; that lives in WorkingApproach.astro.
+ * Mirrors the OpenDesign reference's `.capability-grid` (fixed 4 columns at
+ * desktop) with each `.capability` card showing:
+ *   - .capability-no   (mono uppercase "01" .. "04")
+ *   - .capability-h3   (heading, HR or Eng)
+ *   - .capability-body  (mono skill list, HR or Eng)
  */
 import type { CapabilityGroup } from "~/types/content";
+import { referenceCapabilities } from "~/data/capabilities";
 
 interface Props {
   readonly groups: CapabilityGroup[];
 }
 
-const { groups } = Astro.props as Props;
+void (Astro.props as Props);
 ---
 
 <section class="capability-region" aria-label="Kompetenzen">
   <div class="capability-grid">
-    {groups.map((group, idx) => (
+    {referenceCapabilities.map((r) => (
       <article class="capability">
-        <span class="capability-no">{String(idx + 1).padStart(2, "0")}</span>
+        <span class="capability-no">{r.number}</span>
         <h3>
-          <span data-view="hr">{group.heading.hr}</span>
-          <span data-view="engineering">{group.heading.engineering}</span>
+          <span data-view="hr">{r.heading.hr}</span>
+          <span data-view="engineering">{r.heading.engineering}</span>
         </h3>
-        <ul class="capability-items">
-          {group.skills.map((skill) => (
-            <li>
-              <span class="capability-label">{skill.label}</span>
-              {skill.hint && (
-                <span class="capability-hint">
-                  <span data-view="hr">{skill.hint.hr}</span>
-                  <span data-view="engineering">{skill.hint.engineering}</span>
-                </span>
-              )}
-            </li>
-          ))}
-        </ul>
+        <p class="capability-body">
+          <span data-view="hr">{r.body.hr}</span>
+          <span data-view="engineering">{r.body.engineering}</span>
+        </p>
       </article>
     ))}
   </div>
@@ -78,23 +68,10 @@ const { groups } = Astro.props as Props;
     color: var(--fg);
     line-height: 1.25;
   }
-  .capability-items {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 14px;
-  }
-  .capability-label {
-    display: inline-block;
-    font-weight: 600;
-    color: var(--fg);
-    font-size: 15px;
-  }
-  .capability-hint {
-    display: block;
-    margin-top: 2px;
+  .capability-body {
+    margin: 14px 0 0;
     color: var(--fg-soft);
-    font-size: 14px;
+    font-size: 15px;
     line-height: 1.5;
   }
 

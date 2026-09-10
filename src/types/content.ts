@@ -32,17 +32,38 @@ export interface CapabilityGroup {
 
 export type ProjectStatus = "shipped" | "ongoing" | "research";
 
+/**
+ * Project entry — fields mirror the OpenDesign reference's
+ * `.work-item` content. The Flagship project (BODI / agent-garden) has
+ * `isFlagship: true` and renders without role-line / points / stack-line.
+ * Compact entries render with reduced vertical padding.
+ */
 export interface ProjectEntry {
   id: string;
   title: string;
-  customer: DualCopy;
-  role: DualCopy;
+  /** 1-line mono-uppercase meta: "2021-2026 · Zwei-Personen-Entwicklerteam" */
+  meta: DualCopy;
+  /** 1-line italic sub-title: "B2B-VR-Trainingsplattform für Fahrschulen" */
+  sub: DualCopy;
+  /** Lead paragraph: 1-2 sentences describing the project. */
+  lead: DualCopy;
+  /** Optional 1-line role line below the lead. */
+  roleLine?: DualCopy;
+  /** Optional HR-mode bullet list (work-points). */
+  pointsHr?: string[];
+  /** Optional Engineering-mode bullet list (work-points). */
+  pointsEngineering?: string[];
+  /** Stack line tokens, joined with " · ". */
   stack: string[];
-  summary: DualCopy;
-  impact: DualCopy[];
+  /** Internal status flag for the project's lifecycle. */
   status: ProjectStatus;
   period: { start: IsoDate; end?: IsoDate };
-  link?: { href: string; label: DualCopy };
+  /** True for the flagship project; renders a larger h3. */
+  isFlagship?: boolean;
+  /** True for compact entries; reduced padding. */
+  compact?: boolean;
+  /** Optional case-study link (e.g. "Case Study ansehen"). */
+  caseLink?: { href: string; label: DualCopy };
 }
 
 export interface ExperienceEntry {

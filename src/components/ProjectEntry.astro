@@ -2,90 +2,87 @@
 /**
  * ProjectEntry
  *
- * Editorial project row. Mirrors the reference's 2-column layout:
- *   .work-item .work-index | .work-body
+ * Mirrors the OpenDesign reference's `.work-item` content structure:
+ *   .work-index (mono date label) + .work-body
  *
- * Body contains:
- *   .work-meta   (one-line mono label)
+ *   .work-meta    (1-line mono label)
  *   h3
- *   .work-sub    (italic role line)
- *   .work-lead   (HR / Engineering modes)
- *   .work-points (HR / Engineering bullet lists)
- *   .stack-line  (Stack label · items)
+ *   .work-sub     (1-line italic sub-title)
+ *   .work-lead    (1 paragraph, HR or Eng)
+ *   .role-line    (1 line, optional)
+ *   .work-points  (3+ bullet list, HR or Eng, optional)
+ *   .stack-line   (Stack · items)
+ *   .case-link    (optional)
  */
-import type { DualCopy } from "~/types/content";
+import type { ProjectEntry as ProjectEntryData } from "~/types/content";
 
 interface Props {
-  readonly title: string;
-  readonly index: string;
-  readonly isFlagship?: boolean | undefined;
-  readonly meta: { hr: string; engineering: string };
-  readonly sub: DualCopy;
-  readonly lead: DualCopy;
-  readonly role?: { hr: string; engineering: string } | undefined;
-  readonly points?: DualCopy[] | undefined;
-  readonly stack: string[];
+  readonly project: ProjectEntryData;
 }
 
-const {
-  title,
-  index,
-  isFlagship = false,
-  meta,
-  sub,
-  lead,
-  role = undefined,
-  points = undefined,
-  stack,
-} = Astro.props as Props;
+const { project } = Astro.props as Props;
+
+const period = project.period.end
+  ? `${project.period.start} – ${project.period.end}`
+  : `${project.period.start} – heute`;
 ---
 
-<article class={`work-item${isFlagship ? " flagship-teaser" : ""}`}>
+<article
+  class:list={[
+    "work-item",
+    project.isFlagship ? "flagship-teaser" : null,
+    project.compact ? "compact-work" : null,
+  ]}
+>
   <div class="work-index">
-    <span>{index}</span>
+    <span>{period}</span>
   </div>
   <div class="work-body">
     <p class="work-meta">
-      <span data-view="hr">{meta.hr}</span>
-      <span data-view="engineering">{meta.engineering}</span>
+      <span data-view="hr">{project.meta.hr}</span>
+      <span data-view="engineering">{project.meta.engineering}</span>
     </p>
-    <h3 class={isFlagship ? "is-flagship" : ""}>{title}</h3>
+    <h3 class:list={[project.isFlagship ? "is-flagship" : null]}>{project.title}</h3>
     <p class="work-sub">
-      <span data-view="hr">{sub.hr}</span>
-      <span data-view="engineering">{sub.engineering}</span>
+      <span data-view="hr">{project.sub.hr}</span>
+      <span data-view="engineering">{project.sub.engineering}</span>
     </p>
     <p class="work-lead">
-      <span data-view="hr">{lead.hr}</span>
-      <span data-view="engineering">{lead.engineering}</span>
+      <span data-view="hr">{project.lead.hr}</span>
+      <span data-view="engineering">{project.lead.engineering}</span>
     </p>
-    {role && (
+    {project.roleLine && (
       <p class="role-line">
-        <span data-view="hr">{role.hr}</span>
-        <span data-view="engineering">{role.engineering}</span>
+        <span data-view="hr">{project.roleLine.hr}</span>
+        <span data-view="engineering">{project.roleLine.engineering}</span>
       </p>
     )}
-    {points && points.length > 0 && (
-      <ul class="work-points work-points--hr hr-only">
-        {points.map((p) => (
-          <li>
-            <span>{p.hr}</span>
-          </li>
+    {project.pointsHr && project.pointsHr.length > 0 && (
+      <ul class="work-points hr-only">
+        {project.pointsHr.map((p) => (
+          <li>{p}</li>
         ))}
       </ul>
     )}
-    {points && points.length > 0 && (
-      <ul class="work-points work-points--engineering engineering-only">
-        {points.map((p) => (
-          <li>
-            <span>{p.engineering}</span>
-          </li>
+    {project.pointsEngineering && project.pointsEngineering.length > 0 && (
+      <ul class="work-points engineering-only">
+        {project.pointsEngineering.map((p) => (
+          <li>{p}</li>
         ))}
       </ul>
     )}
-    <p class="stack-line">
-      <span>Stack</span>
-      <span class="stack-items">{stack.join(" · ")}</span>
-    </p>
+    {project.stack.length > 0 && (
+      <p class="stack-line">
+        <span>Stack</span>
+        <span class="stack-items">{project.stack.join(" · ")}</span>
+      </p>
+    )}
+    {project.caseLink && (
+      <a class="case-link" href={project.caseLink.href}>
+        <span data-view="hr">{project.caseLink.label.hr}</span>
+        <span data-view="engineering">{project.caseLink.label.engineering}</span>
+      </a>
+    )}
   </div>
 </article>
 
@@ -99,6 +96,9 @@ const {
   }
   .work-item:first-of-type {
     border-top: 1.5px solid var(--fg);
+  }
+  .work-item.compact-work {
+    padding: 28px 0;
   }
   .work-index {
     font-family: var(--font-mono);
@@ -187,6 +187,25 @@ const {
   }
   .stack-items {
     color: var(--fg-soft);
+  }
+  .case-link {
+    display: inline-flex;
+    margin-top: 20px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border-bottom: 1px solid color-mix(in oklch, var(--accent) 45%, transparent);
+    padding-bottom: 3px;
+  }
+  .case-link::after {
+    content: "";
+    width: 18px;
+    height: 1px;
+    margin-left: 10px;
+    align-self: center;
+    background: currentColor;
   }
 
   @media (max-width: 900px) {

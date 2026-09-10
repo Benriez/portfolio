@@ -2,22 +2,17 @@
 /**
  * Education
  *
- * Reference `.education-list` lives inside a sidebar aside beside the career
- * list (see ExperienceTimeline.astro). This component renders the
- * educational entries in the same visual rhythm: hairline divider, 22px
- * headings, two-line dates, hairline-on-top separation.
+ * Renders the reference's `.education-list` block: each entry has an
+ * h3 (degree / title), an institution line, and one or two period lines
+ * (the h_da entry has two: "Interactive Media Design …" and "Informatik …").
+ *
+ * The data is sourced from `src/data/education.ts` (`referenceEducation`).
  */
-import type { EducationEntry } from "~/types/content";
-
-interface Props {
-  readonly entries: EducationEntry[];
-}
-
-const { entries } = Astro.props as Props;
+import { referenceEducation } from "~/data/education";
 ---
 
 <dl class="education-list">
-  {entries.map((entry) => (
+  {referenceEducation.map((entry) => (
     <div>
       <h3>
         <span data-view="hr">{entry.degree.hr}</span>
@@ -27,15 +22,12 @@ const { entries } = Astro.props as Props;
         <span data-view="hr">{entry.institution.hr}</span>
         <span data-view="engineering">{entry.institution.engineering}</span>
       </p>
-      <p class="education-focus">
-        <span data-view="hr">{entry.focus.hr}</span>
-        <span data-view="engineering">{entry.focus.engineering}</span>
-      </p>
-      <p class="education-period">
-        {entry.start}
-        {" → "}
-        {entry.end ?? "heute · present"}
-      </p>
+      {entry.periodLines.map((line) => (
+        <p class="education-period">
+          <span data-view="hr">{line}</span>
+          <span data-view="engineering">{line}</span>
+        </p>
+      ))}
     </div>
   ))}
 </dl>
@@ -61,16 +53,9 @@ const { entries } = Astro.props as Props;
     margin: 6px 0 0;
     color: var(--fg-soft);
   }
-  .education-focus {
-    margin-top: 6px;
+  .education-period {
+    margin: 4px 0 0;
     color: var(--fg-soft);
     max-width: 60ch;
-  }
-  .education-period {
-    font-family: var(--font-mono);
-    font-size: 12px;
-    letter-spacing: 0.1em;
-    color: var(--accent);
-    margin-top: 10px;
   }
 </style>

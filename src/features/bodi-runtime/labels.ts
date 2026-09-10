@@ -3,81 +3,82 @@ import type { Aspect, RuntimeLabelSet } from "./types";
 /**
  * BODI runtime visualization labels.
  *
- * Mirrors the OpenDesign reference (`app.js` LABELS tables):
- *   HR uses German short labels; Engineering uses English long labels.
- *   Neutral is a short technical identifier (used on the runtime graphic).
+ * Mirrors the OpenDesign reference `app.js` LABELS tables exactly:
+ *   HR: short German labels (e.g. "Task", "Context", "Workflow", "AI Ausführung")
+ *   Engineering: short English labels (e.g. "User / Task", "Message Gate")
+ *   Neutral: short technical identifier (used on the runtime graphic)
  */
 export const runtimeLabels: RuntimeLabelSet = {
   nodes: {
     "graph-active": {
       id: "graph-active",
       label: {
-        hr: "Graph-Knoten aktiv",
-        engineering: "Graph node active",
-        neutral: "Graph node",
+        hr: "Task",
+        engineering: "User / Task",
+        neutral: "Task",
       },
     },
     tick: {
       id: "tick",
       label: {
-        hr: "Agent Tick",
-        engineering: "Agent tick",
-        neutral: "Agent tick",
+        hr: "Context",
+        engineering: "Message Gate",
+        neutral: "Context",
       },
     },
     verify: {
       id: "verify",
       label: {
-        hr: "Verifikation",
-        engineering: "Verification",
-        neutral: "Verify",
+        hr: "Workflow",
+        engineering: "Memory / Context",
+        neutral: "Workflow",
       },
     },
     pass: {
       id: "pass",
       label: {
-        hr: "Bestanden",
-        engineering: "Pass",
-        neutral: "Pass",
+        hr: "AI Ausführung",
+        engineering: "Durable Execution Graph",
+        neutral: "AI Execution",
       },
     },
     fail: {
       id: "fail",
       label: {
-        hr: "Fehlgeschlagen",
-        engineering: "Fail",
-        neutral: "Fail",
+        hr: "Ergebnis prüfen",
+        engineering: "Managed Agent Runtime",
+        neutral: "Check Result",
       },
     },
     recover: {
       id: "recover",
       label: {
-        hr: "Wiederaufnahme",
-        engineering: "Recovery",
-        neutral: "Recover",
+        hr: "Verifikation",
+        engineering: "Result / Verification",
+        neutral: "Verification",
       },
     },
     supervisor: {
       id: "supervisor",
       label: {
-        hr: "Supervisor",
-        engineering: "Supervisor",
-        neutral: "Supervisor",
+        hr: "Zustand sichern",
+        engineering: "Persist State",
+        neutral: "Persist",
       },
     },
     "bounded-attempt": {
       id: "bounded-attempt",
       label: {
-        hr: "Begrenzte Versuche",
-        engineering: "Bounded attempts",
-        neutral: "Bounded",
+        hr: "Fortsetzen",
+        engineering: "Closure / Continue",
+        neutral: "Continue",
       },
     },
     persist: {
       id: "persist",
       label: {
-        hr: "Persistieren",
-        engineering: "Persist",
+        hr: "Zustand sichern",
+        engineering: "Persist State",
         neutral: "Persist",
       },
     },
@@ -111,24 +112,18 @@ export const runtimeLabels: RuntimeLabelSet = {
     recovery: {
       title: { hr: "Wiederaufnahme", engineering: "Recovery", neutral: "Recovery" },
       caption: {
-        hr:
-          "Bei Fehlschlag greifen Recovery und Supervisor ein. Es wird begrenzt oft erneut verifiziert " +
-          "und gelingt innerhalb des Budgets.",
+        hr: "Bei Fehlschlag greifen Recovery und Supervisor ein. Es wird begrenzt oft erneut verifiziert und gelingt innerhalb des Budgets.",
         engineering:
-          "On failure, recovery and supervisor engage. Verification is retried up to the bounded attempt " +
-          "budget; on success, the result is persisted and the graph continues.",
+          "On failure, recovery and supervisor engage. Verification is retried up to the bounded attempt budget; on success, the result is persisted and the graph continues.",
         neutral: "On failure, bounded retry under supervisor; on success, persist and continue.",
       },
     },
     exhausted: {
       title: { hr: "Endgültiger Fehler", engineering: "Terminal failure", neutral: "Terminal" },
       caption: {
-        hr:
-          "Wenn das Versuchsbudget aufgebraucht ist, geht der Lauf in einen endgültigen Fehlerzustand über. " +
-          "Es wird nicht persistiert.",
+        hr: "Wenn das Versuchsbudget aufgebraucht ist, geht der Lauf in einen endgültigen Fehlerzustand über. Es wird nicht persistiert.",
         engineering:
-          "When the bounded attempt budget is exhausted, the run enters a terminal-failure state. " +
-          "No persist; no continue.",
+          "When the bounded attempt budget is exhausted, the run enters a terminal-failure state. No persist; no continue.",
         neutral: "When the attempt budget is exhausted, the run enters a terminal-failure state.",
       },
     },
