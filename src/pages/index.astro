@@ -1,150 +1,63 @@
 ---
-/**
- * Single-page index.
- *
- * Section order mirrors the OpenDesign reference exactly:
- *   1. Hero
- *   2. #work (Auswahl / Selected work) — flagship + 4 projects
- *   3. #flagship BODI architecture + case-grid
- *   4. #experience (career + education aside)
- *   5. #capabilities (4-col grid + tech-stack definition)
- *   6. #approach (Arbeitsweise)
- *   7. #contact
- */
 import BaseLayout from "~/layouts/BaseLayout.astro";
-import Hero from "~/components/Hero.astro";
-import SectionHeader from "~/components/SectionHeader.astro";
-import ProjectEntry from "~/components/ProjectEntry.astro";
-import Capabilities from "~/components/Capabilities.astro";
-import WorkingApproach from "~/components/WorkingApproach.astro";
-import BodiRuntimeVisualization from "~/features/bodi-runtime/BodiRuntimeVisualization.astro";
-import ExperienceTimeline from "~/components/ExperienceTimeline.astro";
-import Approach from "~/components/Approach.astro";
-import Contact from "~/components/Contact.astro";
-
-import { projects } from "~/data/projects";
-import { experience } from "~/data/experience";
-import { capabilities } from "~/data/capabilities";
-import type { ContactItem, ViewMode } from "~/types/content";
-
-const title = "Benjamin Riezler — Engineering Portfolio";
-const description =
-  "Engineering Portfolio of Benjamin Riezler — small platforms, data-driven tools, and a working model of an agent runtime.";
-
-const initialMode: ViewMode = "hr";
-
-const contacts: ContactItem[] = [
-  {
-    id: "email",
-    label: "E-Mail",
-    href: "mailto:contact@benrieder.dev",
-    visible: true,
-  },
-  {
-    id: "github",
-    label: "GitHub",
-    href: "https://github.com/Benriez",
-    visible: true,
-  },
-  {
-    id: "linkedin",
-    label: "LinkedIn",
-    href: "https://www.linkedin.com/in/benrieder",
-    visible: false,
-  },
-  {
-    id: "website",
-    label: "Webseite",
-    href: "https://benrieder.dev",
-    visible: false,
-  },
-];
 ---
 
-<BaseLayout title={title} description={description} mode={initialMode}>
-  <Hero />
-
-  <section class="section" id="work" aria-labelledby="projects-h">
+<BaseLayout
+  title="Wartung — Benjamin Riezler Portfolio"
+  description="Das Portfolio befindet sich gerade in der Wartung."
+  mode="hr"
+>
+  <section class="section maintenance" aria-labelledby="maintenance-h">
     <div class="container">
-      <SectionHeader
-        id="projects-h"
-        eyebrow={{ hr: "Ausgewählte Projekte", engineering: "Selected work" }}
-        title={{
-          hr: "Systeme, die Produkt, Betrieb und technische Tiefe verbinden.",
-          engineering: "Systems that combine product, operations and technical depth.",
-        }}
-      />
-      <ol class="work-list">
-        {projects.map((project) => (
-          <li class="work-list-item">
-            <ProjectEntry project={project} />
-          </li>
-        ))}
-      </ol>
-    </div>
-  </section>
-
-  <BodiRuntimeVisualization attemptMax={3} />
-
-  <section class="section" id="experience" aria-labelledby="experience-h">
-    <div class="container">
-      <ExperienceTimeline entries={experience} />
-    </div>
-  </section>
-
-  <section class="section" id="capabilities" aria-labelledby="capabilities-h">
-    <div class="container">
-      <SectionHeader
-        id="capabilities-h"
-        eyebrow={{ hr: "Kompetenzen", engineering: "Capabilities" }}
-        title={{
-          hr: "Was ich abdecke",
-          engineering: "Engineering Surface",
-        }}
-        lede={{
-          hr: "Keine Skill-Level, keine Prozentwerte. Nur belastbare Kompetenzfelder aus den Projekten.",
-          engineering:
-            "No skill levels, no percentages. Only competence areas that held up across real projects.",
-        }}
-      />
-      <Capabilities groups={capabilities} />
-      <WorkingApproach
-        title={{
-          hr: "Bevorzugte Werkzeuge",
-          engineering: "Preferred tools",
-        }}
-      />
-    </div>
-  </section>
-
-  <Approach />
-
-  <section class="section contact-section" id="contact" aria-labelledby="contact-h">
-    <div class="container">
-      <Contact
-        heading={{
-          hr: "Kontakt und Profile",
-          engineering: "Contact and profiles",
-        }}
-        items={contacts}
-      />
+      <p class="eyebrow">Status</p>
+      <h1 id="maintenance-h">Seite in Wartung</h1>
+      <p class="maintenance-lead">
+        Das Portfolio wird derzeit überarbeitet und ist kurzfristig nicht erreichbar.
+      </p>
+      <p class="maintenance-note">
+        Bitte versuchen Sie es in wenigen Minuten erneut. Bei Fragen erreichen Sie mich unter{" "}
+        <a href="mailto:contact@benrieder.dev">contact@benrieder.dev</a>.
+      </p>
     </div>
   </section>
 </BaseLayout>
 
 <style>
-  .section {
-    padding: clamp(72px, 9vw, 120px) 0;
+  .maintenance {
+    padding: clamp(120px, 20vw, 200px) 0;
     border-top: 1px solid var(--hairline);
   }
-  .work-list {
-    display: grid;
-    gap: 0;
+  .maintenance .eyebrow {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin: 0 0 16px;
   }
-  .work-list-item {
-    list-style: none;
+  .maintenance h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 700;
+    margin: 0 0 24px;
+    color: var(--fg);
   }
-  .work-list-item:first-child .work-item {
-    border-top: 1.5px solid var(--fg);
+  .maintenance-lead {
+    font-size: 1.15rem;
+    line-height: 1.6;
+    color: var(--fg);
+    max-width: 60ch;
+    margin: 0 0 16px;
+  }
+  .maintenance-note {
+    font-size: 0.95rem;
+    color: var(--muted);
+    max-width: 60ch;
+    margin: 0;
+  }
+  .maintenance-note a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .maintenance-note a:hover {
+    text-decoration: underline;
   }
 </style>
