@@ -137,8 +137,9 @@ jobs:
       - name: Install Playwright browsers
         run: pnpm test:e2e:install
 
-      - name: Start preview server
-        run: pnpm preview &
+      - name: Start static server
+        run: |
+          node -e "const http=require('http'),fs=require('fs'),path=require('path');const d='dist';const m={'.html':'text/html','.css':'text/css','.js':'text/javascript','.json':'application/json','.svg':'image/svg+xml','.png':'image/png','.jpg':'image/jpeg','.ico':'image/x-icon','.woff2':'font/woff2','.woff':'font/woff'};http.createServer((q,r)=>{let f=path.join(d,q.url==='/'?'/index.html':q.url);if(fs.existsSync(f)&&fs.statSync(f).isFile()){}else{f=path.join(d,'index.html');}const e=path.extname(f);r.writeHead(200,{'Content-Type':m[e]||'text/plain'});fs.createReadStream(f).pipe(r);}).listen(4321,'127.0.0.1',()=>console.log('Static server on :4321'));" &
 
       - name: Wait for server
         run: for i in $(seq 1 30); do curl -sf http://127.0.0.1:4321 && break; sleep 1; done
