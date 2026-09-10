@@ -168,6 +168,8 @@ jobs:
     steps:
       - id: deployment
         uses: actions/configure-pages@v5
+        with:
+          enablement: true
 
   deploy:
     name: Deploy to GitHub Pages
