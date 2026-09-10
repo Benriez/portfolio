@@ -98,7 +98,7 @@ recovery branch in its working form.
 
 `controller.ts` (referenced from `BodiRuntimeVisualization.astro`) owns:
 
-- The DOM references to `[data-bodi-root]`, `[data-bodi-token]`, etc.
+- The DOM references to `[data-bodi-runtime]`, `[data-runtime-svg]`, `[data-runtime-edges]`, etc.
 - The tick interval (`TICK_MS` = 1.1 s; `REDUCED_MOTION_TICK_MS` = 2.2 s).
 - The `MutationObserver` that re-renders when `body[data-mode]` changes.
 - Reduced-motion short-circuit (no interval starts; static state shown).

@@ -50,18 +50,18 @@ const githubUrl = "https://github.com/Benriez";
     </div>
 
     <div class="mode-switch" role="group" aria-label="Lesemodus wählen">
-      <a href="?mode=hr" data-set-mode="hr" data-mode-link aria-pressed={mode === "hr"}>
+      <button type="button" data-set-mode="hr" data-mode-link aria-pressed={mode === "hr"}>
         HR
-      </a>
+      </button>
       <span aria-hidden="true">/</span>
-      <a
-        href="?mode=engineering"
+      <button
+        type="button"
         data-set-mode="engineering"
         data-mode-link
         aria-pressed={mode === "engineering"}
       >
         Engineering
-      </a>
+      </button>
     </div>
   </nav>
 </header>
@@ -79,7 +79,7 @@ const githubUrl = "https://github.com/Benriez";
     const url = new URL(window.location.href);
     url.searchParams.set("mode", next);
     window.history.replaceState({}, "", url.toString());
-    document.querySelectorAll<HTMLAnchorElement>("[data-mode-link]").forEach((el) => {
+    document.querySelectorAll<HTMLElement>("[data-mode-link]").forEach((el) => {
       const target = el.getAttribute("data-set-mode") === "engineering" ? "engineering" : "hr";
       el.setAttribute("aria-pressed", target === next ? "true" : "false");
     });
@@ -88,7 +88,7 @@ const githubUrl = "https://github.com/Benriez";
     );
   }
 
-  document.querySelectorAll<HTMLAnchorElement>("[data-set-mode]").forEach((a) => {
+  document.querySelectorAll<HTMLElement>("[data-set-mode]").forEach((a) => {
     a.addEventListener("click", (event) => {
       event.preventDefault();
       const m = a.getAttribute("data-set-mode") ?? "hr";
@@ -139,6 +139,7 @@ const githubUrl = "https://github.com/Benriez";
   .nav-actions a,
   .nav-actions button,
   .mode-switch a,
+  .mode-switch button,
   .mode-switch span {
     font-family: var(--font-mono);
     font-size: 11px;
@@ -167,13 +168,13 @@ const githubUrl = "https://github.com/Benriez";
     border-radius: 999px;
     padding: 4px;
   }
-  .mode-switch a {
+  .mode-switch button {
     border-radius: 999px;
     background: transparent;
     color: var(--muted);
     padding: 7px 10px;
   }
-  .mode-switch a[aria-pressed="true"] {
+  .mode-switch button[aria-pressed="true"] {
     background: var(--fg);
     color: var(--surface);
   }

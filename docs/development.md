@@ -122,7 +122,7 @@ body[data-mode="engineering"] [data-view="engineering"] {
 ```
 
 The default mode is set in `src/pages/index.astro`. The mode toggle is a
-plain anchor with `?mode=hr|engineering`, handled by a small inline script in
+button with `data-set-mode="hr|engineering"`, handled by a small inline script in
 `src/layouts/BaseLayout.astro`.
 
 ## Feature boundaries

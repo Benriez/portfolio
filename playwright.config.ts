@@ -1,7 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
 
 const PORTFOLIO_PORT = 4321;
-const BASE_URL = process.env.PLAYWRIGHT_BASE_URL ?? `http://127.0.0.1:${PORTFOLIO_PORT}`;
+const BASE_URL = process.env.PLAYWRIGHT_BASE_URL ?? `http://127.0.0.1:${PORTFOLIO_PORT}/portfolio`;
 
 /**
  * @returns {import('@playwright/test').PlaywrightTestConfig}
@@ -30,6 +30,7 @@ export default defineConfig({
       use: {
         ...devices["Pixel 7"],
         viewport: { width: 390, height: 844 },
+        browserName: "chromium",
       },
     },
     {
@@ -37,6 +38,7 @@ export default defineConfig({
       use: {
         ...devices["iPad Mini"],
         viewport: { width: 768, height: 1024 },
+        browserName: "chromium",
       },
     },
     {
@@ -44,15 +46,8 @@ export default defineConfig({
       use: {
         ...devices["Desktop Chrome"],
         viewport: { width: 1440, height: 1000 },
+        browserName: "chromium",
       },
     },
   ],
-  webServer: {
-    command: "pnpm preview",
-    url: BASE_URL,
-    reuseExistingServer: !process.env.CI,
-    timeout: 60_000,
-    stdout: "ignore",
-    stderr: "pipe",
-  },
 });

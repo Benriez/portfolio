@@ -3,18 +3,18 @@ import { test, expect } from "@playwright/test";
 test.describe("BODI runtime visualization", () => {
   test("renders the graph in HR mode", async ({ page }) => {
     await page.goto("/?mode=hr#runtime");
-    await expect(page.locator("[data-bodi-root]")).toBeVisible();
-    await expect(page.locator("[data-bodi-root] svg")).toBeVisible();
+    await expect(page.locator("[data-bodi-runtime]")).toBeVisible();
+    await expect(page.locator("[data-bodi-runtime] svg")).toBeVisible();
   });
 
   test("renders the graph in Engineering mode", async ({ page }) => {
     await page.goto("/?mode=engineering#runtime");
-    await expect(page.locator("[data-bodi-root]")).toBeVisible();
+    await expect(page.locator("[data-bodi-runtime]")).toBeVisible();
   });
 
   test("the summary updates over time (non-static)", async ({ page }) => {
     await page.goto("/?mode=engineering#runtime");
-    const phaseLabel = page.locator("[data-bodi-phase]");
+    const phaseLabel = page.locator("[data-runtime-state]");
     await expect(phaseLabel).toBeVisible();
     const firstPhase = (await phaseLabel.textContent())?.trim() ?? "";
     // Allow the controller to advance at least one tick
@@ -27,7 +27,7 @@ test.describe("BODI runtime visualization", () => {
     const context = await browser.newContext({ reducedMotion: "reduce" });
     const page = await context.newPage();
     await page.goto("/?mode=engineering#runtime");
-    await expect(page.locator("[data-bodi-root]")).toBeVisible();
+    await expect(page.locator("[data-bodi-runtime]")).toBeVisible();
     await context.close();
   });
 });

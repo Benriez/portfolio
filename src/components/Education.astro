@@ -13,10 +13,12 @@ import { referenceEducation } from "~/data/education";
 <dl class="education-list">
   {referenceEducation.map((entry) => (
     <div>
-      <h3>{entry.degree.hr}</h3>
-      <p class="education-institution">{entry.institution.hr}</p>
+      <dt>
+        <h3>{entry.degree.hr}</h3>
+      </dt>
+      <dd class="education-institution">{entry.institution.hr}</dd>
       {entry.periodLines.map((line) => (
-        <p class="education-period">{line}</p>
+        <dd class="education-period">{line}</dd>
       ))}
     </div>
   ))}
