@@ -1,0 +1,82 @@
+---
+/**
+ * BaseLayout
+ *
+ * Shared HTML scaffolding for the portfolio. The shell carries a single
+ * `body[data-mode]` attribute that drives the entire HR/Engineering mode
+ * toggling, plus the page title, description, fonts, and global stylesheet.
+ */
+import "~/styles/global.css";
+import "~/styles/print.css";
+
+import type { ViewMode } from "~/types/content";
+import SiteHeader from "~/components/SiteHeader.astro";
+import SiteFooter from "~/components/SiteFooter.astro";
+
+interface Props {
+  readonly title: string;
+  readonly description: string;
+  readonly mode: ViewMode;
+}
+
+const { title, description, mode } = Astro.props as Props;
+---
+
+<!doctype html>
+<html lang="de" data-mode={mode}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#faf7f2" />
+    <meta name="color-scheme" content="light" />
+    <link rel="icon" type="image/svg+xml" href="/portfolio/favicon.svg" />
+    <title>{title}</title>
+  </head>
+  <body data-mode={mode}>
+    <a href="#main" class="skip-link">
+      {mode === "hr" ? "Zum Hauptinhalt springen" : "Skip to main content"}
+    </a>
+
+    <SiteHeader mode={mode} />
+
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+
+    <SiteFooter />
+
+    <script>
+      (function applyModeFromUrl() {
+        const allowed = new Set(["hr", "engineering"]);
+        const url = new URL(window.location.href);
+        const requested = url.searchParams.get("mode");
+        const html = document.documentElement;
+        const body = document.body;
+        let next: "hr" | "engineering" =
+          html.dataset["mode"] === "engineering" ? "engineering" : "hr";
+        if (requested && allowed.has(requested)) {
+          next = requested === "engineering" ? "engineering" : "hr";
+          html.dataset["mode"] = next;
+          body.dataset["mode"] = next;
+        }
+        document.querySelectorAll<HTMLAnchorElement>("[data-mode-toggle]").forEach((el) => {
+          el.addEventListener("click", (event) => {
+            const target = new URL(el.href, window.location.href);
+            event.preventDefault();
+            const other = next === "hr" ? "engineering" : "hr";
+            url.searchParams.set("mode", other);
+            window.history.replaceState({}, "", url.toString());
+            html.dataset["mode"] = other;
+            body.dataset["mode"] = other;
+            next = other;
+            target.pathname = "/portfolio/";
+            document.documentElement.dispatchEvent(
+              new CustomEvent("modechange", { detail: { mode: other } }),
+            );
+          });
+        });
+      })();
+    </script>
+  </body>
+</html>

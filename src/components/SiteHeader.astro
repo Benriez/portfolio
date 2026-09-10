@@ -1,0 +1,140 @@
+---
+/**
+ * SiteHeader
+ *
+ * Sticky editorial navigation. Renders both modes' labels in the DOM so the
+ * static HTML contains all of them; mode visibility is controlled at CSS level
+ * (see `src/styles/global.css`).
+ */
+import type { ViewMode } from "~/types/content";
+
+interface NavLink {
+  href: string;
+  label: { hr: string; engineering: string };
+}
+
+const links: NavLink[] = [
+  { href: "#projects", label: { hr: "Projekte", engineering: "Projects" } },
+  { href: "#experience", label: { hr: "Werdegang", engineering: "Experience" } },
+  { href: "#capabilities", label: { hr: "Fähigkeiten", engineering: "Capabilities" } },
+  { href: "#runtime", label: { hr: "Laufzeit", engineering: "Runtime" } },
+  { href: "#contact", label: { hr: "Kontakt", engineering: "Contact" } },
+];
+
+interface Props {
+  readonly mode: ViewMode;
+}
+
+const { mode } = Astro.props as Props;
+---
+
+<header class="site-header" data-mode={mode}>
+  <div class="container site-header__inner">
+    <a href="#top" class="site-header__brand" aria-label="Engineering Portfolio — Home">
+      <span class="site-header__mark" aria-hidden="true">
+        ●
+      </span>
+      <span class="site-header__brand-name">
+        <span data-view="hr">Engineering Portfolio</span>
+        <span data-view="engineering">Engineering Portfolio</span>
+      </span>
+    </a>
+
+    <nav class="site-header__nav" aria-label="Primary">
+      <ul>
+        {links.map((link) => (
+          <li>
+            <a href={link.href}>
+              <span data-view="hr">{link.label.hr}</span>
+              <span data-view="engineering">{link.label.engineering}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <a
+      class="site-header__toggle"
+      href={`?mode=${mode === "hr" ? "engineering" : "hr"}`}
+      data-mode-toggle
+    >
+      <span data-view="hr">Switch to Engineering view</span>
+      <span data-view="engineering">Switch to HR view</span>
+    </a>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: color-mix(in srgb, var(--surface-canvas) 86%, transparent);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--hairline);
+  }
+  .site-header__inner {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: var(--space-5);
+    padding-block: var(--space-3);
+  }
+  .site-header__brand {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .site-header__brand-name [data-view] {
+    display: inline;
+  }
+  .site-header__mark {
+    color: var(--accent);
+    font-size: 14px;
+  }
+  .site-header__nav ul {
+    display: flex;
+    gap: var(--space-5);
+    justify-content: center;
+  }
+  .site-header__nav a {
+    font-size: var(--type-body-sm);
+    color: var(--ink-muted);
+  }
+  .site-header__nav a:hover,
+  .site-header__nav a:focus-visible {
+    color: var(--ink-strong);
+    text-decoration: none;
+  }
+  .site-header__toggle {
+    font-size: var(--type-body-sm);
+    color: var(--ink-strong);
+    border: 1px solid var(--hairline-strong);
+    border-radius: 999px;
+    padding: 6px 12px;
+  }
+  .site-header__toggle:hover,
+  .site-header__toggle:focus-visible {
+    text-decoration: none;
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  @media (max-width: 720px) {
+    .site-header__inner {
+      grid-template-columns: 1fr;
+      gap: var(--space-2);
+    }
+    .site-header__nav ul {
+      flex-wrap: wrap;
+      justify-content: flex-start;
+      gap: var(--space-3);
+    }
+    .site-header__toggle {
+      justify-self: start;
+    }
+  }
+</style>

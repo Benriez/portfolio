@@ -1,0 +1,96 @@
+/*
+ * Design tokens for the Engineering Portfolio.
+ *
+ * Hierarchy:
+ *   1. Surfaces and ink (warm off-white background, near-black ink).
+ *   2. Single restrained indigo accent.
+ *   3. Hairline borders and spacing scale.
+ *
+ * All values are HSL or sRGB; we do not use preprocessor color functions.
+ */
+
+:root {
+  /* --- Surfaces --- */
+  --surface-canvas: #faf7f2;
+  --surface-canvas-soft: #f3efe8;
+  --surface-raised: #ffffff;
+  --surface-ink: #131314;
+
+  /* --- Ink --- */
+  --ink-strong: #131314;
+  --ink-muted: #4b4b4b;
+  --ink-subtle: #6b6b6b;
+  --ink-on-accent: #faf7f2;
+
+  /* --- Accent (single restrained indigo) --- */
+  --accent: #3b2e8b;
+  --accent-soft: #ece9fb;
+  --accent-line: #b9b0e8;
+
+  /* --- Lines --- */
+  --hairline: rgba(19, 19, 20, 0.08);
+  --hairline-strong: rgba(19, 19, 20, 0.18);
+
+  /* --- Type --- */
+  --font-sans:
+    "Inter", "InterVariable", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --font-mono:
+    "JetBrains Mono", "JetBrainsMono", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    "Liberation Mono", monospace;
+
+  --type-display-1: clamp(2.5rem, 4.2vw, 3.75rem);
+  --type-display-2: clamp(2rem, 3.2vw, 2.75rem);
+  --type-h1: clamp(1.75rem, 2.6vw, 2.25rem);
+  --type-h2: clamp(1.375rem, 2vw, 1.625rem);
+  --type-h3: 1.125rem;
+  --type-body: 1rem;
+  --type-body-sm: 0.9375rem;
+  --type-caption: 0.8125rem;
+
+  --leading-tight: 1.18;
+  --leading-snug: 1.34;
+  --leading-body: 1.62;
+
+  /* --- Space scale (8px base) --- */
+  --space-0: 0;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+  --space-10: 128px;
+
+  /* --- Layout --- */
+  --layout-content: 72ch;
+  --layout-wide: 1180px;
+  --layout-gutter: clamp(20px, 4vw, 48px);
+  --layout-rail: 240px;
+
+  /* --- Radii & shadows --- */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --shadow-card: 0 1px 0 var(--hairline);
+  --shadow-pop: 0 6px 24px -16px rgba(19, 19, 20, 0.18);
+
+  /* --- Motion --- */
+  --motion-fast: 140ms;
+  --motion-base: 240ms;
+  --motion-slow: 380ms;
+  --easing-soft: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  /*
+   * Editorial engineering aesthetic is intentionally light-only.
+   * We do not auto-flip to a dark scheme; future dark mode will be explicit.
+   */
+  :root {
+    color-scheme: light;
+  }
+}

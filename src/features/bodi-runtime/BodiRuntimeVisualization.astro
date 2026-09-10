@@ -1,0 +1,248 @@
+---
+/**
+ * BodiRuntimeVisualization
+ *
+ * Renders the static SVG for the BODI runtime visualization and hydrates a
+ * small controller that animates an execution token along the graph.
+ *
+ * The visualization is deterministic and respects `prefers-reduced-motion`.
+ */
+import { runtimeLabels } from "./labels";
+import { computeGeometry, nodeCenter } from "./geometry";
+import "./runtime.css";
+
+interface Props {
+  readonly attemptMax: number;
+}
+
+const { attemptMax } = Astro.props as Props;
+
+const geometry = computeGeometry();
+const width = geometry.width;
+const height = geometry.height;
+
+// edge origin/target points for the SVG layer
+const edgePoints = geometry.edges.map((edge) => {
+  const from = nodeCenter(geometry, edge.from);
+  const to = nodeCenter(geometry, edge.to);
+  return {
+    ...edge,
+    d: `M ${from.x} ${from.y} L ${to.x} ${to.y}`,
+  };
+});
+---
+
+<section
+  class="bodi-runtime"
+  data-bodi-root
+  data-attempt-max={attemptMax}
+  aria-labelledby="bodi-runtime-title"
+  role="group"
+>
+  <header class="bodi-runtime__header">
+    <h2 id="bodi-runtime-title" class="bodi-runtime__title">
+      <span data-view="hr">{runtimeLabels.phases.normal.title.hr}</span>
+      <span data-view="engineering">{runtimeLabels.phases.normal.title.engineering}</span>
+    </h2>
+    <p class="bodi-runtime__summary" data-bodi-summary role="status" aria-live="polite">
+      <span data-view="hr">Visualisierung · bereit</span>
+      <span data-view="engineering">Visualization · ready</span>
+    </p>
+  </header>
+
+  <div class="bodi-runtime__stage">
+    <svg
+      class="bodi-runtime__svg"
+      viewBox={`0 0 ${width} ${height}`}
+      role="img"
+      aria-label="BODI runtime graph visualization"
+    >
+      <g class="bodi-runtime__edges" data-bodi-edges>
+        {edgePoints.map((edge) => (
+          <path
+            class="bodi-runtime__edge"
+            data-edge-from={edge.from}
+            data-edge-to={edge.to}
+            d={edge.d}
+            data-state="idle"
+          />
+        ))}
+      </g>
+
+      <g class="bodi-runtime__nodes" data-bodi-nodes>
+        {Object.entries(geometry.nodes).map(([id, b]) => {
+          const labels = runtimeLabels.nodes[id as keyof typeof runtimeLabels.nodes];
+          return (
+            <g
+              class="bodi-runtime__node"
+              data-node-id={id}
+              data-state="idle"
+              transform={`translate(${b.x} ${b.y})`}
+            >
+              <rect class="bodi-runtime__node-rect" width={b.w} height={b.h} rx={6} ry={6} />
+              <text class="bodi-runtime__node-text" x={b.w / 2} y={b.h / 2}>
+                {labels.label.neutral}
+              </text>
+            </g>
+          );
+        })}
+      </g>
+
+      <circle
+        class="bodi-runtime__token"
+        data-bodi-token
+        cx="0"
+        cy="0"
+        r="6"
+        opacity="0"
+        aria-hidden="true"
+      />
+    </svg>
+
+    <p class="bodi-runtime__caption" data-bodi-caption>
+      <span data-view="hr">{runtimeLabels.phases.normal.caption.hr}</span>
+      <span data-view="engineering">{runtimeLabels.phases.normal.caption.engineering}</span>
+    </p>
+
+    <dl class="bodi-runtime__meta" data-bodi-meta>
+      <div>
+        <dt>Phase</dt>
+        <dd data-bodi-phase>—</dd>
+      </div>
+      <div>
+        <dt>Attempt</dt>
+        <dd data-bodi-attempt>0 / {attemptMax}</dd>
+      </div>
+    </dl>
+  </div>
+</section>
+
+<script>
+  import { advance, initialFrame, MAX_ATTEMPTS } from "./machine";
+  import { computeGeometry, nodeCenter } from "./geometry";
+  import { TICK_MS, REDUCED_MOTION_TICK_MS } from "./controller";
+  import type { Aspect, TickFrame } from "./types";
+
+  function selectAspect(_entries: NodeListOf<Element>, root: HTMLElement): Aspect {
+    const mode = root.closest<HTMLElement>("[data-mode]")?.dataset["mode"];
+    if (mode === "hr" || mode === "engineering") {
+      return mode;
+    }
+    return "engineering";
+  }
+
+  function renderFrame(
+    geometry: ReturnType<typeof computeGeometry>,
+    frame: TickFrame,
+    token: SVGCircleElement | null,
+    phaseLabel: HTMLElement | null,
+    _caption: HTMLElement | null,
+    attemptLabel: HTMLElement | null,
+    attemptMax: number,
+    _aspect: Aspect,
+  ): void {
+    const active = new Set(frame.active);
+    const done = new Set(frame.done);
+
+    // Update nodes
+    document.querySelectorAll<SVGGElement>("[data-node-id]").forEach((el) => {
+      const id = el.dataset["nodeId"] as keyof typeof geometry.nodes;
+      const isActive = active.has(id);
+      const isDone = done.has(id);
+      const state = isDone ? "done" : isActive ? "active" : "idle";
+      el.dataset["state"] = state;
+      // Add a 'failed' state for the exhausted frame's exhausted node
+      if (id === "exhausted" && frame.phase === "exhausted") {
+        el.dataset["state"] = "failed";
+      }
+    });
+
+    // Update edges
+    document.querySelectorAll<SVGPathElement>("[data-edge-from]").forEach((el) => {
+      const from = el.dataset["edgeFrom"]!;
+      const phaseActive =
+        (frame.phase === "normal" && frame.done.includes(from as never)) ||
+        (frame.phase === "recovery" && frame.done.includes(from as never));
+      el.dataset["state"] = phaseActive ? "active" : "idle";
+      // Static visual rule: an edge is "active" when its source has been visited.
+      if (done.has(from as never)) {
+        el.dataset["state"] = "active";
+      } else {
+        el.dataset["state"] = "idle";
+      }
+    });
+
+    // Token position
+    if (token && frame.active.length > 0) {
+      const firstId = frame.active[0]!;
+      const center = nodeCenter(geometry, firstId);
+      token.setAttribute("cx", String(center.x));
+      token.setAttribute("cy", String(center.y));
+      token.setAttribute("opacity", "1");
+    }
+
+    // Meta
+    if (phaseLabel) {
+      phaseLabel.textContent = frame.phase;
+    }
+    if (attemptLabel) {
+      attemptLabel.textContent = `${frame.attempt} / ${attemptMax}`;
+    }
+  }
+
+  function init(): void {
+    const root = document.querySelector<HTMLElement>("[data-bodi-root]");
+    if (!root) return;
+
+    const token = root.querySelector<SVGCircleElement>("[data-bodi-token]");
+    const phaseLabel = root.querySelector<HTMLElement>("[data-bodi-phase]");
+    const caption = root.querySelector<HTMLElement>("[data-bodi-caption]");
+    const attemptLabel = root.querySelector<HTMLElement>("[data-bodi-attempt]");
+    const maxAttr = root.dataset["attemptMax"];
+    const attemptMax = maxAttr ? Math.max(1, parseInt(maxAttr, 10)) : MAX_ATTEMPTS;
+
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const tickMs = reducedMotion ? REDUCED_MOTION_TICK_MS : TICK_MS;
+
+    const geometry = computeGeometry({ width: root.clientWidth });
+
+    let state = { scriptIndex: -1, attempt: 1 };
+
+    const render = (frame: TickFrame, aspect: Aspect): void => {
+      renderFrame(geometry, frame, token, phaseLabel, caption, attemptLabel, attemptMax, aspect);
+    };
+
+    const tick = (): void => {
+      const next = advance(state);
+      state = next.state;
+      const aspect = selectAspect(document.querySelectorAll("[data-mode]"), root);
+      render(next.frame, aspect);
+    };
+
+    if (!reducedMotion) {
+      // Initial frame for sighted users
+      const firstFrame = initialFrame();
+      const aspect = selectAspect(document.querySelectorAll("[data-mode]"), root);
+      render(firstFrame, aspect);
+      window.setInterval(tick, tickMs);
+    }
+
+    const observer = new MutationObserver(() => {
+      const aspect = selectAspect(document.querySelectorAll("[data-mode]"), root);
+      const lastFrame = state.scriptIndex >= 0 ? lastFrameFor(state) : initialFrame();
+      render(lastFrame, aspect);
+    });
+    observer.observe(document.body, { attributes: true, attributeFilter: ["data-mode"] });
+  }
+
+  function lastFrameFor(state: { scriptIndex: number; attempt: number }): TickFrame {
+    // Reconstruct frame from current state for cross-mode rendering.
+    return advance(state).frame;
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+</script>

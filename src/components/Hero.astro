@@ -1,0 +1,137 @@
+---
+/**
+ * Hero
+ *
+ * Editorial, restrained hero with eyebrow, headline, lede, and primary action.
+ */
+import { runtimeLabels } from "~/features/bodi-runtime/labels";
+---
+
+<section class="hero" id="top" aria-labelledby="hero-title">
+  <div class="container hero__inner">
+    <p class="hero__eyebrow eyebrow">
+      <span data-view="hr">Engineering Portfolio</span>
+      <span data-view="engineering">Engineering Portfolio</span>
+    </p>
+
+    <h1 id="hero-title" class="hero__title">
+      <span data-view="hr">
+        Engineering Portfolio — Software, die nachvollziehbar funktioniert.
+      </span>
+      <span data-view="engineering">
+        Engineering Portfolio — software you can reason about, operate, and inspect.
+      </span>
+    </h1>
+
+    <p class="hero__lede">
+      <span data-view="hr">
+        Verlässliche kleine Plattformen, datengetriebene Werkzeuge und eine klare Vorstellung davon,
+        wie ein Software-Lauf nachvollziehbar, wiederaufnehmbar und auditierbar bleibt.
+      </span>
+      <span data-view="engineering">
+        Small reliable platforms, data-driven tooling, and a working model of an agent runtime whose
+        behavior you can inspect frame by frame.
+      </span>
+    </p>
+
+    <div class="hero__actions">
+      <a class="hero__cta" href="#projects">
+        <span data-view="hr">Projekte ansehen</span>
+        <span data-view="engineering">See projects</span>
+        <span aria-hidden="true">→</span>
+      </a>
+
+      <a class="hero__cta hero__cta--quiet" href="#runtime">
+        <span data-view="hr">Laufzeit-Demo</span>
+        <span data-view="engineering">Runtime demo</span>
+      </a>
+    </div>
+
+    <p class="hero__footnote">
+      <span data-view="hr">Visualisierung des Laufzeit-Modells:</span>
+      <span data-view="engineering">Visualizing the runtime model:</span>{" "}
+      <em class="hero__footnote-name">{runtimeLabels.phases.normal.title.neutral}</em> ·{" "}
+      <span data-view="hr">{runtimeLabels.phases.recovery.title.hr}</span>
+      <span data-view="engineering">{runtimeLabels.phases.recovery.title.engineering}</span>
+    </p>
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding-block: clamp(var(--space-8), 8vw, var(--space-10));
+    border-block-end: 1px solid var(--hairline);
+  }
+
+  .hero__inner > * + * {
+    margin-top: var(--space-4);
+  }
+
+  .hero__eyebrow {
+    margin: 0;
+  }
+
+  .hero__title {
+    font-size: var(--type-display-1);
+    line-height: var(--leading-tight);
+    letter-spacing: -0.02em;
+    max-width: 18ch;
+  }
+
+  .hero__lede {
+    font-size: var(--type-h3);
+    color: var(--ink-muted);
+    max-width: var(--layout-content);
+    line-height: var(--leading-snug);
+  }
+
+  .hero__actions {
+    display: flex;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+    margin-top: var(--space-5);
+  }
+
+  .hero__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    border-radius: 999px;
+    padding: 10px 18px;
+    border: 1px solid var(--ink-strong);
+    background: var(--ink-strong);
+    color: var(--ink-on-accent);
+    font-weight: 600;
+    font-size: var(--type-body-sm);
+  }
+  .hero__cta--quiet {
+    background: transparent;
+    color: var(--ink-strong);
+    border-color: var(--hairline-strong);
+  }
+  .hero__cta:hover,
+  .hero__cta:focus-visible {
+    text-decoration: none;
+    border-color: var(--accent);
+    background: var(--accent);
+    color: var(--ink-on-accent);
+  }
+  .hero__cta--quiet:hover,
+  .hero__cta--quiet:focus-visible {
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+
+  .hero__footnote {
+    font-size: var(--type-caption);
+    color: var(--ink-subtle);
+    font-family: var(--font-mono);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-top: var(--space-6);
+  }
+  .hero__footnote-name {
+    font-style: normal;
+    color: var(--accent);
+  }
+</style>

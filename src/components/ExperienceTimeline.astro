@@ -1,0 +1,102 @@
+---
+/**
+ * ExperienceTimeline
+ *
+ * Single-column timeline of career history with date hairline.
+ */
+import type { ExperienceEntry } from "~/types/content";
+
+interface Props {
+  readonly entries: ExperienceEntry[];
+}
+
+const { entries } = Astro.props as Props;
+
+function fmt(iso: string): string {
+  // Accepts YYYY-MM or YYYY-MM-DD
+  return iso;
+}
+---
+
+<ol class="experience">
+  {entries.map((entry) => (
+    <li class="experience__item">
+      <div class="experience__years">
+        <span>
+          {fmt(entry.start)}
+          {" → "}
+          {entry.end ? fmt(entry.end) : "heute · present"}
+        </span>
+      </div>
+      <div class="experience__body">
+        <h3 class="experience__role">
+          <span data-view="hr">{entry.role.hr}</span>
+          <span data-view="engineering">{entry.role.engineering}</span>
+        </h3>
+        <p class="experience__employer">
+          <span data-view="hr">{entry.employer.hr}</span>
+          <span data-view="engineering">{entry.employer.engineering}</span>
+          {" · "}
+          <span data-view="hr">{entry.location.hr}</span>
+          <span data-view="engineering">{entry.location.engineering}</span>
+        </p>
+        {entry.highlights.length > 0 && (
+          <ul class="experience__highlights">
+            {entry.highlights.map((h) => (
+              <li>
+                <span data-view="hr">{h.hr}</span>
+                <span data-view="engineering">{h.engineering}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </li>
+  ))}
+</ol>
+
+<style>
+  .experience {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+  .experience__item {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: var(--space-4);
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--hairline);
+  }
+  .experience__years {
+    font-family: var(--font-mono);
+    font-size: var(--type-caption);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink-subtle);
+  }
+  .experience__role {
+    font-size: var(--type-h2);
+    line-height: var(--leading-snug);
+    margin-bottom: var(--space-2);
+  }
+  .experience__employer {
+    color: var(--ink-muted);
+    margin-bottom: var(--space-3);
+  }
+  .experience__highlights {
+    padding-left: var(--space-4);
+    list-style: "— ";
+    color: var(--ink-muted);
+    max-width: var(--layout-content);
+  }
+  .experience__highlights li + li {
+    margin-top: var(--space-1);
+  }
+  @media (max-width: 720px) {
+    .experience__item {
+      grid-template-columns: 1fr;
+      gap: var(--space-2);
+    }
+  }
+</style>

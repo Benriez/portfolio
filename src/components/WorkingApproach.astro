@@ -1,0 +1,64 @@
+---
+/**
+ * WorkingApproach
+ *
+ * Tech-stack grid.
+ */
+import type { TechStackGroup } from "~/types/content";
+
+interface Props {
+  readonly groups: TechStackGroup[];
+}
+
+const { groups } = Astro.props as Props;
+---
+
+<div class="tech">
+  {groups.map((group) => (
+    <section class="tech__group" aria-labelledby={`tech-${group.heading.hr}`}>
+      <h3 class="tech__heading" id={`tech-${group.heading.hr}`}>
+        <span data-view="hr">{group.heading.hr}</span>
+        <span data-view="engineering">{group.heading.engineering}</span>
+      </h3>
+      <ul class="tech__items">
+        {group.items.map((item) => (
+          <li>{item}</li>
+        ))}
+      </ul>
+    </section>
+  ))}
+</div>
+
+<style>
+  .tech {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var(--space-5);
+  }
+  .tech__group {
+    border-top: 1px solid var(--hairline);
+    padding-top: var(--space-3);
+  }
+  .tech__heading {
+    font-size: var(--type-caption);
+    color: var(--ink-subtle);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-family: var(--font-mono);
+    margin-bottom: var(--space-2);
+  }
+  .tech__items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+  .tech__items li {
+    border: 1px solid var(--hairline);
+    border-radius: 6px;
+    padding: 4px 10px;
+    background: var(--surface-canvas);
+    font-family: var(--font-mono);
+    font-size: var(--type-caption);
+    color: var(--ink-strong);
+  }
+</style>

@@ -1,0 +1,65 @@
+/*
+ * Print stylesheet.
+ *
+ * The portfolio is meant to be readable when saved as PDF.
+ * We collapse the header, remove motion, and prefer hairline anchors.
+ */
+
+@media print {
+  :root {
+    --surface-canvas: #ffffff;
+    --surface-canvas-soft: #ffffff;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+    color: #000 !important;
+    font-size: 11pt;
+    line-height: 1.45;
+  }
+
+  .skip-link,
+  .site-header__toggle,
+  .site-footer__social,
+  nav[aria-label="Primary"] {
+    display: none !important;
+  }
+
+  a,
+  a:visited {
+    color: #000 !important;
+    text-decoration: underline;
+  }
+
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 90%;
+    color: #333;
+  }
+
+  section,
+  article {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  h1,
+  h2,
+  h3 {
+    break-after: avoid;
+    page-break-after: avoid;
+    color: #000 !important;
+  }
+
+  .bodi-runtime,
+  .bodi-runtime * {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  /* Render both modes in print so reviewers see all content */
+  [data-view] {
+    display: revert !important;
+  }
+}

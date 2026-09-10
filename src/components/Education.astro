@@ -1,0 +1,83 @@
+---
+/**
+ * Education
+ *
+ * Condensed education row.
+ */
+import type { EducationEntry } from "~/types/content";
+
+interface Props {
+  readonly entries: EducationEntry[];
+}
+
+const { entries } = Astro.props as Props;
+---
+
+<dl class="education">
+  {entries.map((entry) => (
+    <div class="education__row">
+      <dt>
+        <span data-view="hr">{entry.degree.hr}</span>
+        <span data-view="engineering">{entry.degree.engineering}</span>
+      </dt>
+      <dd>
+        <p class="education__institution">
+          <span data-view="hr">{entry.institution.hr}</span>
+          <span data-view="engineering">{entry.institution.engineering}</span>
+        </p>
+        <p class="education__focus">
+          <span data-view="hr">{entry.focus.hr}</span>
+          <span data-view="engineering">{entry.focus.engineering}</span>
+        </p>
+        <p class="education__years">
+          {entry.start}
+          {" → "}
+          {entry.end ?? "heute · present"}
+        </p>
+      </dd>
+    </div>
+  ))}
+</dl>
+
+<style>
+  .education {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  .education__row {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: var(--space-4);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--hairline);
+  }
+  .education__row dt {
+    font-size: var(--type-h3);
+  }
+  .education__row dd {
+    margin: 0;
+  }
+  .education__institution {
+    color: var(--ink-strong);
+    font-weight: 600;
+  }
+  .education__focus {
+    color: var(--ink-muted);
+    margin-top: var(--space-1);
+  }
+  .education__years {
+    font-family: var(--font-mono);
+    font-size: var(--type-caption);
+    color: var(--ink-subtle);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-top: var(--space-2);
+  }
+  @media (max-width: 720px) {
+    .education__row {
+      grid-template-columns: 1fr;
+      gap: var(--space-1);
+    }
+  }
+</style>

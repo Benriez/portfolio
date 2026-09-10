@@ -1,0 +1,202 @@
+---
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import Hero from "~/components/Hero.astro";
+import SectionHeader from "~/components/SectionHeader.astro";
+import ProjectEntry from "~/components/ProjectEntry.astro";
+import ExperienceTimeline from "~/components/ExperienceTimeline.astro";
+import Capabilities from "~/components/Capabilities.astro";
+import WorkingApproach from "~/components/WorkingApproach.astro";
+import Education from "~/components/Education.astro";
+import Contact from "~/components/Contact.astro";
+import BodiRuntimeVisualization from "~/features/bodi-runtime/BodiRuntimeVisualization.astro";
+
+import { projects } from "~/data/projects";
+import { experience } from "~/data/experience";
+import { capabilities } from "~/data/capabilities";
+import { techStack } from "~/data/tech-stack";
+import { education } from "~/data/education";
+import type { ContactItem, ViewMode } from "~/types/content";
+
+const title = "Engineering Portfolio — Ben Riederer";
+const description =
+  "Engineering Portfolio von Ben Riederer — kleine Plattformen, datengetriebene Werkzeuge und ein visualisiertes Laufzeit-Modell.";
+
+const contacts: ContactItem[] = [
+  {
+    id: "github",
+    label: "GitHub",
+    href: "https://github.com/Benriez",
+    visible: true,
+  },
+  {
+    id: "location",
+    label: "Darmstadt · Deutschland",
+    href: "https://maps.google.com/?q=Darmstadt%2C+Germany",
+    visible: true,
+  },
+  {
+    id: "email",
+    label: "E-Mail",
+    href: "mailto:contact@benrieder.dev",
+    visible: true,
+  },
+  {
+    id: "linkedin",
+    label: "LinkedIn",
+    href: "https://www.linkedin.com/in/benrieder",
+    visible: false,
+  },
+  {
+    id: "website",
+    label: "Webseite",
+    href: "https://benrieder.dev",
+    visible: false,
+  },
+];
+
+const mode: ViewMode = "hr";
+
+export function getStaticPaths(): never[] {
+  return [];
+}
+---
+
+<BaseLayout title={title} description={description} mode={mode}>
+  <Hero />
+
+  <section class="section section--bordered" id="projects" aria-labelledby="projects-h">
+    <div class="container">
+      <SectionHeader
+        id="projects-h"
+        eyebrow={{ hr: "Auswahl", engineering: "Selected work" }}
+        title={{
+          hr: "Drei Projekte, an denen die Arbeitsweise sichtbar wird.",
+          engineering: "Three projects that show how the work is built.",
+        }}
+        lede={{
+          hr: "Jedes Projekt steht für eine konkrete Engineering-Haltung: kleine Plattformen, klare Datenflüsse, auditierbare Läufe.",
+          engineering:
+            "Each project stands for a concrete engineering stance: small platforms, clear data flows, auditable runs.",
+        }}
+      />
+      <div>
+        {projects.map((project) => (
+          <ProjectEntry project={project} />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt" id="experience" aria-labelledby="experience-h">
+    <div class="container">
+      <SectionHeader
+        id="experience-h"
+        eyebrow={{ hr: "Werdegang", engineering: "Experience" }}
+        title={{
+          hr: "Verantwortung wächst mit dem Verständnis für das System.",
+          engineering: "Responsibility that scales with how well the system is understood.",
+        }}
+        lede={{
+          hr: "Vom Werkstudenten bis zur eigenverantwortlichen Auslieferung — Stationen mit echter Endverantwortung.",
+          engineering:
+            "From a working student to end-to-end delivery — stations where accountability rested with me.",
+        }}
+      />
+      <ExperienceTimeline entries={experience} />
+    </div>
+  </section>
+
+  <section class="section section--bordered" id="capabilities" aria-labelledby="capabilities-h">
+    <div class="container">
+      <SectionHeader
+        id="capabilities-h"
+        eyebrow={{ hr: "Fähigkeiten", engineering: "Capabilities" }}
+        title={{
+          hr: "Was das Engineering-Werkzeugkasten heute zuverlässig liefert.",
+          engineering: "What the day-to-day engineering toolkit reliably delivers.",
+        }}
+        lede={{
+          hr: "Vier Bereiche, in denen ich wiederholt Projekte umgesetzt habe — geordnet nach Reife, nicht nach Mode.",
+          engineering:
+            "Four areas where I have repeatedly delivered — ordered by maturity, not by fashion.",
+        }}
+      />
+      <Capabilities groups={capabilities} />
+    </div>
+  </section>
+
+  <section class="section section--alt" id="runtime" aria-labelledby="runtime-h">
+    <div class="container">
+      <SectionHeader
+        id="runtime-h"
+        eyebrow={{ hr: "Laufzeit", engineering: "Runtime" }}
+        title={{
+          hr: "Ein laufzeitfähiges Modell statt einer Folie.",
+          engineering: "A working model, not a slide.",
+        }}
+        lede={{
+          hr: "Diese Visualisierung läuft im Browser — Recovery, Supervisor und begrenzte Versuche sind nicht nur Wörter, sondern sichtbar gemachte Entscheidungen.",
+          engineering:
+            "This visualization runs in the browser — recovery, supervisor, and bounded attempts are not just words, but decisions made visible.",
+        }}
+      />
+      <BodiRuntimeVisualization attemptMax={3} />
+    </div>
+  </section>
+
+  <section class="section section--bordered" id="stack" aria-labelledby="stack-h">
+    <div class="container">
+      <SectionHeader
+        id="stack-h"
+        eyebrow={{ hr: "Werkzeuge", engineering: "Working approach" }}
+        title={{
+          hr: "Bevorzugte Werkzeuge — minimalistisch, stabil, gut kombinierbar.",
+          engineering: "Preferred tools — minimal, stable, and easy to combine.",
+        }}
+        lede={{
+          hr: "Statt Frameworks zu sammeln, reduziere ich lieber auf das, was wirklich hilft.",
+          engineering:
+            "Rather than accumulating frameworks, I prefer to reduce to what genuinely helps.",
+        }}
+      />
+      <WorkingApproach groups={techStack} />
+    </div>
+  </section>
+
+  <section class="section section--alt" id="education" aria-labelledby="education-h">
+    <div class="container">
+      <SectionHeader
+        id="education-h"
+        eyebrow={{ hr: "Ausbildung", engineering: "Education" }}
+        title={{
+          hr: "Bachelor of Engineering — Informationstechnik, h_da Darmstadt.",
+          engineering: "B.Eng. Information Technology — h_da Darmstadt.",
+        }}
+        lede={{
+          hr: "Software mit ingenieurwissenschaftlichem Hintergrund — zuverlässig und überprüfbar.",
+          engineering: "Software with an engineering background — reliable and verifiable.",
+        }}
+      />
+      <Education entries={education} />
+    </div>
+  </section>
+
+  <section class="section section--bordered" id="contact" aria-labelledby="contact-h">
+    <div class="container">
+      <SectionHeader
+        id="contact-h"
+        eyebrow={{ hr: "Kontakt", engineering: "Contact" }}
+        title={{
+          hr: "Sprechen wir kurz und schriftlich.",
+          engineering: "Reach out — short, written, async-friendly.",
+        }}
+        lede={{
+          hr: "Standort Darmstadt, remote-fähig, mit Vorliebe für asynchrone Zusammenarbeit.",
+          engineering:
+            "Based in Darmstadt, comfortable working remote, prefers async collaboration.",
+        }}
+      />
+      <Contact items={contacts} />
+    </div>
+  </section>
+</BaseLayout>
