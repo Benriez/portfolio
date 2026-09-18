@@ -15,12 +15,14 @@
  *   .case-link    (optional)
  */
 import type { ProjectEntry as ProjectEntryData } from "~/types/content";
+import { formatProjectMeta } from "~/data/project-status";
 
 interface Props {
   readonly project: ProjectEntryData;
 }
 
 const { project } = Astro.props as Props;
+const meta = formatProjectMeta(project.meta, project.status);
 ---
 
 <article
@@ -35,8 +37,8 @@ const { project } = Astro.props as Props;
   </div>
   <div class="work-body">
     <p class="work-meta">
-      <span data-view="hr">{project.meta.hr}</span>
-      <span data-view="engineering">{project.meta.engineering}</span>
+      <span data-view="hr">{meta.hr}</span>
+      <span data-view="engineering">{meta.engineering}</span>
     </p>
     <h3 class:list={[project.isFlagship ? "is-flagship" : null]}>{project.title}</h3>
     <p class="work-sub">

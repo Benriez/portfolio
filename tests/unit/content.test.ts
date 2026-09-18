@@ -4,6 +4,7 @@ import { experience } from "~/data/experience";
 import { capabilities } from "~/data/capabilities";
 import { techStack } from "~/data/tech-stack";
 import { education } from "~/data/education";
+import { formatProjectMeta, projectStatusLabels } from "~/data/project-status";
 
 const PLACEHOLDER_PATTERNS = [
   /\[handle\]/i,
@@ -81,6 +82,26 @@ describe("Public content data", () => {
     for (const p of projects) {
       // HR is always required; engineering may be empty for compact entries.
       expect(p.lead.hr.length).toBeGreaterThan(20);
+    }
+  });
+
+  it("assigns the canonical project maturity status", () => {
+    expect(Object.fromEntries(projects.map((p) => [p.title, p.status]))).toEqual({
+      "BODI / agent-garden": "active-development",
+      Fahrschule360: "live",
+      "Shopping-Pong": "live",
+      Steuerkompass: "active-development",
+      "Odoo Add-on Suite": "live",
+    });
+  });
+
+  it("renders project maturity labels through existing metadata", () => {
+    for (const project of projects) {
+      const meta = formatProjectMeta(project.meta, project.status);
+      const label = projectStatusLabels[project.status];
+
+      expect(meta.hr).toContain(label);
+      expect(meta.engineering).toContain(label);
     }
   });
 });

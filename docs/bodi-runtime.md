@@ -3,6 +3,9 @@
 The portfolio contains a **deterministic visualization** of Agent Garden's
 BODI semantics. It is **not** the real runtime. There is no live agent
 process, no SQLite database, no Telegram bridge, no production kernel.
+Agent Garden / BODI itself is an actively developed system; this page
+visualizes implemented mechanisms without presenting the overall project as
+a finished product.
 
 ## What this is
 

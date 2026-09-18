@@ -26,16 +26,16 @@ const Flagship: ProjectEntry = {
     engineering: "AI Operator Control Plane",
   },
   lead: {
-    hr: "Plattform zur zuverlässigen Ausführung autonomer KI-Workflows mit persistentem Zustand, automatischer Fehlerbehandlung und Wiederaufnahme nach Unterbrechungen.",
+    hr: "Eigenentwickeltes System in aktiver Entwicklung zur zuverlässigen Ausführung autonomer KI-Workflows mit persistentem Zustand, automatischer Fehlerbehandlung und Wiederaufnahme nach Unterbrechungen.",
     engineering:
-      "Durable Agent Runtime mit persistenter Workflow-Steuerung, Memory Governance, Recovery und Managed Agent Execution.",
+      "Durable Agent Runtime in aktiver Entwicklung mit persistenter Workflow-Steuerung, Memory Governance, Recovery und Managed Agent Execution.",
   },
   stack: [],
-  status: "ongoing",
+  status: "active-development",
   period: { start: "2026" },
   isFlagship: true,
   caseLink: {
-    href: "#flagship",
+    href: "#runtime",
     label: "Case Study ansehen",
   },
 };
@@ -80,7 +80,7 @@ const Fahrschule360: ProjectEntry = {
     "Docker",
     "CapRover",
   ],
-  status: "shipped",
+  status: "live",
   period: { start: "2021", end: "2026" },
 };
 
@@ -124,7 +124,7 @@ const ShoppingPong: ProjectEntry = {
     "CapRover",
     "Playwright",
   ],
-  status: "shipped",
+  status: "live",
   period: { start: "2026" },
 };
 
@@ -141,7 +141,7 @@ const Steuerkompass: ProjectEntry = {
     engineering: "Electron-/Angular-Desktop-Produkt",
   },
   lead: {
-    hr: "Desktop-Anwendung mit Fokus auf lokale Verarbeitung, kontrollierte Release-Artefakte und eine konsistente, zugängliche Benutzeroberfläche.",
+    hr: "Desktop-Anwendung in Entwicklung mit Fokus auf lokale Verarbeitung, kontrollierte Release-Artefakte und eine konsistente, zugängliche Benutzeroberfläche.",
     engineering: "",
   },
   pointsEngineering: [
@@ -149,7 +149,7 @@ const Steuerkompass: ProjectEntry = {
     "ARIA, Fokus, Kontrast, prefers-reduced-motion und MCP.",
   ],
   stack: ["Angular", "Electron", "TypeScript", "MCP", "macOS"],
-  status: "shipped",
+  status: "active-development",
   period: { start: "2026" },
   compact: true,
 };
@@ -172,7 +172,7 @@ const OdooAddonSuite: ProjectEntry = {
   },
   pointsEngineering: ["Python, PostgreSQL, XML, base_automation, Activities und CRM Integration."],
   stack: ["Python", "Odoo", "PostgreSQL", "XML"],
-  status: "shipped",
+  status: "live",
   period: { start: "2026" },
   compact: true,
 };

@@ -1,7 +1,9 @@
 import { defineConfig, devices } from "@playwright/test";
 
 const PORTFOLIO_PORT = 4321;
-const BASE_URL = process.env.PLAYWRIGHT_BASE_URL ?? `http://127.0.0.1:${PORTFOLIO_PORT}/portfolio`;
+const rawBaseUrl =
+  process.env.PLAYWRIGHT_BASE_URL ?? `http://127.0.0.1:${PORTFOLIO_PORT}/portfolio`;
+const BASE_URL = rawBaseUrl.endsWith("/") ? rawBaseUrl : `${rawBaseUrl}/`;
 
 /**
  * @returns {import('@playwright/test').PlaywrightTestConfig}

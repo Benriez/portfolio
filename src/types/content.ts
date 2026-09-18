@@ -32,7 +32,7 @@ export interface CapabilityGroup {
   skills: SkillItem[];
 }
 
-export type ProjectStatus = "shipped" | "ongoing" | "research";
+export type ProjectStatus = "active-development" | "live";
 
 /**
  * Project entry — fields mirror the OpenDesign reference's
@@ -60,7 +60,7 @@ export interface ProjectEntry {
   pointsEngineering?: string[];
   /** Stack line tokens, joined with " · ". */
   stack: string[];
-  /** Internal status flag for the project's lifecycle. */
+  /** Public project maturity/status. */
   status: ProjectStatus;
   period: { start: IsoDate; end?: IsoDate };
   /** Monospace left-rail label (e.g. "Flagship", "2021-2026", "2026"). */

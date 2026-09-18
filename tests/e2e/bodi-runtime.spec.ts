@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 
 test.describe("BODI runtime visualization", () => {
   test("renders the graph in HR mode", async ({ page }) => {
-    await page.goto("/?mode=hr#runtime");
+    await page.goto("./?mode=hr#runtime");
     const runtime = page.locator("[data-bodi-runtime]");
     if (!(await runtime.isVisible())) {
       test.skip(true, "BODI runtime unavailable during maintenance");
@@ -12,7 +12,7 @@ test.describe("BODI runtime visualization", () => {
   });
 
   test("renders the graph in Engineering mode", async ({ page }) => {
-    await page.goto("/?mode=engineering#runtime");
+    await page.goto("./?mode=engineering#runtime");
     const runtime = page.locator("[data-bodi-runtime]");
     if (!(await runtime.isVisible())) {
       test.skip(true, "BODI runtime unavailable during maintenance");
@@ -21,7 +21,7 @@ test.describe("BODI runtime visualization", () => {
   });
 
   test("the summary updates over time (non-static)", async ({ page }) => {
-    await page.goto("/?mode=engineering#runtime");
+    await page.goto("./?mode=engineering#runtime");
     const runtime = page.locator("[data-bodi-runtime]");
     if (!(await runtime.isVisible())) {
       test.skip(true, "BODI runtime unavailable during maintenance");
@@ -38,7 +38,7 @@ test.describe("BODI runtime visualization", () => {
   test("respects prefers-reduced-motion (token stays hidden or static)", async ({ browser }) => {
     const context = await browser.newContext({ reducedMotion: "reduce" });
     const page = await context.newPage();
-    await page.goto("/?mode=engineering#runtime");
+    await page.goto("./?mode=engineering#runtime");
     const runtime = page.locator("[data-bodi-runtime]");
     if (!(await runtime.isVisible())) {
       await context.close();

@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
-const PAGES = ["/?mode=hr", "/?mode=engineering"];
+const PAGES = ["./?mode=hr", "./?mode=engineering"];
 
 for (const path of PAGES) {
   test(`axe-core smoke: ${path}`, async ({ page }) => {
