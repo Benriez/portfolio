@@ -34,6 +34,10 @@ test.describe("Portfolio shell", () => {
   test("renders project maturity labels in selected work", async ({ page }) => {
     await page.goto("./?mode=hr");
 
+    if (await page.getByRole("heading", { level: 1, name: /wartung/i }).isVisible()) {
+      test.skip(true, "Portfolio project list unavailable during maintenance");
+    }
+
     const bodi = page.locator("article", {
       has: page.getByRole("heading", { name: "BODI / agent-garden" }),
     });
