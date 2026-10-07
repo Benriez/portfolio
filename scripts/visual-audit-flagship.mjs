@@ -49,7 +49,7 @@ async function main() {
         if (await el.count()) {
           const file = path.join(OUT_DIR, `${target.label}-${vp.name}-${mode.name}.png`);
           await el.screenshot({ path: file });
-          console.log(`  saved ${file}`);
+          console.warn(`  saved ${file}`);
         } else {
           console.warn(`  ${selector} not found on ${target.label}`);
         }
@@ -59,7 +59,7 @@ async function main() {
     }
   }
   await browser.close();
-  console.log("done");
+  console.warn("done");
 }
 
 main().catch((err) => {

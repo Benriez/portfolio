@@ -39,13 +39,13 @@ async function main() {
       await page.waitForTimeout(800);
       const file = path.join(OUT_DIR, `${vp.name}-${mode.name}.png`);
       await page.screenshot({ path: file, fullPage: true });
-      console.log(`  saved ${file}`);
+      console.warn(`  saved ${file}`);
       await page.close();
     }
     await context.close();
   }
   await browser.close();
-  console.log("done");
+  console.warn("done");
 }
 
 main().catch((err) => {
