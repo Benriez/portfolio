@@ -21,8 +21,10 @@ test.describe("Portfolio shell", () => {
 
   test("toggles via UI without a full reload", async ({ page }) => {
     await page.goto("./?mode=hr");
+    await page.waitForFunction(() => document.body.dataset["mode"] === "hr");
     await expect(page.locator("body")).toHaveAttribute("data-mode", "hr");
     await page.getByRole("button", { name: "Engineering", exact: true }).click();
+    await page.waitForFunction(() => document.body.dataset["mode"] === "engineering");
     await expect(page.locator("body")).toHaveAttribute("data-mode", "engineering");
   });
 

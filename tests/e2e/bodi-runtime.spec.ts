@@ -15,6 +15,8 @@ test.describe("BODI flagship system architecture", () => {
 
   test("renders Engineering-only stage labels in Engineering mode", async ({ page }) => {
     await page.goto("./?mode=engineering#flagship");
+    // Wait for the URL-applied mode attribute before testing visibility.
+    await page.waitForFunction(() => document.body.dataset["mode"] === "engineering");
     const flagship = page.locator("#flagship");
     await expect(flagship).toBeVisible();
     // Engineering stages include "Durable Execution Graph"
@@ -32,6 +34,7 @@ test.describe("BODI flagship system architecture", () => {
 
   test("exposes the local-model layer with the canonical names", async ({ page }) => {
     await page.goto("./?mode=engineering#flagship");
+    await page.waitForFunction(() => document.body.dataset["mode"] === "engineering");
     const models = page.locator(".bodi-node--models");
     await expect(models).toBeVisible();
     await expect(models.getByText("Ornith")).toBeVisible();
@@ -58,6 +61,7 @@ test.describe("BODI flagship system architecture", () => {
 
   test("renders Production Evidence with the key/value list", async ({ page }) => {
     await page.goto("./?mode=engineering#flagship");
+    await page.waitForFunction(() => document.body.dataset["mode"] === "engineering");
     const flagship = page.locator("#flagship");
     await expect(flagship.locator(".bodi-evidence")).toBeVisible();
     await expect(flagship.locator(".bodi-evidence-list dt", { hasText: "Access" })).toBeVisible();
@@ -97,6 +101,7 @@ test.describe("BODI flagship system architecture", () => {
 
   test("is static — no animation timer or token", async ({ page }) => {
     await page.goto("./?mode=engineering#flagship");
+    await page.waitForFunction(() => document.body.dataset["mode"] === "engineering");
     // No rt-runtime elements should leak from the old runtime visualization.
     await expect(page.locator("[data-bodi-runtime]")).toHaveCount(0);
     await expect(page.locator(".rt-token")).toHaveCount(0);
@@ -106,6 +111,7 @@ test.describe("BODI flagship system architecture", () => {
     const context = await browser.newContext({ reducedMotion: "reduce" });
     const page = await context.newPage();
     await page.goto("./?mode=engineering#flagship");
+    await page.waitForFunction(() => document.body.dataset["mode"] === "engineering");
     const flagship = page.locator("#flagship");
     await expect(flagship.locator(".bodi-map-stage")).toBeVisible();
     await expect(flagship.locator(".bodi-node--core")).toBeVisible();
