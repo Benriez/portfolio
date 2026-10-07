@@ -1,6 +1,6 @@
 # ADR 0002 — BODI runtime isolation
 
-Status: Accepted (2026-09-10)
+Status: Superseded by ADR 0003 (2026-10-08)
 Author: Ben Riederer
 
 ## Context
@@ -73,9 +73,16 @@ the only place that touches `requestAnimationFrame`, timers, and
   by canonical name and source file location **without** including or
   requiring Agent Garden itself.
 
+## Supersession
+
+This ADR was **superseded by ADR 0003 — BODI flagship as static
+architecture diagram** on 2026-10-08. The runtime visualization, the
+state machine, the geometry helpers, and the controller were all
+removed in favor of a single static Astro component. See ADR 0003 and
+`docs/bodi-runtime.md` for the current architecture.
+
 ## References
 
-- `src/features/bodi-runtime/machine.ts`
-- `src/features/bodi-runtime/geometry.ts`
-- `docs/bodi-runtime.md`
+- `docs/bodi-runtime.md` (updated 2026-10-08)
+- ADR 0003 — BODI flagship as static architecture diagram
 - `bridge/src/services/workflow-controller/verifier.ts` (canonical source)

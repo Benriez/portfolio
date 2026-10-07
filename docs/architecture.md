@@ -1,14 +1,14 @@
 # Architecture
 
-The portfolio is a **static Astro** site. The runtime is a single-page
-TypeScript BODI visualization that runs in the browser. Astro provides the
-HTML shell, the typed content, and the build pipeline.
+The portfolio is a **static Astro** site. The shell is plain HTML/CSS.
+The BODI flagship is a single static Astro component; there is no client
+runtime, no state machine, no controller, no JavaScript island for the
+flagship.
 
 ## Principles
 
 1. **Complexity is isolated where the domain is complex.** Static portfolio
-   content stays static. The BODI runtime lives behind a single feature
-   directory.
+   content stays static. The BODI flagship is one Astro file.
 2. **The static HTML carries both views.** Both `hr` and `engineering`
    variants of every dual-content field ship in the rendered HTML. The mode
    is a CSS-only visibility switch.
@@ -35,13 +35,12 @@ HTML shell, the typed content, and the build pipeline.
 
 ## Client-side JS boundary
 
-Static HTML is shipped for everything except the BODI runtime. The runtime
-ships a small TypeScript island (`src/features/bodi-runtime/`) that:
+The portfolio ships **no client JS** for the body content. The only
+JavaScript on the page is:
 
-- hydrates an SVG layer with the deterministic graph layout,
-- mutates `data-state` attributes to animate,
-- reads `body[data-mode]` to switch vocabulary,
-- respects `prefers-reduced-motion`.
+- the mode-switch handler in `SiteHeader.astro`,
+- the print-button handler in `Hero.astro`,
+- the URL-query `?mode=` applier in `BaseLayout.astro`.
 
 There is no SPA navigation, no router, no client-side data fetching.
 
@@ -50,13 +49,11 @@ There is no SPA navigation, no router, no client-side data fetching.
 - Design tokens in `src/styles/tokens.css` (single source of truth).
 - Global rules and reset in `src/styles/global.css`.
 - Print rules in `src/styles/print.css`.
-- BODI runtime styles isolated in `src/features/bodi-runtime/runtime.css`.
 - Component-level styles via Astro `<style>` blocks.
 
 ## Testing strategy
 
-- **Unit** — pure logic only: the BODI state machine, geometry, labels, and
-  content placeholder audit.
+- **Unit** — typed content + manifest parity under `tests/unit/`.
 - **E2E** — three real viewport projects (390 / 768 / 1440) and both modes
   (HR / Engineering) against the built site via `pnpm preview`.
 - **Accessibility** — `@axe-core/playwright` smoke test in both modes.
@@ -73,8 +70,11 @@ There is no SPA navigation, no router, no client-side data fetching.
 The portfolio intentionally does not grow past:
 
 - 1 layout (`BaseLayout.astro`)
-- ~10 components in `src/components/`
-- 5 typed content files (`projects`, `experience`, `education`,
-  `capabilities`, `tech-stack`)
-- 1 BODI feature directory
+- ~10 components in `src/components/` plus `BodiFlagship.astro`
+- 5 typed content files (`projects`, `experience`, `capabilities`,
+  `tech-stack`, `education`)
+- 1 static BODI flagship component
 - 1 single CI workflow
+
+See ADR 0003 for the move from a runtime visualization to the static
+architecture diagram.
