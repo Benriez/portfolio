@@ -1,64 +1,180 @@
 ---
 import BaseLayout from "~/layouts/BaseLayout.astro";
+import Hero from "~/components/Hero.astro";
+import ProjectEntry from "~/components/ProjectEntry.astro";
+import ExperienceTimeline from "~/components/ExperienceTimeline.astro";
+import Capabilities from "~/components/Capabilities.astro";
+import WorkingApproach from "~/components/WorkingApproach.astro";
+import Contact from "~/components/Contact.astro";
+import BodiFlagship from "~/components/bodi/BodiFlagship.astro";
+import { projects } from "~/data/projects";
+import { experience } from "~/data/experience";
+import type { ContactItem } from "~/types/content";
+
+const contactItems: ContactItem[] = [
+  {
+    id: "email",
+    label: "E-Mail",
+    href: "mailto:bennyriezler@gmail.com",
+    visible: true,
+  },
+  {
+    id: "github",
+    label: "GitHub",
+    href: "https://github.com/Benriez?tab=repositories",
+    visible: true,
+  },
+  {
+    id: "linkedin",
+    label: "LinkedIn",
+    href: "https://www.linkedin.com/in/benjamin-riezler-239b61181/",
+    visible: true,
+  },
+];
 ---
 
 <BaseLayout
-  title="Wartung — Benjamin Riezler Portfolio"
-  description="Das Portfolio befindet sich gerade in der Wartung."
+  title="Benjamin Riezler - Full-Stack & Applied AI Engineer"
+  description="Persönliche Engineering-Bewerbungswebsite für einen Full-Stack & Applied AI Engineer mit Fokus auf produktive Softwaresysteme, Production Engineering und AI Agent Systems."
   mode="hr"
 >
-  <section class="section maintenance" aria-labelledby="maintenance-h">
+  <Hero />
+
+  <section class="section" id="work">
     <div class="container">
-      <p class="eyebrow">Status</p>
-      <h1 id="maintenance-h">Seite in Wartung</h1>
-      <p class="maintenance-lead">
-        Das Portfolio wird derzeit überarbeitet und ist kurzfristig nicht erreichbar.
-      </p>
-      <p class="maintenance-note">
-        Bitte versuchen Sie es in wenigen Minuten erneut. Bei Fragen erreichen Sie mich unter{" "}
-        <a href="mailto:contact@benrieder.dev">contact@benrieder.dev</a>.
-      </p>
+      <header class="section-head">
+        <p class="section-kicker">Ausgewählte Projekte</p>
+        <h2>Systeme, die Produkt, Betrieb und technische Tiefe verbinden.</h2>
+      </header>
+      <div class="work-list">
+        {projects.map((project) => (
+          <ProjectEntry project={project} />
+        ))}
+      </div>
     </div>
   </section>
+
+  <BodiFlagship />
+
+  <section class="section" id="experience">
+    <div class="container">
+      <ExperienceTimeline entries={experience} />
+    </div>
+  </section>
+
+  <section class="section" id="capabilities">
+    <div class="container">
+      <div class="section-head capability-head">
+        <p class="section-kicker">Kompetenzen</p>
+        <h2>
+          <span class="hr-only">Was ich abdecke</span>
+          <span class="engineering-only">Engineering Surface</span>
+        </h2>
+        <p class="section-note">
+          Keine Skill-Level, keine Prozentwerte. Nur belastbare Kompetenzfelder aus den Projekten.
+        </p>
+      </div>
+      <Capabilities />
+      <WorkingApproach title={{ hr: "Technischer Stack", engineering: "Technischer Stack" }} />
+    </div>
+  </section>
+
+  <section class="section about" id="about">
+    <div class="container">
+      <p class="section-kicker">Arbeitsweise</p>
+      <h2>Systemisch denken, präzise bauen, zuverlässig betreiben.</h2>
+      <div class="approach-list">
+        <p>
+          Ich arbeite an der Schnittstelle zwischen Produktanforderung, Softwarearchitektur und
+          laufendem Betrieb. Wichtig ist nicht nur, dass ein Feature funktioniert, sondern wie es
+          sich bei Fehlern, Deployments, Zustandswechseln und echten Nutzungsbedingungen verhält.
+        </p>
+        <p>
+          Meine Arbeit verbindet Requirements Engineering, Root-Cause Analysis, Recovery Thinking
+          und Production Ownership. Konzept, Implementierung und Betrieb gehören dabei zusammen.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <Contact
+    items={contactItems}
+    heading={{
+      hr: "Kontakt und Profile",
+      engineering: "Kontakt und Profile",
+    }}
+  />
 </BaseLayout>
 
 <style>
-  .maintenance {
-    padding: clamp(120px, 20vw, 200px) 0;
-    border-top: 1px solid var(--hairline);
+  .section-head {
+    display: grid;
+    grid-template-columns: minmax(0, 0.82fr) minmax(0, 1fr);
+    gap: clamp(28px, 6vw, 80px);
+    align-items: end;
+    margin-bottom: 42px;
   }
-  .maintenance .eyebrow {
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--muted);
-    margin: 0 0 16px;
+  .section-head .section-kicker {
+    grid-column: 1 / -1;
+    margin-bottom: -18px;
   }
-  .maintenance h1 {
-    font-size: clamp(2rem, 5vw, 3.5rem);
-    font-weight: 700;
-    margin: 0 0 24px;
-    color: var(--fg);
-  }
-  .maintenance-lead {
-    font-size: 1.15rem;
-    line-height: 1.6;
-    color: var(--fg);
-    max-width: 60ch;
-    margin: 0 0 16px;
-  }
-  .maintenance-note {
-    font-size: 0.95rem;
-    color: var(--muted);
-    max-width: 60ch;
+  .section-head h2 {
+    font-size: clamp(34px, 5vw, 64px);
+    line-height: 1.02;
+    letter-spacing: -0.04em;
+    font-weight: 600;
+    max-width: 13ch;
     margin: 0;
   }
-  .maintenance-note a {
-    color: var(--accent);
-    text-decoration: underline;
-    text-underline-offset: 0.16em;
+  .section-head.capability-head {
+    display: block;
+    max-width: 720px;
   }
-  .maintenance-note a:hover {
-    text-decoration-thickness: 2px;
+  .section-head.capability-head .section-kicker {
+    margin-bottom: 14px;
+  }
+  .section-head.capability-head h2 {
+    max-width: none;
+  }
+  .section-note {
+    margin: 18px 0 0;
+    color: var(--fg-soft);
+    font-size: 15px;
+    max-width: 48ch;
+  }
+  .work-list {
+    display: grid;
+    gap: 0;
+  }
+  .about {
+    background: var(--surface);
+  }
+  .about h2 {
+    font-size: clamp(34px, 5vw, 64px);
+    line-height: 1.02;
+    letter-spacing: -0.04em;
+    font-weight: 600;
+    max-width: 13ch;
+    margin: 0;
+  }
+  .about .section-kicker {
+    margin-bottom: 14px;
+  }
+  .approach-list {
+    display: grid;
+    gap: 18px;
+    margin-top: 34px;
+  }
+  .approach-list p {
+    margin: 0;
+    font-size: 20px;
+    line-height: 1.45;
+    letter-spacing: -0.02em;
+    color: var(--fg-soft);
+  }
+  @media (max-width: 900px) {
+    .section-head {
+      grid-template-columns: 1fr;
+    }
   }
 </style>

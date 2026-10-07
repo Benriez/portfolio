@@ -1,10 +1,14 @@
 ---
 /**
- * Tech stack
+ * WorkingApproach
  *
- * Mirrors the OpenDesign reference's `.tech-stack` definition-list pattern:
- *   - 150px label column + 1fr content column
- *   - hairline divider between rows
+ * Mirrors the OpenDesign reference's `.about` (id="about") and `.tech-stack`
+ * definition-list patterns:
+ *   - Working approach: kicker + h2 + two long paragraphs
+ *   - Tech stack: 150px label column + 1fr content column, hairline dividers
+ *
+ * The component is split: the .about-grid (heading + paragraphs) is rendered
+ * inline in `index.astro`; this component provides only the .tech-stack block.
  *
  * Reads from `referenceTechStack` (the authoritative 4-row payload from
  * `src/data/tech-stack.ts`) so the rendered text exactly matches the source.
@@ -12,7 +16,7 @@
 import { referenceTechStack } from "~/data/tech-stack";
 
 interface Props {
-  title: { hr: string; engineering: string };
+  readonly title: { hr: string; engineering: string };
 }
 
 void (Astro.props as Props);

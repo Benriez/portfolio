@@ -5,13 +5,15 @@
  * Shared HTML scaffolding for the portfolio. The shell carries a single
  * `body[data-mode]` attribute that drives the entire HR/Engineering mode
  * toggling, plus the page title, description, fonts, and global stylesheet.
+ *
+ * The reference does NOT include a footer element; this layout mirrors
+ * that exactly — the portfolio ends at the closing `</main>`.
  */
 import "~/styles/global.css";
 import "~/styles/print.css";
 
 import type { ViewMode } from "~/types/content";
 import SiteHeader from "~/components/SiteHeader.astro";
-import SiteFooter from "~/components/SiteFooter.astro";
 
 interface Props {
   readonly title: string;
@@ -31,11 +33,17 @@ const { title, description, mode } = Astro.props as Props;
     <meta name="theme-color" content="oklch(98% 0.004 80)" />
     <meta name="color-scheme" content="light" />
     <link rel="icon" type="image/svg+xml" href="/portfolio/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    />
     <title>{title}</title>
   </head>
   <body data-mode={mode}>
     <a href="#main" class="skip-link">
-      {mode === "hr" ? "Zum Hauptinhalt springen" : "Skip to main content"}
+      Zum Inhalt springen
     </a>
 
     <SiteHeader mode={mode} />
@@ -43,8 +51,6 @@ const { title, description, mode } = Astro.props as Props;
     <main id="main" tabindex="-1">
       <slot />
     </main>
-
-    <SiteFooter />
 
     <script>
       // Apply ?mode= from URL on initial load. The mode-switch component

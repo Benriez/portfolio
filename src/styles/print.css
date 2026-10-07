@@ -22,13 +22,13 @@
 
   .site-header,
   .hero-actions,
-  .contact-actions button,
   .skip-link {
     display: none !important;
   }
 
   .section,
-  .hero {
+  .hero,
+  .flagship-section {
     padding: 18mm 0 0;
     border-top: 1px solid #ddd;
   }
@@ -42,7 +42,14 @@
   .education-list > div,
   .capability,
   .case-point,
-  .tech-stack-list > div {
+  .tech-stack-list > div,
+  .bodi-evidence,
+  .bodi-replay,
+  .bodi-engineering-ownership,
+  .bodi-reliability-engineering,
+  .bodi-failure-model,
+  .bodi-extra,
+  .bodi-provenance {
     break-inside: avoid;
     page-break-inside: avoid;
   }

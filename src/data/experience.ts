@@ -50,12 +50,12 @@ const REFERENCE: ReadonlyArray<ReferenceExperience> = [
           "Operation of own Linux / Docker / CapRover infrastructure and a Windows RDP server for five users with user, role and access management.",
       },
     ],
-    subroleTitle: "Technischer Produktmanager · Steuerbüro",
+    subroleTitle: "Technischer Produktmanager & Systems Engineer · Steuerbüro",
     subroleContext: "Kundenrolle im Rahmen der Selbstständigkeit",
     subroleLead: {
-      hr: "Fachliche Anforderungen aufnehmen und strukturieren, Prioritäten festlegen und gemeinsam mit Anwendern technische Lösungen in die Produktentwicklung überführen.",
+      hr: "Operative Geschäftsprozesse aufnehmen, strukturieren und in technische Lösungen überführen. Verantwortung reicht von ERP- und Workflow-Integration über Microsoft 365 und Windows-Server-Betrieb bis zu produktivem Rollout und Betrieb.",
       engineering:
-        "Fachliche Anforderungen strukturieren, in technische Lösungen übersetzen, Umsetzung priorisieren und die Weiterentwicklung produktiver Systeme begleiten.",
+        "Requirements Engineering · Business Process Analysis · ERP- und Workflow-Integration (Odoo) · Windows Server / RDS · Microsoft 365 / Exchange · Identity & Access · Automation · Production troubleshooting. Schnittstelle zwischen Fachanwendern, Geschäftsprozessen und technischer Umsetzung.",
     },
     subroleSummary:
       "Schnittstelle zwischen Fachanwendern, Geschäftsprozessen und technischer Umsetzung.",

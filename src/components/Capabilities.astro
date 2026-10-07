@@ -8,14 +8,7 @@
  *   - .capability-h3   (heading, HR or Eng)
  *   - .capability-body  (mono skill list, HR or Eng)
  */
-import type { CapabilityGroup } from "~/types/content";
 import { referenceCapabilities } from "~/data/capabilities";
-
-interface Props {
-  readonly groups: CapabilityGroup[];
-}
-
-void (Astro.props as Props);
 ---
 
 <section class="capability-region" aria-label="Kompetenzen">

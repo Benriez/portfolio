@@ -55,16 +55,9 @@ pnpm verify:public-release # Audits the public-release-safety invariants
 ```
 src/
 ├── components/                 # Astro components (SiteHeader, Hero, etc.)
+│   └── bodi/
+│       └── BodiFlagship.astro  # Static BODI architecture + case-study
 ├── data/                       # Typed content modules (projects.ts, etc.)
-├── features/
-│   └── bodi-runtime/           # BODI visualization island
-│       ├── BodiRuntimeVisualization.astro
-│       ├── machine.ts          # Pure state machine
-│       ├── controller.ts       # Constants & types for the controller
-│       ├── geometry.ts         # Pure graph layout
-│       ├── labels.ts           # All textual labels
-│       ├── types.ts            # BODI-specific types
-│       └── runtime.css         # BODI scoped styles
 ├── layouts/
 │   └── BaseLayout.astro        # Single layout shell
 ├── pages/
@@ -122,15 +115,14 @@ body[data-mode="engineering"] [data-view="engineering"] {
 ```
 
 The default mode is set in `src/pages/index.astro`. The mode toggle is a
-button with `data-set-mode="hr|engineering"`, handled by a small inline script in
-`src/layouts/BaseLayout.astro`.
+button with `data-set-mode="hr|engineering"`, handled by a small inline
+script in `src/layouts/BaseLayout.astro`.
 
 ## Feature boundaries
 
-The BODI feature is **isolated** from everything else:
+The BODI flagship is **static** — no client JS, no timers, no
+observers. `src/components/bodi/BodiFlagship.astro` is the only file
+that knows about the BODI architecture. Its mode split is pure CSS.
 
-- Only `src/features/bodi-runtime/*` knows about the BODI vocabulary.
-- `controller.ts` is the only place where timers, observers, and DOM
-  mutations live.
-- `geometry.ts` and `machine.ts` are pure functions with no I/O.
-- `labels.ts` is plain data; its values are safe to import in tests.
+For an explanation of why the BODI feature is static rather than
+animated, see ADR 0003 and `docs/bodi-runtime.md`.

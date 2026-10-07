@@ -5,8 +5,9 @@
  * Mirrors the OpenDesign reference `.hero` structure:
  *   .hero > .container > .hero-grid > .hero-main + .hero-panel
  *
- * Note: the reference renders the `hero-lead` only in HR mode (no
- * Engineering variant in the reference HTML). Mode switch re-shows HR.
+ * The hero-lead is shown in both modes — same copy in HR and Engineering,
+ * matching the reference which renders the same lead paragraph regardless
+ * of mode (the reference does not split hero-lead).
  */
 interface HeroPanelItem {
   readonly keyLabel: string;
@@ -54,17 +55,20 @@ const stack = [
   "Production Engineering",
   "Technical Product Management",
 ] as const;
+
+const githubUrl = "https://github.com/Benriez?tab=repositories";
+const email = "bennyriezler@gmail.com";
 ---
 
 <section class="hero" id="top">
   <div class="container hero-grid">
     <div class="hero-main">
-      <p class="eyebrow hr-only">Engineering Bewerbung</p>
+      <p class="eyebrow">Engineering Bewerbung</p>
       <h1>Benjamin Riezler</h1>
       <p class="role">Full-Stack &amp; Applied AI Engineer</p>
-      <p class="hero-lead hr-only">
-        Ich entwickle und betreibe Softwaresysteme von Produktanforderungen und Architektur bis
-        Production, Reliability und autonomen Agent-Runtimes.
+      <p class="hero-lead">
+        Ich entwickle und betreibe Softwaresysteme von Produktanforderung und Architektur bis
+        Production, Reliability und langlebigen AI-Agent-Runtimes
       </p>
 
       <div class="hero-stack" aria-label="Kerntechnologien">
@@ -77,21 +81,16 @@ const stack = [
         <a class="primary-link" href="#work">
           Projekte ansehen
         </a>
-        <button
-          type="button"
-          class="text-button hr-only"
-          data-mode-link
-          data-set-mode="engineering"
-        >
+        <button type="button" class="text-button" data-set-mode="engineering">
           Engineering-Modus
         </button>
         <button type="button" class="text-button" data-print>
           CV / Print
         </button>
-        <a class="text-link" href="https://github.com/Benriez" rel="noopener">
+        <a class="text-link" href={githubUrl} rel="noopener">
           GitHub
         </a>
-        <a class="text-link" href="mailto:contact@benrieder.dev">
+        <a class="text-link" href={`mailto:${email}`}>
           Kontakt
         </a>
       </div>
@@ -129,9 +128,9 @@ const stack = [
     align-items: end;
   }
   .hero h1 {
-    font-size: var(--type-display-1);
+    font-size: clamp(46px, 7vw, 88px);
     line-height: 1.02;
-    letter-spacing: var(--tracking-display);
+    letter-spacing: -0.04em;
     font-weight: 600;
     max-width: 11ch;
   }
@@ -239,8 +238,8 @@ const stack = [
     .hero {
       padding-top: 48px;
     }
-    .role {
-      font-size: 22px;
+    .hero h1 {
+      font-size: 48px;
     }
     .hero-lead {
       font-size: 22px;

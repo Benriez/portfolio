@@ -5,10 +5,10 @@ import type { CapabilityGroup, DualCopy } from "~/types/content";
  *
  * Four groups, in reference order, each with HR + Engineering variants.
  *
- *   01. AI & Automation  /  AI & Agent Systems
- *   02. Software Engineering  /  Full-Stack Engineering
+ *   01. AI & Automation          /  AI & Agent Systems
+ *   02. Software & Systems Eng.  /  Full-Stack & Systems Integration
  *   03. Production & Operations  /  Production Engineering
- *   04. Technical Product Management  /  Product Engineering
+ *   04. Technical Product Mgmt   /  Product Engineering
  *
  * The reference renders each group's body as a single line of skill tokens
  * separated by " · "; we preserve that in a single SkillItem per group.
@@ -26,39 +26,39 @@ const REFERENCE: ReadonlyArray<ReferenceCapability> = [
     id: "ai-automation",
     number: "01",
     heading: {
-      hr: "AI & Automation",
-      engineering: "AI & Agent Systems",
+      hr: "AI &amp; Automation",
+      engineering: "AI &amp; Agent Systems",
     },
     body: {
-      hr: "Autonome KI-Workflows · zuverlässige Ausführung · Memory · MCP · LLM Integration",
+      hr: "Agentische Workflows · lokale KI-Infrastruktur · zuverlässige Ausführung · Memory · LLM Integration · Production Reliability",
       engineering:
-        "Agent Runtime · Durable Execution Graphs · Memory Governance · Supervisor / Recovery · MCP · LLM Integration · Agent Reliability",
+        "Durable Agent Runtime · Execution Graphs · Memory Governance · Managed OpenCode · Self-hosted LLMs · Inference Gateway · Model Scheduling / Queueing · Multi-tenant API · MCP · Evaluation · Agent Reliability",
     },
   },
   {
-    id: "software-engineering",
+    id: "software-systems-engineering",
     number: "02",
     heading: {
-      hr: "Software Engineering",
-      engineering: "Full-Stack Engineering",
+      hr: "Software &amp; Systems Engineering",
+      engineering: "Full-Stack &amp; Systems Integration",
     },
     body: {
-      hr: "TypeScript · Angular · Node.js / Express · Python · Django / DRF · Authentication · WebSockets",
+      hr: "TypeScript · Angular · Node.js / Express · Python · Django / DRF · APIs · Authentication · WebSockets · Systems Integration · Device Integration",
       engineering:
-        "TypeScript · Angular · Node.js / Express · Python · Django / DRF · Authentication · WebSockets",
+        "TypeScript · Angular · Node.js / Express · Python · Django / DRF · APIs · Authentication · WebSockets · Systems Integration · Device Integration",
     },
   },
   {
     id: "production-operations",
     number: "03",
     heading: {
-      hr: "Production & Operations",
+      hr: "Production &amp; Operations",
       engineering: "Production Engineering",
     },
     body: {
-      hr: "Docker · CapRover · Linux · Reliability · Root-Cause Analysis · Recovery Engineering",
+      hr: "Docker · CapRover · Linux · Windows Server / RDS · CI/CD · Identity &amp; Access · Production Debugging · Root-Cause Analysis · Reliability Engineering",
       engineering:
-        "Docker · CapRover · Linux · Reliability · Root-Cause Analysis · Recovery Engineering",
+        "Docker · CapRover · Linux · Windows Server / RDS · CI/CD · Identity &amp; Access · Production Debugging · Root-Cause Analysis · Reliability Engineering",
     },
   },
   {

@@ -13,6 +13,9 @@ playwright-report/
 test-results/
 .cache/vitest/
 
+# Local visual-audit artifacts (regenerated on demand)
+tmp-visual-audit/
+
 # OS / editor noise
 .DS_Store
 Thumbs.db

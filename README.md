@@ -2,13 +2,14 @@
 
 > Calm, editorial, content-first personal site.
 
-Personal portfolio of **Ben Riederer** — built with **Astro 7** and
+Personal portfolio of **Benjamin Riezler** — built with **Astro 7** and
 **TypeScript** strict. Hosted as a static site on GitHub Pages under
 [`/portfolio`](https://benriez.github.io/portfolio/).
 
 The portfolio intentionally avoids any UI framework. Static HTML carries
-both an HR view and an Engineering view (CSS-driven visibility). A small
-TypeScript island powers a deterministic BODI runtime visualization.
+both an HR view and an Engineering view (CSS-driven visibility). The
+BODI flagship is a static system architecture diagram plus a
+copy-rich case-study surface — no runtime animation.
 
 ## Stack
 
@@ -27,23 +28,16 @@ TypeScript island powers a deterministic BODI runtime visualization.
 | --------------- | --------------------------------------------------------------------- |
 | Layout shell    | `src/layouts/BaseLayout.astro`                                        |
 | Page            | `src/pages/index.astro` (one page)                                    |
-| Components      | `src/components/*.astro`                                              |
+| Components      | `src/components/*.astro`, `src/components/bodi/BodiFlagship.astro`    |
 | Content         | `src/data/{projects,experience,capabilities,tech-stack,education}.ts` |
 | Shared types    | `src/types/content.ts`                                                |
 | Design tokens   | `src/styles/tokens.css`                                               |
 | Reset & globals | `src/styles/global.css`                                               |
 | Print           | `src/styles/print.css`                                                |
-| BODI runtime    | `src/features/bodi-runtime/`                                          |
 
-The BODI feature is **isolated**:
-
-- `machine.ts` is pure (no DOM).
-- `geometry.ts` is pure (computes bounds).
-- `labels.ts` is plain data.
-- The Astro wrapper owns DOM, timers, observers.
-
-See `docs/architecture.md` and `docs/bodi-runtime.md` for the full
-picture.
+The BODI flagship is a single static Astro component. There is no
+runtime island, no state machine, no controller, no client-side
+script for the flagship. See ADR 0003.
 
 ## Local setup
 
@@ -75,8 +69,7 @@ the Node 22 LTS provided by Homebrew.
 
 ## Testing
 
-- **Unit** — pure logic only (machine, geometry, labels, content audit)
-  under `tests/unit/`.
+- **Unit** — pure content and manifest tests under `tests/unit/`.
 - **E2E** — Playwright spins up three real viewports (390, 768, 1440) and
   runs both modes (HR / Engineering). The `pnpm preview` server is started
   automatically.
@@ -85,8 +78,7 @@ the Node 22 LTS provided by Homebrew.
 ## Accessibility
 
 - Skip link, semantic landmarks, focus-visible rings.
-- `prefers-reduced-motion` honored by the BODI runtime (static
-  architecture still visible).
+- Static BODI flagship — no animation, no reduced-motion handler needed.
 - Dual rendering of HR / Engineering views in static HTML.
 
 ## Deployment
@@ -126,15 +118,17 @@ See `docs/deployment.md` for the complete pipeline.
 │   ├── deployment.md
 │   └── adr/
 │       ├── 0001-astro-static-architecture.md
-│       └── 0002-bodi-runtime-isolation.md
+│       ├── 0002-bodi-runtime-isolation.md
+│       └── 0003-bodi-static-architecture.md
 ├── scripts/
 │   ├── verify-docs.sh
 │   ├── check-public-release.sh
 │   └── pnpm22.sh
 ├── src/
 │   ├── components/
+│   │   └── bodi/
+│   │       └── BodiFlagship.astro
 │   ├── data/
-│   ├── features/bodi-runtime/
 │   ├── layouts/BaseLayout.astro
 │   ├── pages/index.astro
 │   ├── styles/
@@ -147,13 +141,12 @@ See `docs/deployment.md` for the complete pipeline.
 ## License
 
 The portfolio source code is MIT. The authored content (the German +
-English dual-view copy in `src/data/*.ts` and the BODI runtime labels)
+English dual-view copy in `src/data/*.ts` and the BODI flagship labels)
 is dual-licensed under MIT + CC BY 4.0 so it can be reused with
-attribution. See the footer link for the canonical CC declaration.
+attribution.
 
 ## Related projects
 
 - [Agent Garden](https://github.com/Benriez/agent-garden) — the canonical
-  BODI runtime this visualization depicts.
-- [OpenDesign](https://github.com/Benriez/opendesign) — the design
-  reference used for editorial layout decisions.
+  BODI runtime this portfolio describes.
+- OpenDesign — the design reference used for editorial layout decisions.
