@@ -74,7 +74,7 @@ describe("Public content data", () => {
       .map(flatten)
       .join("\n");
     for (const needle of LITERAL_BLOCKLIST) {
-      expect(allText).not.toContain(needle);
+      expect(allText.toString()).not.toContain(needle);
     }
   });
 
@@ -90,18 +90,22 @@ describe("Public content data", () => {
       "BODI / agent-garden": "active-development",
       Fahrschule360: "live",
       "Shopping-Pong": "live",
-      Steuerkompass: "active-development",
+      "Production Web Platform Migration": "live",
       "Odoo Add-on Suite": "live",
     });
   });
 
-  it("renders project maturity labels through existing metadata", () => {
+  it("renders project meta without injecting an extra status label", () => {
     for (const project of projects) {
       const meta = formatProjectMeta(project.meta, project.status);
+      // OpenDesign reference presents maturity through copy, not via a badge.
+      // The status type still exists for downstream classification — it
+      // must NOT leak into the rendered meta.
+      expect(meta.hr).toBe(project.meta.hr);
+      expect(meta.engineering).toBe(project.meta.engineering);
       const label = projectStatusLabels[project.status];
-
-      expect(meta.hr).toContain(label);
-      expect(meta.engineering).toContain(label);
+      expect(meta.hr.includes(label)).toBe(false);
+      expect(meta.engineering.includes(label)).toBe(false);
     }
   });
 });

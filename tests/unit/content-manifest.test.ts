@@ -20,7 +20,7 @@ const REFERENCE_PROJECT_TITLES = [
   "BODI / agent-garden",
   "Fahrschule360",
   "Shopping-Pong",
-  "Steuerkompass",
+  "Production Web Platform Migration",
   "Odoo Add-on Suite",
 ] as const;
 
@@ -30,10 +30,6 @@ const REFERENCE_EXPERIENCE_TITLES = [
   "Werkstudent → Full-Stack Developer",
   "Technischer Produktdesigner",
 ] as const;
-
-// (Reference experience date ranges and employer strings are documented
-//  in src/data/experience.ts.  They are enforced structurally by the
-//  employment-records test below.)
 
 // EXACT reference education entries, in reference order.
 const REFERENCE_EDUCATION_TITLES = [
@@ -46,14 +42,14 @@ const REFERENCE_EDUCATION_TITLES = [
 // Each capability carries both HR and Engineering variants.
 const REFERENCE_CAPABILITY_HEADINGS = {
   hr: [
-    "AI & Automation",
-    "Software Engineering",
-    "Production & Operations",
+    "AI &amp; Automation",
+    "Software &amp; Systems Engineering",
+    "Production &amp; Operations",
     "Technical Product Management",
   ],
   engineering: [
-    "AI & Agent Systems",
-    "Full-Stack Engineering",
+    "AI &amp; Agent Systems",
+    "Full-Stack &amp; Systems Integration",
     "Production Engineering",
     "Product Engineering",
   ],

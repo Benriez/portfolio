@@ -1,17 +1,12 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("Portfolio shell", () => {
-  test("renders the hero, sections, and footer", async ({ page }) => {
+  test("renders the hero, sections, and no maintenance page", async ({ page }) => {
     await page.goto("./");
-    const h1 = page.getByRole("heading", { level: 1 });
-    if (await h1.isVisible()) {
-      await expect(h1).toBeVisible();
-      await expect(page.getByRole("contentinfo")).toBeVisible();
-    } else {
-      await expect(page.getByRole("heading", { level: 1, name: /wartung/i })).toBeVisible();
-      await expect(page.getByText(/kurzfristig nicht erreichbar/)).toBeVisible();
-      await expect(page.getByRole("contentinfo")).toBeVisible();
-    }
+    // Maintenance page must no longer be visible.
+    await expect(page.getByRole("heading", { level: 1, name: /wartung/i })).toHaveCount(0);
+    await expect(page.getByRole("heading", { level: 1, name: "Benjamin Riezler" })).toBeVisible();
+    await expect(page.getByRole("contentinfo")).toHaveCount(0);
   });
 
   test("supports HR mode via query parameter", async ({ page }) => {
@@ -31,46 +26,54 @@ test.describe("Portfolio shell", () => {
     await expect(page.locator("body")).toHaveAttribute("data-mode", "engineering");
   });
 
-  test("renders project maturity labels in selected work", async ({ page }) => {
-    await page.goto("./?mode=hr");
+  test("renders the exact OpenDesign project set in order", async ({ page }) => {
+    await page.goto("./?mode=hr#work");
+    const headings = page.locator("#work .work-body h3");
+    await expect(headings).toHaveCount(5);
+    await expect(headings.nth(0)).toHaveText("BODI / agent-garden");
+    await expect(headings.nth(1)).toHaveText("Fahrschule360");
+    await expect(headings.nth(2)).toHaveText("Shopping-Pong");
+    await expect(headings.nth(3)).toHaveText("Production Web Platform Migration");
+    await expect(headings.nth(4)).toHaveText("Odoo Add-on Suite");
+  });
 
-    if (await page.getByRole("heading", { level: 1, name: /wartung/i }).isVisible()) {
-      test.skip(true, "Portfolio project list unavailable during maintenance");
-    }
-
-    const bodi = page.locator("article", {
+  test("flagship project links to the case study anchor", async ({ page }) => {
+    await page.goto("./?mode=hr#work");
+    const flagship = page.locator("article", {
       has: page.getByRole("heading", { name: "BODI / agent-garden" }),
     });
+    const caseLink = flagship.getByRole("link", { name: "Case Study ansehen" });
+    await expect(caseLink).toHaveAttribute("href", "#flagship");
+  });
+
+  test("project meta carries period and tagline without an extra status label", async ({
+    page,
+  }) => {
+    await page.goto("./?mode=hr#work");
+
     const fahrschule360 = page.locator("article", {
       has: page.getByRole("heading", { name: "Fahrschule360" }),
     });
+    await expect(fahrschule360.locator(".work-meta [data-view='hr']")).toContainText("2020-2026");
+    await expect(fahrschule360.locator(".work-meta [data-view='hr']")).not.toContainText(
+      "In aktiver Entwicklung",
+    );
+
     const shoppingPong = page.locator("article", {
       has: page.getByRole("heading", { name: "Shopping-Pong" }),
     });
-    const steuerkompass = page.locator("article", {
-      has: page.getByRole("heading", { name: "Steuerkompass" }),
-    });
-    const odoo = page.locator("article", {
-      has: page.getByRole("heading", { name: "Odoo Add-on Suite" }),
-    });
-
-    await expect(bodi.locator(".work-meta [data-view='hr']")).toContainText(
+    await expect(shoppingPong.locator(".work-meta [data-view='hr']")).not.toContainText(
       "In aktiver Entwicklung",
     );
-    await expect(steuerkompass.locator(".work-meta [data-view='hr']")).toHaveText(
-      "In aktiver Entwicklung",
-    );
-    await expect(fahrschule360.locator(".work-meta [data-view='hr']")).toContainText(
+    await expect(shoppingPong.locator(".work-meta [data-view='hr']")).not.toContainText(
       "Live / Production",
     );
-    await expect(shoppingPong.locator(".work-meta [data-view='hr']")).toContainText(
-      "Live / Production",
-    );
-    await expect(odoo.locator(".work-meta [data-view='hr']")).toHaveText("Live / Production");
 
-    await page.getByRole("button", { name: "Engineering", exact: true }).click();
-    await expect(bodi.locator(".work-meta [data-view='engineering']")).toContainText(
-      "In aktiver Entwicklung",
+    const flagship = page.locator("article", {
+      has: page.getByRole("heading", { name: "BODI / agent-garden" }),
+    });
+    await expect(flagship.locator(".work-meta [data-view='hr']")).toContainText(
+      "Self-hosted AI Operator Platform",
     );
   });
 });
