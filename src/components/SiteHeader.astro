@@ -2,8 +2,18 @@
 /**
  * SiteHeader
  *
- * Sticky editorial navigation. Reference layout:
- *   grid 4 columns: brand · nav-links · nav-actions · mode-switch
+ * Sticky editorial navigation.
+ *
+ * Desktop / tablet (>= 901px): 4-column grid
+ *   brand · nav-links · nav-github · mode-switch
+ *
+ * Mobile (<= 900px): compact two-row composition
+ *   row 1: brand (left) · mode-switch (right)
+ *   row 2: nav-links + nav-github, wrapping to 2 cohesive rows
+ *
+ * On <= 560px the mode switch label shortens "Engineering" → "Eng" via
+ * the data-mode-label-full / data-mode-label-short spans while
+ * preserving the aria-label="Engineering" accessible name.
  */
 import type { ViewMode } from "~/types/content";
 
@@ -37,20 +47,27 @@ const githubUrl = "https://github.com/Benriez";
       BR
     </a>
 
-    <div class="nav-links" aria-label="Sektionen">
+    <ul class="nav-links" aria-label="Sektionen und Profil">
       {links.map((link) => (
-        <a href={link.href}>{link.label}</a>
+        <li>
+          <a href={link.href}>{link.label}</a>
+        </li>
       ))}
-    </div>
-
-    <div class="nav-actions" aria-label="Profilaktionen">
-      <a href={githubUrl} rel="noopener">
-        GitHub
-      </a>
-    </div>
+      <li>
+        <a class="nav-github" href={githubUrl} rel="noopener">
+          GitHub
+        </a>
+      </li>
+    </ul>
 
     <div class="mode-switch" role="group" aria-label="Lesemodus wählen">
-      <button type="button" data-set-mode="hr" data-mode-link aria-pressed={mode === "hr"}>
+      <button
+        type="button"
+        data-set-mode="hr"
+        data-mode-link
+        aria-pressed={mode === "hr"}
+        aria-label="HR"
+      >
         HR
       </button>
       <span aria-hidden="true">/</span>
@@ -59,8 +76,10 @@ const githubUrl = "https://github.com/Benriez";
         data-set-mode="engineering"
         data-mode-link
         aria-pressed={mode === "engineering"}
+        aria-label="Engineering"
       >
-        Engineering
+        <span class="mode-label mode-label-full">Engineering</span>
+        <span class="mode-label mode-label-short">Eng</span>
       </button>
     </div>
   </nav>
@@ -113,7 +132,7 @@ const githubUrl = "https://github.com/Benriez";
     display: grid;
     grid-template-columns: auto 1fr auto auto;
     align-items: center;
-    gap: 18px;
+    column-gap: 18px;
   }
   .brand {
     font-family: var(--font-display);
@@ -125,24 +144,22 @@ const githubUrl = "https://github.com/Benriez";
     text-decoration: none;
   }
   .nav-links {
-    display: flex;
-    gap: 18px;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-  .nav-actions {
+    list-style: none;
+    margin: 0;
+    padding: 0;
     display: flex;
     align-items: center;
-    gap: 6px;
-    justify-content: flex-end;
-    flex-wrap: wrap;
+    gap: 18px;
+    justify-content: center;
+  }
+  .nav-links li {
+    display: inline-flex;
+    flex-shrink: 0;
   }
   .nav-links a,
-  .nav-actions a,
-  .nav-actions button,
-  .mode-switch a,
   .mode-switch button,
-  .mode-switch span {
+  .mode-switch span,
+  .nav-github {
     font-family: var(--font-mono);
     font-size: 11px;
     letter-spacing: 0.1em;
@@ -150,17 +167,18 @@ const githubUrl = "https://github.com/Benriez";
   }
   .nav-links a {
     color: var(--fg-soft);
+    text-decoration: none;
   }
-  .nav-links a:hover {
+  .nav-links a:hover,
+  .nav-github:hover {
     color: var(--fg);
   }
-  .nav-actions a {
+  /* GitHub is a profile destination — push it to the end of the
+     desktop nav so the section links read as a centered group. */
+  .nav-github {
+    margin-left: auto;
     color: var(--fg-soft);
-    padding: 7px 0;
-  }
-  .nav-actions a:hover,
-  .nav-actions button:hover {
-    color: var(--fg);
+    text-decoration: none;
   }
   .mode-switch {
     display: inline-flex;
@@ -175,6 +193,9 @@ const githubUrl = "https://github.com/Benriez";
     background: transparent;
     color: var(--muted);
     padding: 7px 10px;
+    border: 0;
+    cursor: pointer;
+    font: inherit;
   }
   .mode-switch button[aria-pressed="true"] {
     background: var(--fg);
@@ -184,18 +205,61 @@ const githubUrl = "https://github.com/Benriez";
     color: var(--soft);
   }
 
+  /* Default mode label: full visible, short hidden.
+     aria-label keeps the accessible name stable across viewports. */
+  .mode-label-short {
+    display: none;
+  }
+
+  /* Mobile: compact two-row composition.
+     row 1: brand (left) · mode-switch (right)
+     row 2: nav-links wrapping naturally with GitHub inline */
   @media (max-width: 900px) {
     .nav {
       width: min(100% - 28px, var(--max));
-      grid-template-columns: 1fr;
-      gap: 14px;
-      padding: 14px 0;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      min-height: 0;
+      padding: 10px 0;
+      column-gap: 12px;
+      row-gap: 6px;
     }
+    .brand {
+      margin-right: auto;
+    }
+    .mode-switch {
+      padding: 2px;
+    }
+    .mode-switch button {
+      padding: 5px 8px;
+    }
+    /* nav-links takes its own row 2, with all six items wrapping
+       together as a single cohesive navigation block. GitHub is
+       the last list item so it flows inline with the section links. */
     .nav-links {
+      order: 2;
+      flex: 0 0 100%;
+      min-width: 0;
+      flex-wrap: wrap;
       justify-content: flex-start;
+      gap: 4px 12px;
     }
-    .nav-actions {
-      justify-content: flex-start;
+    .nav-github {
+      margin-left: 0;
+    }
+  }
+
+  /* Narrow mobile: shorten mode label to "Eng" so the mode switch
+     reads as a small utility, not a primary CTA. The aria-label
+     keeps the accessible name "Engineering" so getByRole tests
+     still match. */
+  @media (max-width: 560px) {
+    .mode-label-full {
+      display: none;
+    }
+    .mode-label-short {
+      display: inline;
     }
   }
 </style>

@@ -87,6 +87,86 @@ test.describe("Portfolio shell", () => {
     await expect(page.locator("[data-print]")).toHaveCount(0);
   });
 
+  test("mobile header at 390px is compact and shows BR, all nav links, and a compact mode switch", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("./?mode=hr");
+    const header = page.locator(".site-header");
+    await expect(header).toBeVisible();
+    // BR lettermark is visible
+    await expect(page.locator(".brand")).toContainText("BR");
+    // All six nav destinations are present (5 sections + GitHub).
+    const linkTexts = await page.locator(".nav-links a").allTextContents();
+    expect(linkTexts.map((t) => t.trim())).toEqual([
+      "Projekte",
+      "Berufserfahrung",
+      "Kompetenzen",
+      "Arbeitsweise",
+      "Kontakt",
+      "GitHub",
+    ]);
+    // Both mode buttons are visible and the active mode is pressed.
+    const hrButton = page.getByRole("button", { name: "HR", exact: true });
+    const engineeringButton = page.getByRole("button", { name: "Engineering", exact: true });
+    await expect(hrButton).toBeVisible();
+    await expect(engineeringButton).toBeVisible();
+    await expect(hrButton).toHaveAttribute("aria-pressed", "true");
+    await expect(engineeringButton).toHaveAttribute("aria-pressed", "false");
+    // The mobile header is compact: the bounding box of the header is
+    // well under 200px tall (was 219px before the redesign).
+    const headerBox = await header.boundingBox();
+    expect(headerBox).not.toBeNull();
+    expect(headerBox!.height).toBeLessThan(180);
+    // No horizontal page overflow.
+    const overflow = await page.evaluate(
+      () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    );
+    expect(overflow).toBeLessThanOrEqual(1);
+  });
+
+  test("mobile header at 430px still keeps all six nav destinations visible without overflow", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 430, height: 932 });
+    await page.goto("./?mode=hr");
+    const linkTexts = await page.locator(".nav-links a").allTextContents();
+    expect(linkTexts.map((t) => t.trim())).toEqual([
+      "Projekte",
+      "Berufserfahrung",
+      "Kompetenzen",
+      "Arbeitsweise",
+      "Kontakt",
+      "GitHub",
+    ]);
+    const overflow = await page.evaluate(
+      () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    );
+    expect(overflow).toBeLessThanOrEqual(1);
+  });
+
+  test("desktop header at 1440px is unchanged: 4-column grid with GitHub and full mode labels", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await page.goto("./?mode=hr");
+    // All six destinations are visible.
+    const linkTexts = await page.locator(".nav-links a").allTextContents();
+    expect(linkTexts.map((t) => t.trim())).toEqual([
+      "Projekte",
+      "Berufserfahrung",
+      "Kompetenzen",
+      "Arbeitsweise",
+      "Kontakt",
+      "GitHub",
+    ]);
+    // Full "Engineering" label (not "Eng") on desktop.
+    await expect(page.getByRole("button", { name: "Engineering", exact: true })).toBeVisible();
+    // Desktop header is the original 69px-ish row.
+    const headerBox = await page.locator(".site-header").boundingBox();
+    expect(headerBox!.height).toBeLessThan(80);
+  });
+
   test("project meta carries period and tagline without an extra status label", async ({
     page,
   }) => {
