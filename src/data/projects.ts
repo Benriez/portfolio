@@ -33,11 +33,6 @@ const Flagship: ProjectEntry = {
   stack: [],
   status: "active-development",
   period: { start: "2026" },
-  isFlagship: true,
-  caseLink: {
-    href: "#flagship",
-    label: "Case Study ansehen",
-  },
 };
 
 const Fahrschule360: ProjectEntry = {

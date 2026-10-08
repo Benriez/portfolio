@@ -78,11 +78,14 @@ the only place that touches `requestAnimationFrame`, timers, and
 This ADR was **superseded by ADR 0003 — BODI flagship as static
 architecture diagram** on 2026-10-08. The runtime visualization, the
 state machine, the geometry helpers, and the controller were all
-removed in favor of a single static Astro component. See ADR 0003 and
-`docs/bodi-runtime.md` for the current architecture.
+removed in favor of a single static Astro component. See ADR 0003 for
+the current architecture.
+
+The dedicated BODI flagship section itself was subsequently retired
+on 2026-10-08. BODI / agent-garden is now documented solely through
+its Selected Work entry.
 
 ## References
 
-- `docs/bodi-runtime.md` (updated 2026-10-08)
-- ADR 0003 — BODI flagship as static architecture diagram
+- ADR 0003 — BODI flagship as static architecture diagram (superseded)
 - `bridge/src/services/workflow-controller/verifier.ts` (canonical source)

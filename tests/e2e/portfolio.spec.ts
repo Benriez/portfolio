@@ -39,13 +39,16 @@ test.describe("Portfolio shell", () => {
     await expect(headings.nth(4)).toHaveText("Odoo Add-on Suite");
   });
 
-  test("flagship project links to the case study anchor", async ({ page }) => {
+  test("does not render the removed BODI flagship case-study link", async ({ page }) => {
     await page.goto("./?mode=hr#work");
-    const flagship = page.locator("article", {
-      has: page.getByRole("heading", { name: "BODI / agent-garden" }),
-    });
-    const caseLink = flagship.getByRole("link", { name: "Case Study ansehen" });
-    await expect(caseLink).toHaveAttribute("href", "#flagship");
+    const caseLink = page.getByRole("link", { name: "Case Study ansehen" });
+    await expect(caseLink).toHaveCount(0);
+  });
+
+  test("does not expose a #flagship anchor on the page", async ({ page }) => {
+    await page.goto("./?mode=hr");
+    await expect(page.locator("#flagship")).toHaveCount(0);
+    await expect(page.locator(".flagship-section")).toHaveCount(0);
   });
 
   test("project meta carries period and tagline without an extra status label", async ({
@@ -71,10 +74,10 @@ test.describe("Portfolio shell", () => {
       "Live / Production",
     );
 
-    const flagship = page.locator("article", {
+    const bodi = page.locator("article", {
       has: page.getByRole("heading", { name: "BODI / agent-garden" }),
     });
-    await expect(flagship.locator(".work-meta [data-view='hr']")).toContainText(
+    await expect(bodi.locator(".work-meta [data-view='hr']")).toContainText(
       "Self-hosted AI Operator Platform",
     );
   });

@@ -55,8 +55,6 @@ pnpm verify:public-release # Audits the public-release-safety invariants
 ```
 src/
 ├── components/                 # Astro components (SiteHeader, Hero, etc.)
-│   └── bodi/
-│       └── BodiFlagship.astro  # Static BODI architecture + case-study
 ├── data/                       # Typed content modules (projects.ts, etc.)
 ├── layouts/
 │   └── BaseLayout.astro        # Single layout shell
@@ -120,9 +118,10 @@ script in `src/layouts/BaseLayout.astro`.
 
 ## Feature boundaries
 
-The BODI flagship is **static** — no client JS, no timers, no
-observers. `src/components/bodi/BodiFlagship.astro` is the only file
-that knows about the BODI architecture. Its mode split is pure CSS.
+There is **no dedicated BODI flagship section** on the page. BODI /
+agent-garden is documented as a regular Selected Work project entry
+alongside the other projects. No file knows about a BODI
+visualization, runtime island, or case-study layout.
 
-For an explanation of why the BODI feature is static rather than
-animated, see ADR 0003 and `docs/bodi-runtime.md`.
+For the historical record of why the BODI runtime visualization was
+retired entirely, see ADR 0003.

@@ -124,58 +124,7 @@ async function extractInMode(page) {
       };
     });
 
-    const flagship = (() => {
-      const sec = $("#flagship");
-      if (!sec) return null;
-      const eyebrow = visibleTextOf(sec.querySelector(".eyebrow"));
-      const h2 = textRaw(sec.querySelector("h2"));
-      const leadHr = visibleTextOf(sec.querySelector(".section-lead.hr-only"));
-      const leadEng = visibleTextOf(sec.querySelector(".section-lead.engineering-only"));
-      const sr = sec.querySelector("[data-runtime]");
-      const pipeline = $$(".rt-pipeline > .rt-node", sr).map((n) => ({
-        key: n.dataset.key,
-        step: n.dataset.step,
-        labelHr: visibleTextOf(n.querySelector(".rt-label")),
-        labelEng: visibleTextOf(n.querySelector(".rt-label")),
-      }));
-      const recovery = $$(".rt-recovery .rt-rec-node", sr).map((n) => ({
-        rec: n.dataset.rec,
-        labelHr: visibleTextOf(n.querySelector(".rt-rec-label")),
-        labelEng: visibleTextOf(n.querySelector(".rt-rec-label")),
-      }));
-      const sideHeadHr = visibleTextOf(sr.querySelector(".rt-side-head"));
-      const sideHeadEng = visibleTextOf(sr.querySelector(".rt-side-head"));
-      const sideMetaHr = visibleTextOf(sr.querySelector(".rt-side-meta"));
-      const sideMetaEng = visibleTextOf(sr.querySelector(".rt-side-meta"));
-      const casePoints = $$(".case-point", sec).map((cp) => {
-        // Reference: span (number), p.hr-only (HR body), p.engineering-only (Eng body).
-        // Pick the <p> for the active mode first; fall back to first <p>.
-        const pHr = cp.querySelector("p.hr-only");
-        const pEng = cp.querySelector("p.engineering-only");
-        const currentMode = document.body.dataset.mode === "engineering" ? "engineering" : "hr";
-        const target =
-          currentMode === "engineering"
-            ? (pEng ?? cp.querySelector("p"))
-            : (pHr ?? cp.querySelector("p"));
-        return {
-          no: textRaw(cp.querySelector("span")),
-          body: visibleTextOf(target),
-        };
-      });
-      return {
-        eyebrow,
-        h2,
-        leadHr,
-        leadEng,
-        pipeline,
-        recovery,
-        sideHeadHr,
-        sideHeadEng,
-        sideMetaHr,
-        sideMetaEng,
-        casePoints,
-      };
-    })();
+    const flagship = null;
 
     const experience = $$("#experience .career-item").map((item) => ({
       time: textRaw(item.querySelector("time")),
@@ -352,33 +301,7 @@ async function main() {
       stackLine: p.stackLine,
       caseLink: p.caseLink,
     })),
-    flagship: hr.flagship
-      ? {
-          eyebrow: hr.flagship.eyebrow,
-          h2: hr.flagship.h2,
-          leadHr: hr.flagship.leadHr,
-          leadEng: eng.flagship?.leadEng,
-          pipeline: hr.flagship.pipeline.map((n, i) => ({
-            key: n.key,
-            step: n.step,
-            labelHr: n.labelHr,
-            labelEng: eng.flagship?.pipeline[i]?.labelEng,
-          })),
-          recovery: hr.flagship.recovery.map((n, i) => ({
-            rec: n.rec,
-            labelHr: n.labelHr,
-            labelEng: eng.flagship?.recovery[i]?.labelEng,
-          })),
-          sideHeadHr: hr.flagship.sideHeadHr,
-          sideHeadEng: eng.flagship?.sideHeadEng,
-          sideMetaHr: hr.flagship.sideMetaHr,
-          sideMetaEng: eng.flagship?.sideMetaEng,
-          casePoints: hr.flagship.casePoints.map((c, i) => ({
-            no: c.no,
-            body: merge(c.body, eng.flagship?.casePoints[i]?.body),
-          })),
-        }
-      : null,
+    flagship: null,
     experience: hr.experience,
     education: hr.education,
     capabilities: hr.capabilities.map((c, i) => ({

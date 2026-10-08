@@ -1,14 +1,14 @@
 # Architecture
 
 The portfolio is a **static Astro** site. The shell is plain HTML/CSS.
-The BODI flagship is a single static Astro component; there is no client
-runtime, no state machine, no controller, no JavaScript island for the
-flagship.
+There is no client runtime, no state machine, no controller, no
+JavaScript island for the body content.
 
 ## Principles
 
-1. **Complexity is isolated where the domain is complex.** Static portfolio
-   content stays static. The BODI flagship is one Astro file.
+1. **Static where the domain is static.** Portfolio content stays static
+   HTML; only the navigation mode-switch and the print button ship
+   minimal inline JavaScript.
 2. **The static HTML carries both views.** Both `hr` and `engineering`
    variants of every dual-content field ship in the rendered HTML. The mode
    is a CSS-only visibility switch.
@@ -70,11 +70,11 @@ There is no SPA navigation, no router, no client-side data fetching.
 The portfolio intentionally does not grow past:
 
 - 1 layout (`BaseLayout.astro`)
-- ~10 components in `src/components/` plus `BodiFlagship.astro`
+- ~10 components in `src/components/`
 - 5 typed content files (`projects`, `experience`, `capabilities`,
   `tech-stack`, `education`)
-- 1 static BODI flagship component
 - 1 single CI workflow
 
-See ADR 0003 for the move from a runtime visualization to the static
-architecture diagram.
+See ADR 0003 for the historical move from a runtime BODI visualization
+to the static diagram, and the subsequent decision to retire the
+dedicated flagship section entirely.

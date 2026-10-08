@@ -7,9 +7,7 @@ Personal portfolio of **Benjamin Riezler** — built with **Astro 7** and
 [`/portfolio`](https://benriez.github.io/portfolio/).
 
 The portfolio intentionally avoids any UI framework. Static HTML carries
-both an HR view and an Engineering view (CSS-driven visibility). The
-BODI flagship is a static system architecture diagram plus a
-copy-rich case-study surface — no runtime animation.
+both an HR view and an Engineering view (CSS-driven visibility).
 
 ## Stack
 
@@ -28,16 +26,19 @@ copy-rich case-study surface — no runtime animation.
 | --------------- | --------------------------------------------------------------------- |
 | Layout shell    | `src/layouts/BaseLayout.astro`                                        |
 | Page            | `src/pages/index.astro` (one page)                                    |
-| Components      | `src/components/*.astro`, `src/components/bodi/BodiFlagship.astro`    |
+| Components      | `src/components/*.astro`                                              |
 | Content         | `src/data/{projects,experience,capabilities,tech-stack,education}.ts` |
 | Shared types    | `src/types/content.ts`                                                |
 | Design tokens   | `src/styles/tokens.css`                                               |
 | Reset & globals | `src/styles/global.css`                                               |
 | Print           | `src/styles/print.css`                                                |
 
-The BODI flagship is a single static Astro component. There is no
-runtime island, no state machine, no controller, no client-side
-script for the flagship. See ADR 0003.
+The portfolio is intentionally flat: no dedicated BODI flagship
+section, no client-side runtime for the BODI diagram, no controller.
+BODI / agent-garden is documented as a regular Selected Work entry
+with its `active-development` status preserved. See ADR 0003 for the
+historical move away from a runtime visualization; the runtime
+visualization itself has been retired entirely.
 
 ## Local setup
 
@@ -78,7 +79,6 @@ the Node 22 LTS provided by Homebrew.
 ## Accessibility
 
 - Skip link, semantic landmarks, focus-visible rings.
-- Static BODI flagship — no animation, no reduced-motion handler needed.
 - Dual rendering of HR / Engineering views in static HTML.
 
 ## Deployment
@@ -113,7 +113,6 @@ See `docs/deployment.md` for the complete pipeline.
 ├── .github/workflows/quality-and-deploy.yml
 ├── docs/
 │   ├── architecture.md
-│   ├── bodi-runtime.md
 │   ├── development.md
 │   ├── deployment.md
 │   └── adr/
@@ -126,8 +125,6 @@ See `docs/deployment.md` for the complete pipeline.
 │   └── pnpm22.sh
 ├── src/
 │   ├── components/
-│   │   └── bodi/
-│   │       └── BodiFlagship.astro
 │   ├── data/
 │   ├── layouts/BaseLayout.astro
 │   ├── pages/index.astro
@@ -141,9 +138,8 @@ See `docs/deployment.md` for the complete pipeline.
 ## License
 
 The portfolio source code is MIT. The authored content (the German +
-English dual-view copy in `src/data/*.ts` and the BODI flagship labels)
-is dual-licensed under MIT + CC BY 4.0 so it can be reused with
-attribution.
+English dual-view copy in `src/data/*.ts`) is dual-licensed under
+MIT + CC BY 4.0 so it can be reused with attribution.
 
 ## Related projects
 

@@ -30,11 +30,11 @@ section "Documentation files exist"
 for f in \
   README.md \
   docs/architecture.md \
-  docs/bodi-runtime.md \
   docs/development.md \
   docs/deployment.md \
   docs/adr/0001-astro-static-architecture.md \
-  docs/adr/0002-bodi-runtime-isolation.md
+  docs/adr/0002-bodi-runtime-isolation.md \
+  docs/adr/0003-bodi-static-architecture.md
 do
   check_file "$f"
 done

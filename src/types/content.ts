@@ -36,9 +36,8 @@ export type ProjectStatus = "active-development" | "live";
 
 /**
  * Project entry — fields mirror the OpenDesign reference's
- * `.work-item` content. The Flagship project (BODI / agent-garden) has
- * `isFlagship: true` and renders without role-line / points / stack-line.
- * Compact entries render with reduced vertical padding.
+ * `.work-item` content. Compact entries render with reduced vertical
+ * padding.
  */
 export interface ProjectEntry {
   id: string;
@@ -67,8 +66,6 @@ export interface ProjectEntry {
   period: { start: IsoDate; end?: IsoDate };
   /** Monospace left-rail label (e.g. "Flagship", "2021-2026", "2026"). */
   index: string;
-  /** True for the flagship project; renders a larger h3. */
-  isFlagship?: boolean;
   /** True for compact entries; reduced padding. */
   compact?: boolean;
   /** Optional case-study link. Reference label is single-language. */

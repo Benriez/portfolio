@@ -27,8 +27,7 @@
   }
 
   .section,
-  .hero,
-  .flagship-section {
+  .hero {
     padding: 18mm 0 0;
     border-top: 1px solid #ddd;
   }
@@ -41,10 +40,7 @@
   .career-item,
   .education-list > div,
   .capability,
-  .case-point,
-  .tech-stack-list > div,
-  .bodi-viz-core,
-  .bodi-point {
+  .tech-stack-list > div {
     break-inside: avoid;
     page-break-inside: avoid;
   }
