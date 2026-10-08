@@ -149,4 +149,59 @@ test.describe("BODI flagship — editorial system map", () => {
     const stages = flagship.locator(".bodi-viz-stage");
     await expect(stages).toHaveCount(5);
   });
+  test("keeps the desktop runtime compact and continuation local", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await page.goto("./?mode=hr#flagship");
+    const viz = page.locator(".bodi-viz");
+    const composition = await viz.boundingBox();
+    const plan = await viz.locator(".bodi-viz-stage--plan").boundingBox();
+    const continuation = await viz.locator(".bodi-viz-stage--continue").boundingBox();
+    const identity = await viz.locator(".bodi-viz-core-head").boundingBox();
+    const cycle = await viz.locator(".bodi-viz-cycle").boundingBox();
+    expect(composition && plan && continuation && identity && cycle).toBeTruthy();
+    if (!composition || !plan || !continuation || !identity || !cycle) return;
+    const runtimeRatio = (continuation.x + continuation.width - plan.x) / composition.width;
+    expect(runtimeRatio).toBeGreaterThanOrEqual(0.65);
+    expect(runtimeRatio).toBeLessThanOrEqual(0.75);
+    expect(composition.height).toBeGreaterThanOrEqual(280);
+    expect(composition.height).toBeLessThanOrEqual(360);
+    expect(Math.abs(identity.x - plan.x)).toBeLessThan(1);
+    expect(Math.abs(cycle.x - continuation.x)).toBeLessThan(1);
+    await expect(viz.locator(".bodi-viz-return")).toHaveCount(0);
+    await expect(viz.locator(".bodi-viz-cycle")).toContainText("Next cycle");
+  });
+
+  test("keeps workflow, recovery, inference, and boundary labels separated", async ({ page }) => {
+    await page.goto("./?mode=engineering#flagship");
+    await page.evaluate(() => document.fonts.ready);
+    const collisions = await page.locator(".bodi-viz").evaluate((viz) => {
+      const labels = viz.querySelectorAll(
+        ".bodi-viz-name, .bodi-viz-recovery p, .bodi-viz-inference span, " +
+          ".bodi-viz-end p, .bodi-viz-durability, .bodi-viz-cycle span",
+      );
+      const boxes = [...labels].map((label) => {
+        const range = document.createRange();
+        range.selectNodeContents(label);
+        return { text: label.textContent?.trim(), rects: [...range.getClientRects()] };
+      });
+      const overlaps: string[] = [];
+      for (let i = 0; i < boxes.length; i++) {
+        for (let j = i + 1; j < boxes.length; j++) {
+          const first = boxes[i]!;
+          const second = boxes[j]!;
+          if (
+            first.rects.some((a) =>
+              second.rects.some(
+                (b) => a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top,
+              ),
+            )
+          )
+            overlaps.push(`${first.text} / ${second.text}`);
+        }
+      }
+      return overlaps;
+    });
+    expect(collisions).toEqual([]);
+    await expect(page.locator(".bodi-viz-retry")).toBeVisible();
+  });
 });

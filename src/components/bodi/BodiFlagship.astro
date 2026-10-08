@@ -63,7 +63,7 @@ const engineeringPoints = [
         </div>
         <svg
           class="bodi-viz-geometry bodi-viz-desktop"
-          viewBox="0 0 1000 360"
+          viewBox="0 0 1000 320"
           preserveAspectRatio="none"
           aria-hidden="true"
         >
@@ -80,24 +80,21 @@ const engineeringPoints = [
               <path d="M1 1 L7 4 L1 7" />
             </marker>
           </defs>
-          <path class="bodi-viz-track" d="M0 160 H970" marker-end="url(#bodi-arrow)" />
-          <path class="bodi-viz-exit" d="M970 160 V228" marker-end="url(#bodi-arrow)" />
-          <path
-            class="bodi-viz-return"
-            d="M840 160 V174 H815 V310 H130 V160 H140"
-            marker-end="url(#bodi-arrow)"
-          />
+          <path class="bodi-viz-boundary" d="M15 135 H150" marker-end="url(#bodi-arrow)" />
+          <path class="bodi-viz-track" d="M160 135 H830" />
+          <path class="bodi-viz-boundary" d="M830 135 H985" marker-end="url(#bodi-arrow)" />
+          <path class="bodi-viz-identity" d="M160 118 V135" />
           <path
             class="bodi-viz-recovery-line"
-            d="M490 160 V174 H475 V244 H300 V160 H310"
+            d="M500 135 V150 H480 V250 Q480 260 470 260 H315 Q305 260 305 250 V153 Q305 135 320 135"
             marker-end="url(#bodi-arrow)"
           />
-          <path class="bodi-viz-feed" d="M320 116 V150" marker-end="url(#bodi-arrow)" />
-          <path class="bodi-viz-state" d="M650 160 H710 M650 167 H710 M650 174 H710" />
-          <circle cx="150" cy="160" r="4" />
-          <circle cx="320" cy="160" r="5" />
-          <path class="bodi-viz-gate" d="M490 152 L498 160 L490 168 L482 160 Z" />
-          <circle cx="840" cy="160" r="4" />
+          <path class="bodi-viz-feed" d="M330 110 V125" marker-end="url(#bodi-arrow)" />
+          <path class="bodi-viz-state" d="M655 135 H705 M655 142 H705 M655 149 H705" />
+          <circle cx="160" cy="135" r="4" />
+          <circle cx="330" cy="135" r="5" />
+          <path class="bodi-viz-gate" d="M500 127 L508 135 L500 143 L492 135 Z" />
+          <circle cx="830" cy="135" r="4" />
         </svg>
         <svg
           class="bodi-viz-geometry bodi-viz-mobile"
@@ -120,11 +117,6 @@ const engineeringPoints = [
           </defs>
           <path class="bodi-viz-track" d="M24 120 V588" marker-end="url(#bodi-arrow-mobile)" />
           <path
-            class="bodi-viz-return"
-            d="M24 482 H318 V150 H34"
-            marker-end="url(#bodi-arrow-mobile)"
-          />
-          <path
             class="bodi-viz-recovery-line"
             d="M24 294 H142 V385 H272 V222 H34"
             marker-end="url(#bodi-arrow-mobile)"
@@ -135,7 +127,7 @@ const engineeringPoints = [
             marker-end="url(#bodi-arrow-mobile)"
           />
           <path class="bodi-viz-state" d="M17 403 H31 M17 410 H31 M17 417 H31" />
-          <circle cx="24" cy="150" r="4" />
+          <circle cx="24" cy="140" r="4" />
           <circle cx="24" cy="222" r="5" />
           <path class="bodi-viz-gate" d="M24 286 L32 294 L24 302 L16 294 Z" />
           <circle cx="24" cy="482" r="4" />
@@ -153,10 +145,13 @@ const engineeringPoints = [
           <p class="bodi-viz-recovery-label">Recovery</p>
           <p class="bodi-viz-retry">Retry / Resume</p>
         </div>
-        <p class="bodi-viz-durability">
-          Persisted state <span>→ continuation</span>
+        <p class="bodi-viz-durability">Persisted state</p>
+        <p class="bodi-viz-cycle">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M18 8 A7 7 0 1 1 6 7 M1 7 H6 V12" />
+          </svg>
+          <span>Next cycle</span>
         </p>
-        <p class="bodi-viz-cycle">Next cycle</p>
         <div class="bodi-viz-inference">
           <span class="bodi-viz-inference-key">Local Inference</span>
           <span class="bodi-viz-inference-names">Ornith · Qwen · Decision</span>
@@ -267,12 +262,14 @@ const engineeringPoints = [
   }
   .bodi-viz-core {
     position: relative;
-    height: 360px;
+    width: min(100%, 1080px);
+    height: 320px;
+    margin-inline: auto;
     color: var(--fg);
   }
   .bodi-viz-core-head {
     position: absolute;
-    left: 15%;
+    left: 16%;
     top: 0;
   }
   .bodi-viz-core-title {
@@ -284,7 +281,7 @@ const engineeringPoints = [
   }
   .bodi-viz-core-eyebrow {
     max-width: 180px;
-    margin: 10px 0 0;
+    margin: 6px 0 0;
     font-family: var(--font-mono);
     font-size: 11px;
     letter-spacing: 0.1em;
@@ -311,8 +308,15 @@ const engineeringPoints = [
   .bodi-viz-geometry .bodi-viz-track {
     stroke: var(--fg);
   }
-  .bodi-viz-geometry .bodi-viz-return {
+  .bodi-viz-geometry .bodi-viz-boundary,
+  .bodi-viz-geometry .bodi-viz-identity {
     stroke: var(--rule);
+  }
+  .bodi-viz-geometry .bodi-viz-track {
+    stroke-width: 1.6;
+  }
+  .bodi-viz-geometry .bodi-viz-feed {
+    stroke-width: 1;
   }
   .bodi-viz-geometry .bodi-viz-recovery-line {
     stroke-dasharray: 4 4;
@@ -322,9 +326,6 @@ const engineeringPoints = [
   }
   .bodi-viz-geometry .bodi-viz-gate {
     fill: var(--surface);
-  }
-  .bodi-viz-exit {
-    display: none;
   }
   .bodi-viz-mobile {
     display: none;
@@ -338,25 +339,25 @@ const engineeringPoints = [
   }
   .bodi-viz-stage {
     position: absolute;
-    top: 180px;
+    top: 155px;
     display: flex;
     flex-direction: column;
     gap: 5px;
   }
   .bodi-viz-stage--plan {
-    left: 15%;
+    left: 16%;
   }
   .bodi-viz-stage--execute {
-    left: 32%;
+    left: 33%;
   }
   .bodi-viz-stage--verify {
-    left: 49%;
+    left: 50%;
   }
   .bodi-viz-stage--persist {
     left: 68%;
   }
   .bodi-viz-stage--continue {
-    left: 84%;
+    left: 83%;
   }
   .bodi-viz-num {
     font-family: var(--font-mono);
@@ -376,13 +377,16 @@ const engineeringPoints = [
     max-width: 145px;
   }
   .bodi-viz-end--input {
-    top: 110px;
+    top: 85px;
     left: 0;
   }
   .bodi-viz-end--output {
-    right: 0;
-    top: 185px;
-    max-width: 110px;
+    right: -60px;
+    top: 91px;
+    max-width: 130px;
+  }
+  .bodi-viz-end--output .bodi-viz-end-list {
+    margin-top: 48px;
   }
   .bodi-viz-end-kicker,
   .bodi-viz-inference-key {
@@ -402,8 +406,8 @@ const engineeringPoints = [
   }
   .bodi-viz-inference {
     position: absolute;
-    left: 32%;
-    top: 68px;
+    left: 33%;
+    top: 65px;
     display: grid;
     gap: 2px;
   }
@@ -414,19 +418,20 @@ const engineeringPoints = [
   }
   .bodi-viz-recovery {
     position: absolute;
-    left: 32%;
-    width: 17%;
-    top: 255px;
-    display: flex;
-    gap: 12px;
-    align-items: baseline;
+    left: 30.5%;
+    width: 17.5%;
+    top: 248px;
+    text-align: center;
     color: var(--accent);
   }
   .bodi-viz-recovery p {
     margin: 0;
   }
   .bodi-viz-recovery-label {
-    font-size: 15px;
+    display: inline-block;
+    padding-inline: 12px;
+    background: var(--surface);
+    font-size: 16px;
     font-weight: 500;
   }
   .bodi-viz-fail,
@@ -438,28 +443,48 @@ const engineeringPoints = [
   }
   .bodi-viz-fail {
     position: absolute;
-    right: 0;
-    top: -32px;
+    left: 100%;
+    top: -31px;
+    padding-left: 12px;
+  }
+  .bodi-viz-recovery .bodi-viz-retry {
+    margin-top: 12px;
   }
   .bodi-viz-durability {
     position: absolute;
     left: 68%;
-    top: 240px;
+    top: 238px;
     margin: 0;
     font-size: 12px;
     color: var(--accent);
   }
-  .bodi-viz-durability span {
-    display: block;
-    margin-top: 4px;
-    color: var(--muted);
-  }
   .bodi-viz-cycle {
     position: absolute;
-    left: 15%;
-    top: 322px;
+    left: 83%;
+    top: 235px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
     margin: 0;
     color: var(--muted);
+  }
+  .bodi-viz-cycle svg {
+    width: 20px;
+    height: 20px;
+    flex: none;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.2;
+  }
+
+  @media (min-width: 561px) and (max-width: 1247px) {
+    .bodi-viz-end--output {
+      right: 0;
+      top: 40px;
+    }
+    .bodi-viz-end--output .bodi-viz-end-list {
+      margin-top: 0;
+    }
   }
 
   .bodi-points {
@@ -565,38 +590,57 @@ const engineeringPoints = [
     border: 0;
   }
 
-  @media (max-width: 900px) {
+  @media (max-width: 1100px) {
+    .bodi-viz-core {
+      height: 345px;
+    }
+    .bodi-viz-desktop {
+      top: 25px;
+      height: 320px;
+    }
+    .bodi-viz-stage {
+      top: 180px;
+    }
+    .bodi-viz-recovery {
+      top: 273px;
+    }
+    .bodi-viz-durability {
+      top: 263px;
+    }
+    .bodi-viz-cycle {
+      top: 260px;
+    }
     .bodi-viz-core-head {
-      left: 0;
+      left: 16%;
     }
     .bodi-viz-core-title {
       font-size: 64px;
     }
     .bodi-viz-core-eyebrow {
-      max-width: 160px;
+      max-width: 130px;
       line-height: 1.5;
     }
     .bodi-viz-end--input {
       top: 116px;
     }
-    .bodi-viz-exit {
-      display: block;
-    }
     .bodi-viz-end--output {
-      top: 240px;
-      max-width: 110px;
+      right: 0;
+      top: 65px;
+      max-width: 120px;
+    }
+    .bodi-viz-end--output .bodi-viz-end-list {
+      margin-top: 0;
     }
     .bodi-viz-inference {
       top: 70px;
-      left: 32%;
+      left: 33%;
     }
     .bodi-viz-name {
       font-size: 17px;
     }
-    .bodi-viz-retry {
-      display: none;
-    }
+  }
 
+  @media (max-width: 900px) {
     .bodi-points {
       grid-template-columns: 1fr;
     }
@@ -609,6 +653,33 @@ const engineeringPoints = [
 
     .bodi-point:last-child {
       border-bottom: 0;
+    }
+  }
+
+  @media (min-width: 561px) and (max-width: 650px) {
+    .bodi-viz-core {
+      height: 353px;
+    }
+    .bodi-viz-desktop {
+      top: 33px;
+    }
+    .bodi-viz-end--input {
+      top: 120px;
+    }
+    .bodi-viz-stage {
+      top: 188px;
+    }
+    .bodi-viz-recovery {
+      top: 281px;
+    }
+    .bodi-viz-durability {
+      top: 271px;
+    }
+    .bodi-viz-cycle {
+      top: 268px;
+    }
+    .bodi-viz-core-eyebrow {
+      max-width: 90px;
     }
   }
 
@@ -660,7 +731,7 @@ const engineeringPoints = [
       transform: translateY(-50%);
     }
     .bodi-viz-stage--plan {
-      top: 150px;
+      top: 140px;
     }
     .bodi-viz-stage--execute {
       top: 222px;
@@ -696,9 +767,17 @@ const engineeringPoints = [
       top: 314px;
       display: grid;
       gap: 5px;
+      text-align: left;
+    }
+    .bodi-viz-recovery-label {
+      padding: 0;
+    }
+    .bodi-viz-recovery .bodi-viz-retry {
+      margin: 0;
     }
     .bodi-viz-fail {
       position: static;
+      padding: 0;
     }
     .bodi-viz-retry {
       display: block;
@@ -708,17 +787,12 @@ const engineeringPoints = [
       top: 435px;
       font-size: 11px;
     }
-    .bodi-viz-durability span {
-      display: inline;
-      margin-left: 6px;
-    }
     .bodi-viz-cycle {
-      left: auto;
-      right: 0;
-      top: 525px;
-      background: var(--surface);
-      padding: 4px;
-      writing-mode: vertical-rl;
+      left: 14%;
+      top: 512px;
+    }
+    .bodi-viz-end--output .bodi-viz-end-list {
+      margin-top: 0;
     }
     .bodi-viz-end--output {
       left: 14%;
