@@ -48,13 +48,14 @@ const Fahrschule360: ProjectEntry = {
     engineering: "B2B-VR-Trainingsplattform für Fahrschulen",
   },
   lead: {
-    hr: "Mitentwicklung und langfristige Betreuung einer produktiven Plattform, die VR-Headsets, Backend, Windows-Teacher-App und automatisierte Medienverarbeitung zu einem gemeinsamen Trainingssystem verbindet.",
+    hr: "Mitentwicklung und langfristige Verantwortung für Entwicklung und Betrieb einer selbst gehosteten Server-Infrastruktur für das produktive B2B-VR-Trainingssystem, das VR-Headsets, Backend, Windows-Teacher-App und automatisierte Medienverarbeitung zu einem gemeinsamen Trainingssystem verbindet.",
     engineering:
-      "Backend-, Integrations-, Betriebs- und Geräte-Lifecycle-Verantwortung in einem produktiven Django-/VR-System mit Multi-Tenant-Struktur, containerisierter GPU-/Media-Pipeline und eigener Job-Orchestrierung.",
+      "Backend-, Integrations-, Infrastruktur-, Betriebs- und Geräte-Lifecycle-Verantwortung in einem produktiven Django-/VR-System mit Multi-Tenant-Struktur, selbst betriebener Multi-Server-Infrastruktur, containerisierter GPU-/Media-Pipeline und eigener Job-Orchestrierung.",
   },
   roleLine:
-    "Zwei-Personen-Entwicklerteam · vom Einstieg als Werkstudent über Full-Stack-Entwicklung bis zur selbstständigen Weiterbetreuung · langfristige Backend-, Integrations-, Geräte-Lifecycle- und Betriebsverantwortung",
+    "Zwei-Personen-Entwicklerteam · vom Einstieg als Werkstudent über Full-Stack-Entwicklung bis zur selbstständigen Weiterbetreuung · langfristige Backend-, Integrations-, Infrastruktur-, Geräte-Lifecycle- und Betriebsverantwortung",
   pointsHr: [
+    "Langjährige Verantwortung für Entwicklung und Betrieb einer selbst gehosteten Server-Infrastruktur für das produktive System.",
     "Produktives B2B-System für Fahrschulen mit Backend, VR-Brillen, Teacher App und automatisierter Medienverarbeitung.",
     "Integration von VR-/Teacher-App-Workflows, Geräte-Lifecycle, GPU-Pipeline und Kundeneinsatz.",
     "Provisionierung, Messeauftritte und Live-Demonstrationen im realen Produkteinsatz.",
@@ -64,7 +65,8 @@ const Fahrschule360: ProjectEntry = {
     "WebRTC-Synchronisierung zwischen Pico-G2-VR-Brille und Windows Teacher App inklusive Geräte- und Session-Integration.",
     "Containerisierte GPU-/Media-Pipeline mit Docker API, Topaz Video AI und FFmpeg/ffprobe für automatisierte HLS-/WebM-Ausgabe.",
     "Eigene Job-Orchestrierung mit UUID-basiertem Job-State, Worker-Lifecycle, Preflight, Exit-/Log-Auswertung, kontrolliertem Cleanup und CPU-Fallback.",
-    "OTA, Staged Rollouts, Hotfix-Pfade, CapRover, S3-kompatibler Object Storage und produktive Runtime-Härtung (Health Checks, Log-Tail, Container-Inspektion).",
+    "Langjähriger Betrieb einer selbst gehosteten Multi-Server-Infrastruktur mit CapRover für Deployment, Service-Betrieb und produktive Wartung über die Projektlaufzeit.",
+    "OTA, Staged Rollouts, Hotfix-Pfade, S3-kompatibler Object Storage, Health Checks, Log-Tail, Container-Inspektion und produktive Runtime-Härtung.",
   ],
   stack: [
     "Python",
@@ -78,9 +80,11 @@ const Fahrschule360: ProjectEntry = {
     "NVIDIA GPU",
     "Windows",
     "Pico G2",
+    "Linux",
+    "Self-hosted Infrastructure",
   ],
   integration: [
-    "VR Hardware ↔ Windows Teacher App ↔ Django Backend ↔ WebRTC / APIs ↔ Docker / GPU Processing ↔ Deployment · Device Lifecycle",
+    "VR Hardware ↔ Windows Teacher App ↔ Django Backend ↔ WebRTC / APIs ↔ Docker / GPU Processing ↔ Self-hosted Infrastructure / CapRover ↔ Deployment · Device Lifecycle",
   ],
   status: "live",
   period: { start: "2020", end: "2026" },

@@ -108,4 +108,28 @@ describe("Public content data", () => {
       expect(meta.engineering.includes(label)).toBe(false);
     }
   });
+
+  it("Fahrschule360 surfaces self-hosted infrastructure ownership in Engineering mode", () => {
+    const f360 = projects.find((p) => p.id === "fahrschule360");
+    expect(f360, "Fahrschule360 project entry must exist").toBeDefined();
+    const text = `${f360!.lead.engineering} ${f360!.roleLine} ${(f360!.pointsEngineering ?? []).join(" ")} ${(f360!.stack ?? []).join(" ")} ${(f360!.integration ?? []).join(" ")}`;
+    // Self-hosted production infrastructure is the key signal.
+    expect(text).toMatch(/selbst (gehostet|betrieben)|Self-hosted/i);
+    // CapRover is named explicitly as the deployment/orchestration tool.
+    expect(text).toMatch(/CapRover/);
+    // Multi-server / long-term operational responsibility.
+    expect(text).toMatch(/Multi-Server|Infrastruktur|Betrieb|Wartung/i);
+    // No claim of cloud-managed hyperscaler / Kubernetes / HA cluster.
+    for (const overclaim of [
+      /Kubernetes/i,
+      /hyperscale/i,
+      /\bHA[- ]cluster\b/i,
+      /zero[- ]downtime/i,
+      /autoscal/i,
+      /24\/7 NOC/i,
+      /\bSRE team\b/i,
+    ]) {
+      expect(text, `unsupported overclaim: ${overclaim}`).not.toMatch(overclaim);
+    }
+  });
 });
