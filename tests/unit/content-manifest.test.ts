@@ -42,14 +42,14 @@ const REFERENCE_EDUCATION_TITLES = [
 // Each capability carries both HR and Engineering variants.
 const REFERENCE_CAPABILITY_HEADINGS = {
   hr: [
-    "AI &amp; Automation",
-    "Software &amp; Systems Engineering",
-    "Production &amp; Operations",
+    "AI & Automation",
+    "Software & Systems Engineering",
+    "Production & Operations",
     "Technical Product Management",
   ],
   engineering: [
-    "AI &amp; Agent Systems",
-    "Full-Stack &amp; Systems Integration",
+    "AI & Agent Systems",
+    "Full-Stack & Systems Integration",
     "Production Engineering",
     "Product Engineering",
   ],

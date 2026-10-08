@@ -22,8 +22,8 @@ const Flagship: ProjectEntry = {
     engineering: "Self-hosted AI Operator Platform · seit 2026",
   },
   sub: {
-    hr: "AI Operator Runtime &amp; Inference Platform",
-    engineering: "AI Operator Runtime &amp; Inference Platform",
+    hr: "AI Operator Runtime & Inference Platform",
+    engineering: "AI Operator Runtime & Inference Platform",
   },
   lead: {
     hr: "BODI verbindet langlebige KI-Workflows mit selbst betriebener AI-Infrastruktur. Aufgaben werden als persistente Abläufe ausgeführt, Zustand und Kontext bleiben erhalten und lokale KI-Modelle werden über eine gemeinsame Produktionsschnittstelle kontrolliert bereitgestellt.",
@@ -84,6 +84,9 @@ const Fahrschule360: ProjectEntry = {
     "Windows",
     "Pico G2",
   ],
+  integration: [
+    "VR Hardware ↔ Windows Teacher App ↔ Django Backend ↔ WebRTC / APIs ↔ Docker / GPU Processing ↔ Deployment · Device Lifecycle",
+  ],
   status: "live",
   period: { start: "2020", end: "2026" },
 };
@@ -97,8 +100,8 @@ const ShoppingPong: ProjectEntry = {
     engineering: "2026 · Zwei-Personen-Team",
   },
   sub: {
-    hr: "Automatisierte Laden- &amp; Spielinfrastruktur",
-    engineering: "Automatisierte Laden- &amp; Spielinfrastruktur",
+    hr: "Automatisierte Laden- & Spielinfrastruktur",
+    engineering: "Automatisierte Laden- & Spielinfrastruktur",
   },
   lead: {
     hr: "Gemeinsame Konzeption, Aufbau, Inbetriebnahme und Betrieb einer automatisierten Tischtennis-Location von Online-Buchung und Payment bis Zutritt, Netzwerk und lokaler Spielsteuerung.",
@@ -129,6 +132,7 @@ const ShoppingPong: ProjectEntry = {
     "CapRover",
     "Playwright",
   ],
+  integration: ["Web / Payment ↔ Netzwerk ↔ Raspberry Pi ↔ ESP32 / Smart Home ↔ Android Kiosk"],
   status: "live",
   period: { start: "2026" },
 };
@@ -137,10 +141,7 @@ const ProductionWebPlatform: ProjectEntry = {
   id: "production-web-platform",
   index: "2025–2026",
   title: "Production Web Platform Migration",
-  meta: {
-    hr: "2025–2026 · CMS-, Deployment- und Go-Live-Migration",
-    engineering: "Production migration with CI/CD, OAuth and controlled cutover",
-  },
+  meta: { hr: "", engineering: "" },
   sub: {
     hr: "CMS-, Deployment- und Go-Live-Migration",
     engineering: "Production migration with CI/CD, OAuth and controlled cutover",
@@ -167,10 +168,7 @@ const OdooAddonSuite: ProjectEntry = {
   id: "odoo-addon-suite",
   index: "2026",
   title: "Odoo Add-on Suite",
-  meta: {
-    hr: "2026 · ERP-Erweiterung für Geschäftsprozesse",
-    engineering: "2026 · Odoo-19-Suite mit 16 verzahnten Modulen",
-  },
+  meta: { hr: "", engineering: "" },
   sub: {
     hr: "ERP-Erweiterung für Geschäftsprozesse",
     engineering: "Odoo-19-Suite mit 16 verzahnten Modulen",

@@ -26,8 +26,8 @@ const REFERENCE: ReadonlyArray<ReferenceCapability> = [
     id: "ai-automation",
     number: "01",
     heading: {
-      hr: "AI &amp; Automation",
-      engineering: "AI &amp; Agent Systems",
+      hr: "AI & Automation",
+      engineering: "AI & Agent Systems",
     },
     body: {
       hr: "Agentische Workflows · lokale KI-Infrastruktur · zuverlässige Ausführung · Memory · LLM Integration · Production Reliability",
@@ -39,8 +39,8 @@ const REFERENCE: ReadonlyArray<ReferenceCapability> = [
     id: "software-systems-engineering",
     number: "02",
     heading: {
-      hr: "Software &amp; Systems Engineering",
-      engineering: "Full-Stack &amp; Systems Integration",
+      hr: "Software & Systems Engineering",
+      engineering: "Full-Stack & Systems Integration",
     },
     body: {
       hr: "TypeScript · Angular · Node.js / Express · Python · Django / DRF · APIs · Authentication · WebSockets · Systems Integration · Device Integration",
@@ -52,13 +52,13 @@ const REFERENCE: ReadonlyArray<ReferenceCapability> = [
     id: "production-operations",
     number: "03",
     heading: {
-      hr: "Production &amp; Operations",
+      hr: "Production & Operations",
       engineering: "Production Engineering",
     },
     body: {
-      hr: "Docker · CapRover · Linux · Windows Server / RDS · CI/CD · Identity &amp; Access · Production Debugging · Root-Cause Analysis · Reliability Engineering",
+      hr: "Docker · CapRover · Linux · Windows Server / RDS · CI/CD · Identity & Access · Production Debugging · Root-Cause Analysis · Reliability Engineering",
       engineering:
-        "Docker · CapRover · Linux · Windows Server / RDS · CI/CD · Identity &amp; Access · Production Debugging · Root-Cause Analysis · Reliability Engineering",
+        "Docker · CapRover · Linux · Windows Server / RDS · CI/CD · Identity & Access · Production Debugging · Root-Cause Analysis · Reliability Engineering",
     },
   },
   {

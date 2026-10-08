@@ -16,7 +16,7 @@ import { referenceEducation } from "~/data/education";
       <dt>
         <h3>{entry.degree.hr}</h3>
       </dt>
-      <dd class="education-institution">{entry.institution.hr}</dd>
+      {entry.institution.hr && <dd class="education-institution">{entry.institution.hr}</dd>}
       {entry.periodLines.map((line) => (
         <dd class="education-period">{line}</dd>
       ))}

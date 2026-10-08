@@ -47,8 +47,8 @@ const REFERENCE: ReadonlyArray<ReferenceEducation> = [
   {
     id: "fos-maschinenbau",
     institution: {
-      hr: "Fachoberschule",
-      engineering: "Vocational college",
+      hr: "",
+      engineering: "",
     },
     degree: {
       hr: "Fachoberschule Maschinenbau",

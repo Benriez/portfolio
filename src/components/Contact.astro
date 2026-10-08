@@ -35,7 +35,7 @@ const visible = items.filter((item) => item.visible);
     <div class="contact-actions">
       {visible.map((item) => (
         <a href={item.href} rel="noopener">
-          {item.href.replace(/^mailto:|^tel:|^https?:\/\//, "")}
+          {item.href.replace(/^(?:mailto|tel|https?):(?:\/\/)?(?:www\.)?/, "")}
         </a>
       ))}
       <button type="button" data-print>

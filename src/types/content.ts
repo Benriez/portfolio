@@ -60,6 +60,8 @@ export interface ProjectEntry {
   pointsEngineering?: string[];
   /** Stack line tokens, joined with " · ". */
   stack: string[];
+  /** Optional integration line, joined with " · ". */
+  integration?: string[];
   /** Public project maturity/status. */
   status: ProjectStatus;
   period: { start: IsoDate; end?: IsoDate };
