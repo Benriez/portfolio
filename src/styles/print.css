@@ -43,13 +43,8 @@
   .capability,
   .case-point,
   .tech-stack-list > div,
-  .bodi-evidence,
-  .bodi-replay,
-  .bodi-engineering-ownership,
-  .bodi-reliability-engineering,
-  .bodi-failure-model,
-  .bodi-extra,
-  .bodi-provenance {
+  .bodi-viz-core,
+  .bodi-point {
     break-inside: avoid;
     page-break-inside: avoid;
   }

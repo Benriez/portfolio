@@ -2,412 +2,205 @@
 /**
  * BodiFlagship
  *
- * Static BODI system architecture diagram, mirroring the OpenDesign
- * reference's `.flagship-section` exactly:
+ * Editorial system visualization for the BODI / agent-garden flagship.
  *
- *   .bodi-wrap             → eyebrow + h2 + intro + .bodi-map-stage
- *     ├─ .bodi-node--input    (01 · Eingabe)
- *     ├─ .bodi-arrow          →
- *     ├─ .bodi-node--core     (02 · System)   + state line + 4 stages
- *     ├─ .bodi-arrow          →
- *     ├─ .bodi-node--output   (03 · Ergebnis)
- *     ├─ .bodi-arrow--down    ↓
- *     └─ .bodi-node--models   (04 · Lokale KI-Infrastruktur)
- *     + recovery SVG curve + ↻ RECOVERY & FORTSETZUNG label
+ * One wide composition:
  *
- *   .case-grid (3-column)             → 01 Problem / 02 System / 03 Reliability
- *   .bodi-engineering-ownership       → Engineering Ownership copy
- *   .bodi-reliability-engineering     → Reliability Engineering copy + failure model
- *   .bodi-extra
- *     ├─ .bodi-evidence               → 04 Production Evidence (key/value + provenance chain)
- *     └─ .bodi-incidents
- *         ├─ .bodi-replay             → Queue Replay / Production Fix (Reproduce → Regression → Fix → Release → Production verification)
- *         └─ .bodi-replay--dispatch   → Durable Dispatch / Recovery (Identify → Harden → Verify)
+ *   TASK  →  BODI — AI OPERATOR RUNTIME  →  VERIFIED RESULT
  *
- * No runtime animation, no controller, no state machine. The visualization
- * is the static architecture plus a copy-rich case-study surface.
+ * Inside BODI:
+ *   01 PLAN  →  02 EXECUTE  →  03 VERIFY  →  04 PERSIST  →  05 CONTINUE
+ *                                  ↓
+ *                              ↻ RECOVERY  (returns to EXECUTE)
+ *
+ *   LOCAL INFERENCE
+ *   ORNITH · QWEN · DECISION
+ *
+ * Below the visualization: three short engineering points (durable
+ * execution / recovery & verification / local AI infrastructure), one
+ * compact role line, and an optional compact evidence strip.
+ *
+ * The component is fully static. No runtime animation, no controller,
+ * no state machine.
  */
-const input = {
-  eyebrow: "01 · Eingabe",
-  title: "Aufgabe & Kontext",
-  lines: ["Ziele & Anforderungen", "Projekt & Code", "Workflow-Zustand", "Agents / Sessions"],
-} as const;
 
-const coreStages = {
-  hr: [
-    {
-      num: "1",
-      name: "Workflow Engine",
-      sub: "Zustand · Steuerung · Fortsetzung",
-    },
-    {
-      num: "2",
-      name: "AI-Ausführung",
-      sub: "Planen · Ausführen · Koordinieren",
-    },
-    {
-      num: "3",
-      name: "Prüfung",
-      sub: "Lokale Modelle · Evals · Sicherheit",
-    },
-    {
-      num: "4",
-      name: "Verifikation",
-      sub: "Tests · Logs · Artefakte",
-    },
-  ],
-  engineering: [
-    {
-      num: "1",
-      name: "Durable Execution Graph",
-      sub: "persistent execution state",
-    },
-    {
-      num: "2",
-      name: "S0 / S1 Execution",
-      sub: "Session & Model Authority",
-    },
-    {
-      num: "3",
-      name: "Delivery Safety",
-      sub: "idempotency · recovery fencing",
-    },
-    {
-      num: "4",
-      name: "Verification",
-      sub: "closure · provenance",
-    },
-  ],
-} as const;
-
-const output = {
-  eyebrow: "03 · Ergebnis",
-  title: "Aufgabe erfüllt",
-  lines: ["Artefakte", "Geprüft", "Provenance"],
-} as const;
-
-const models = {
-  eyebrow: "04 · Lokale KI-Infrastruktur",
-  title: "Lokale Modelle",
-  entries: [
-    { name: "Ornith", role: "Code & Engineering" },
-    { name: "Qwen", role: "Reasoning & Analyse" },
-    { name: "Decision", role: "Steuerung & Planung" },
-  ],
-} as const;
-const bodiIntroHr =
+const intro =
   "BODI ist eine selbst betriebene AI Operator Platform für langlebige, zustandsbehaftete KI-Workflows mit Recovery, lokalen Modellen und nachvollziehbarer Verifikation.";
-const bodiIntroEngineering =
-  "BODI orchestriert Durable Agent Execution auf einer selbst betriebenen Inference-Infrastruktur. Persistente Execution Graphs, session- und modellbezogene Authority, Delivery Safety mit Idempotency, kontrollierte Verifikation und Provenance verbinden Engineering- und Production-Ownership.";
-const bodiDiagramSr =
-  "BODI ist eine AI Operator Platform. Eingaben sind Aufgaben, Projektkontext, Workflow-Zustand und Agent-Sessions. BODI orchestriert einen Workflow Engine mit persistenter Zustandsmaschine, AI-Ausführung, Modell-Prüfung und Verifikation. BODI ruft lokale KI-Modelle (Ornith, Qwen) und Decision-Komponenten über einen Inference Gateway auf. Die Modelle sind eine eigene Infrastruktur-Schicht. Ausgaben umfassen abgeschlossene Aufgaben, geprüfte Artefakte, Recovery bei Störung und nachvollziehbare Provenance.";
-const hr_only =
-  "Längere KI-Workflows scheitern nicht nur an der Qualität eines Modells. Zustand kann verloren gehen, Ausführungen können abbrechen und mehrere Modellanfragen können sich gegenseitig blockieren oder unkontrolliert Ressourcen verbrauchen. Auch Modell-Runtimes selbst können unter Last unzuverlässig reagieren.";
-const engineering_only =
-  "Long-running agent execution introduces failure modes across workflow state, context continuity, interrupted turns, concurrent inference, retries, scheduler contention between multiple self-hosted models, model-worker instability and runtime provenance. Self-hosted LLMs are not a managed service — the platform has to enforce the reliability boundaries that a hosted provider would otherwise guarantee.";
-const reliabilityHr =
-  "BODI behandelt Workflow-Steuerung und KI-Infrastruktur als gemeinsames System. Aufgaben werden persistent geplant und ausgeführt, während eine zentrale API den Zugriff auf lokal betriebene Modelle kontrolliert.";
-const reliabilityEngineering =
-  "Durable Execution Graphs, Message- und Memory-Gates, Managed OpenCode Execution und ein OpenAI-kompatibler Inference Gateway bilden eine gemeinsame Runtime. Der Gateway authentifiziert und trennt Tenants, plant Modellzugriffe über eine Queue mit reproduzierbarem Replay-Verhalten und ordnet Anfragen Worker-Slots auf `gpu0` unter `exclusive_model`-Ownership zu — Ornith und Qwen sind die aktuellen self-hosted Modelle, jeweils mit zwei Inference-Slots. Die Worker bleiben intern und werden nicht als öffentliche OpenCode-Provider exponiert.";
-const engineeringOwnershipHr =
-  "Zustand wird gespeichert, Fehlerpfade werden kontrolliert behandelt und Modellzugriffe zentral abgesichert. Änderungen werden mit Tests, Runtime-Prüfungen und nachvollziehbarer Produktions-Provenienz abgenommen.";
-const engineeringOwnershipEngineering =
-  "Persisted workflow state, bounded recovery, tenant-isolated API access, localhost-only model workers, scheduler-controlled concurrency, queue replay, regression testing and immutable release provenance create explicit reliability boundaries from source code to production runtime.";
-const reliabilityEngineeringBlockHr =
-  "Konzeption und technische Verantwortung für persistente KI-Workflows, Recovery-Pfade, Runtime-Betrieb und die Absicherung produktiver Änderungen durch Tests und Produktionsnachweise.";
-const reliabilityEngineeringBlockEngineering =
-  "Architecture and implementation ownership across the Durable Execution Graph, cross-host execution, session and model authority, recovery semantics, deployment provenance, deterministic failure reproduction and production acceptance gates — designed, implemented, and operated rather than only reviewed.";
-const queueReplayHr =
-  "BODI wird nicht nur gegen den Normalfall entwickelt. Zustandsverlust, doppelte Ausführung, unklare Zustellung, fehlerhafte Wiederaufnahme und Runtime-Abweichungen werden als eigene Systemzustände behandelt und technisch abgesichert.";
-const queueReplayEngineering =
-  "Durable dispatch identity · idempotency · ambiguous-delivery reconciliation · stale-result fencing · session and model authority · restart-safe recovery · source-to-runtime provenance. The system is engineered around the failure modes that would otherwise break a long-running AI workflow.";
-const bodi_evidence_note =
-  "Production work is accepted against runtime evidence, not only source-level tests.";
-const durableDispatchHr =
-  "Ein Fehler im Zusammenspiel gleichzeitig angefragter KI-Modelle wurde reproduzierbar gemacht, durch automatisierte Tests abgesichert und anschließend unter realen Produktionsbedingungen verifiziert.";
-const durableDispatchEngineering =
-  "A mixed-model queue replay defect was reproduced deterministically, covered by regression tests, fixed in the Gateway, shipped in an immutable release and verified against real concurrent queued production requests — both queued model requests completed with HTTP 200 after the fix (HTTP 400 missing-or-invalid-model pre-fix).";
-const dispatchReplayHr =
-  "Bei mehrdeutigen Zustellungsfehlern wurde verhindert, dass KI-Aufgaben unkontrolliert erneut ausgeführt werden. Zustellung, Wiederaufnahme und Ergebnisannahme wurden dafür mit persistenten Identitäten und eindeutigen Recovery-Regeln abgesichert.";
-const dispatchReplayEngineering =
-  "Ambiguous 204/429/502 delivery states exposed duplicate-dispatch risk. The dispatch path was redesigned around business-dispatch identity, durable idempotency, sticky UNKNOWN semantics and stale-result fencing before recovery or redispatch is allowed — production-runtime acceptance in progress.";
-const failureModelText =
-  "duplicate dispatch · ambiguous delivery · stale result · runtime drift · model drift · interrupted execution · restart recovery";
+const introEngineering =
+  "BODI orchestriert Durable Agent Execution auf selbst betriebener Inference. Persistente Workflow-Zustände, bounded Recovery, Verifikation und Provenance verbinden Engineering- und Production-Ownership.";
+
+const vizSrDescription =
+  "BODI ist eine AI Operator Platform. Eine Aufgabe mit Projektkontext und Workflow-Zustand tritt ein. BODI durchläuft Plan, Execute, Verify, Persist und Continue. Bei einem Verify-Fehler greift eine bounded Recovery, die zurück in die Ausführung führt. Lokale Modelle (Ornith, Qwen, Decision) sind die kontrollierte Inference-Schicht. Das Ergebnis ist ein verifizierter Artefaktstand mit Provenance.";
+
+const stages = [
+  { num: "01", name: "Plan" },
+  { num: "02", name: "Execute" },
+  { num: "03", name: "Verify" },
+  { num: "04", name: "Persist" },
+  { num: "05", name: "Continue" },
+] as const;
+
+const engineeringPoints = [
+  {
+    num: "01",
+    title: "Durable Execution",
+    body: "Persistente Workflow-Zustände und kontrollierte Fortsetzung über Turns, Neustarts und Unterbrechungen hinweg — Ausführung als zustandsbehafteter Prozess, nicht als einzelne Anfrage.",
+  },
+  {
+    num: "02",
+    title: "Recovery & Verification",
+    body: "Verifikation gegen stale und fehlerhafte Zustände, bounded Recovery und kontrollierte Wiederaufnahme — Störungen werden als eigene Systemzustände behandelt, nicht als Sonderfall.",
+  },
+  {
+    num: "03",
+    title: "Local AI Infrastructure",
+    body: "Koordinierte, selbst betriebene Modell-Runtimes als gemeinsam kontrollierte Inference-Schicht innerhalb desselben Systems — keine externen Provider als versteckte Abhängigkeit.",
+  },
+] as const;
 ---
 
 <section class="section flagship-section" id="flagship">
-  <div class="bodi-wrap">
+  <div class="bodi-wrap container">
     <p class="eyebrow">Flagship Engineering System</p>
     <h2>agent-garden / BODI</h2>
-    <p class="bodi-intro hr-only">{bodiIntroHr}</p>
-    <p class="bodi-intro engineering-only">{bodiIntroEngineering}</p>
 
-    <div class="bodi-map" aria-label="BODI System-Architektur">
-      <p class="sr-only">{bodiDiagramSr}</p>
+    <p class="bodi-status" aria-label="Projektstatus">
+      <span class="bodi-status-dot" aria-hidden="true"></span>
+      <span>In aktiver Entwicklung</span>
+    </p>
 
-      <div class="bodi-map-stage">
-        <div class="bodi-node bodi-node--input">
-          <p class="bodi-node-eyebrow">{input.eyebrow}</p>
-          <p class="bodi-node-title">{input.title}</p>
-          <ul class="bodi-node-lines">
-            {input.lines.map((line) => (
-              <li>{line}</li>
-            ))}
-          </ul>
+    <p class="bodi-intro hr-only">{intro}</p>
+    <p class="bodi-intro engineering-only">{introEngineering}</p>
+
+    <div class="bodi-viz" aria-label="BODI System-Visualisierung">
+      <p class="sr-only">{vizSrDescription}</p>
+
+      <div class="bodi-viz-row">
+        <div class="bodi-viz-end bodi-viz-end--input">
+          <p class="bodi-viz-end-kicker">Task</p>
+          <p class="bodi-viz-end-title">Aufgabe &amp; Kontext</p>
         </div>
 
-        <svg class="bodi-arrow" viewBox="0 0 80 40" preserveAspectRatio="none" aria-hidden="true">
-          <path d="M0 20 L70 20" class="bodi-line"></path>
-          <path d="M64 14 L78 20 L64 26" class="bodi-arrowhead"></path>
+        <svg
+          class="bodi-viz-arrow"
+          viewBox="0 0 40 16"
+          preserveAspectRatio="none"
+          aria-hidden="true"
+        >
+          <path d="M0 8 L34 8" class="bodi-viz-line"></path>
+          <path d="M30 4 L38 8 L30 12" class="bodi-viz-arrowhead"></path>
         </svg>
 
-        <div class="bodi-node bodi-node--core">
-          <p class="bodi-node-eyebrow">02 · System</p>
-          <p class="bodi-node-title">BODI</p>
-          <p class="bodi-node-sub">AI Operator Platform</p>
-          <p class="bodi-node-state">
+        <div class="bodi-viz-core" aria-label="BODI Ausführungs-Loop">
+          <div class="bodi-viz-core-head">
+            <p class="bodi-viz-core-eyebrow">AI Operator Runtime</p>
+            <p class="bodi-viz-core-title">BODI</p>
+          </div>
+
+          <div class="bodi-viz-flow">
+            <ol class="bodi-viz-stages" aria-label="BODI-Ausführung">
+              {stages.map((stage) => (
+                <li class="bodi-viz-stage">
+                  <span class="bodi-viz-num">{stage.num}</span>
+                  <span class="bodi-viz-name">{stage.name}</span>
+                </li>
+              ))}
+            </ol>
+
             <svg
-              class="bodi-state-line"
-              viewBox="0 0 320 16"
+              class="bodi-viz-recovery"
+              viewBox="0 0 400 56"
               preserveAspectRatio="none"
               aria-hidden="true"
             >
-              <path d="M10 8 L40 8" class="bodi-state-seg"></path>
-              <path d="M40 8 L80 8" class="bodi-state-seg"></path>
-              <path d="M80 8 L130 8" class="bodi-state-seg"></path>
-              <path d="M130 8 L190 8" class="bodi-state-seg"></path>
-              <path d="M190 8 L260 8" class="bodi-state-seg"></path>
-              <path d="M260 8 L310 8" class="bodi-state-seg"></path>
-              <circle cx="10" cy="8" r="4" class="bodi-state-dot"></circle>
-              <circle cx="80" cy="8" r="4" class="bodi-state-dot"></circle>
-              <circle cx="190" cy="8" r="4" class="bodi-state-dot"></circle>
-              <circle cx="310" cy="8" r="4" class="bodi-state-dot"></circle>
+              <path d="M260 52 C 260 12, 140 12, 140 52" class="bodi-viz-recovery-line"></path>
+              <path d="M134 48 L140 60 L146 48" class="bodi-viz-recovery-arrow"></path>
             </svg>
-            <span class="bodi-node-state-label">Persistenter Workflow-Zustand</span>
-          </p>
-          <ol class="bodi-stages" aria-label="BODI-Ausführung">
-            {coreStages.hr.map((stage) => (
-              <li class="hr-only">
-                <span class="bodi-stage-num">{stage.num}</span>
-                <span class="bodi-stage-name">{stage.name}</span>
-                <span class="bodi-stage-sub">{stage.sub}</span>
-              </li>
-            ))}
-            {coreStages.engineering.map((stage) => (
-              <li class="engineering-only">
-                <span class="bodi-stage-num">{stage.num}</span>
-                <span class="bodi-stage-name">{stage.name}</span>
-                <span class="bodi-stage-sub">{stage.sub}</span>
-              </li>
-            ))}
-          </ol>
-        </div>
+            <p class="bodi-viz-recovery-label">
+              <span aria-hidden="true">↻</span> Recovery
+            </p>
+          </div>
 
-        <svg class="bodi-arrow" viewBox="0 0 80 40" preserveAspectRatio="none" aria-hidden="true">
-          <path d="M0 20 L70 20" class="bodi-line"></path>
-          <path d="M64 14 L78 20 L64 26" class="bodi-arrowhead"></path>
-        </svg>
-
-        <div class="bodi-node bodi-node--output">
-          <p class="bodi-node-eyebrow">{output.eyebrow}</p>
-          <p class="bodi-node-title">{output.title}</p>
-          <ul class="bodi-node-lines bodi-node-lines--results">
-            {output.lines.map((line) => (
-              <li>
-                <span class="bodi-check" aria-hidden="true">
-                  ✓
-                </span>
-                {line}
-              </li>
-            ))}
-          </ul>
+          <div class="bodi-viz-inference">
+            <span class="bodi-viz-inference-key">Local Inference</span>
+            <span class="bodi-viz-inference-names">Ornith · Qwen · Decision</span>
+          </div>
         </div>
 
         <svg
-          class="bodi-arrow bodi-arrow--down"
-          viewBox="0 0 40 80"
+          class="bodi-viz-arrow"
+          viewBox="0 0 40 16"
           preserveAspectRatio="none"
           aria-hidden="true"
         >
-          <path d="M20 0 L20 60" class="bodi-line"></path>
-          <path d="M14 56 L20 76 L26 56" class="bodi-arrowhead"></path>
+          <path d="M0 8 L34 8" class="bodi-viz-line"></path>
+          <path d="M30 4 L38 8 L30 12" class="bodi-viz-arrowhead"></path>
         </svg>
 
-        <div class="bodi-node bodi-node--models">
-          <p class="bodi-node-eyebrow">{models.eyebrow}</p>
-          <p class="bodi-node-title">{models.title}</p>
-          <ul class="bodi-node-lines bodi-node-lines--models">
-            {models.entries.map((entry) => (
-              <li>
-                <span class="bodi-model-name">{entry.name}</span>
-                <span class="bodi-model-role">{entry.role}</span>
-              </li>
-            ))}
+        <div class="bodi-viz-end bodi-viz-end--output">
+          <p class="bodi-viz-end-kicker">Verified Result</p>
+          <ul class="bodi-viz-end-list">
+            <li>
+              <span class="bodi-viz-check" aria-hidden="true">
+                ✓
+              </span>
+              <span>artifacts</span>
+            </li>
+            <li>
+              <span class="bodi-viz-check" aria-hidden="true">
+                ✓
+              </span>
+              <span>verification</span>
+            </li>
+            <li>
+              <span class="bodi-viz-check" aria-hidden="true">
+                ✓
+              </span>
+              <span>provenance</span>
+            </li>
           </ul>
-          <p class="bodi-node-foot">lokal betrieben · privat · kontrolliert</p>
         </div>
-
-        <svg
-          class="bodi-recovery"
-          viewBox="0 0 1200 120"
-          preserveAspectRatio="none"
-          aria-hidden="true"
-        >
-          <path d="M1080 100 C 1080 60, 600 60, 600 20" class="bodi-line bodi-recovery-line"></path>
-          <path d="M594 26 L600 12 L606 26" class="bodi-arrowhead bodi-recovery-arrow"></path>
-        </svg>
-        <p class="bodi-recovery-label">↻ RECOVERY &amp; FORTSETZUNG</p>
       </div>
     </div>
-  </div>
 
-  <div class="container case-grid" aria-label="BODI Systemstory">
-    <div class="case-point">
-      <span>01 Problem</span>
-      <p class="hr-only">{hr_only}</p>
-      <p class="engineering-only">{engineering_only}</p>
+    <div class="bodi-points" aria-label="Engineering-Schwerpunkte">
+      {engineeringPoints.map((point) => (
+        <article class="bodi-point">
+          <p class="bodi-point-num">{point.num}</p>
+          <div class="bodi-point-body">
+            <h3 class="bodi-point-title">{point.title}</h3>
+            <p class="bodi-point-text">{point.body}</p>
+          </div>
+        </article>
+      ))}
     </div>
-    <div class="case-point">
-      <span>02 System</span>
-      <p class="hr-only">{reliabilityHr}</p>
-      <p class="engineering-only">{reliabilityEngineering}</p>
-    </div>
-    <div class="case-point">
-      <span>03 Reliability</span>
-      <p class="hr-only">{engineeringOwnershipHr}</p>
-      <p class="engineering-only">{engineeringOwnershipEngineering}</p>
-    </div>
-  </div>
 
-  <div class="container bodi-engineering-ownership" aria-label="Engineering Ownership">
-    <p class="bodi-block-kicker">Engineering Ownership</p>
-    <p class="hr-only">{reliabilityEngineeringBlockHr}</p>
-    <p class="engineering-only">{reliabilityEngineeringBlockEngineering}</p>
-  </div>
-
-  <div class="container bodi-reliability-engineering" aria-label="Reliability Engineering">
-    <p class="bodi-block-kicker">Reliability Engineering</p>
-    <p class="hr-only">{queueReplayHr}</p>
-    <p class="engineering-only">{queueReplayEngineering}</p>
-    <p class="bodi-failure-model">
-      <span class="bodi-failure-model-label">Failure model</span>
-      <span class="bodi-failure-model-value">{failureModelText}</span>
+    <p class="bodi-role-line" aria-label="Rolle">
+      <span class="bodi-role-key">Role</span>
+      <span class="bodi-role-value">
+        Architecture · Runtime · Recovery · Production Engineering
+      </span>
     </p>
-  </div>
 
-  <div class="container bodi-extra" aria-label="BODI Production Evidence und Reliability Story">
-    <div class="bodi-evidence" aria-label="Production Evidence">
-      <p class="bodi-block-kicker">04 Production Evidence</p>
-      <dl class="bodi-evidence-list">
-        <div>
-          <dt>Access</dt>
-          <dd>Tenant-isolated API keys</dd>
-        </div>
-        <div>
-          <dt>Workers</dt>
-          <dd>Localhost-only runtime</dd>
-        </div>
-        <div>
-          <dt>Scheduling</dt>
-          <dd>Queue · accelerator ownership</dd>
-        </div>
-        <div>
-          <dt>Dispatch Safety</dt>
-          <dd>Durable identity · idempotency · delivery reconciliation</dd>
-        </div>
-        <div>
-          <dt>Recovery</dt>
-          <dd>Bounded resume · stale-result fencing · session authority</dd>
-        </div>
-        <div>
-          <dt>Verification</dt>
-          <dd>Regression · production checks</dd>
-        </div>
-        <div>
-          <dt>Releases</dt>
-          <dd>Immutable artifacts</dd>
-        </div>
-        <div>
-          <dt>Provenance</dt>
-          <dd>Source · Build · Release · Runtime</dd>
-        </div>
-      </dl>
-      <ol class="bodi-provenance" aria-label="Provenance chain: Source, Build, Release, Runtime">
-        <li class="is-verified">
-          <span class="bodi-prov-step">Source</span>
-          <span class="bodi-prov-mark" aria-hidden="true">
-            ✓
-          </span>
-        </li>
-        <li class="bodi-prov-arrow" aria-hidden="true"></li>
-        <li class="is-verified">
-          <span class="bodi-prov-step">Build</span>
-          <span class="bodi-prov-mark" aria-hidden="true">
-            ✓
-          </span>
-        </li>
-        <li class="bodi-prov-arrow" aria-hidden="true"></li>
-        <li class="is-verified">
-          <span class="bodi-prov-step">Release</span>
-          <span class="bodi-prov-mark" aria-hidden="true">
-            ✓
-          </span>
-        </li>
-        <li class="bodi-prov-arrow" aria-hidden="true"></li>
-        <li class="is-verified">
-          <span class="bodi-prov-step">Runtime</span>
-          <span class="bodi-prov-mark" aria-hidden="true">
-            ✓
-          </span>
-        </li>
-      </ol>
-      <p class="bodi-evidence-note">{bodi_evidence_note}</p>
-    </div>
-
-    <div class="bodi-incidents">
-      <aside class="bodi-replay" aria-label="Reliability Story: Queue Replay">
-        <p class="bodi-block-kicker">Queue Replay / Production Fix</p>
-        <ol class="bodi-replay-steps">
-          <li>
-            <span>Reproduce</span>
-          </li>
-          <li>
-            <span>Regression</span>
-          </li>
-          <li>
-            <span>Fix</span>
-          </li>
-          <li>
-            <span>Release</span>
-          </li>
-          <li>
-            <span>Production verification</span>
-          </li>
-        </ol>
-        <p class="hr-only">{durableDispatchHr}</p>
-        <p class="engineering-only">{durableDispatchEngineering}</p>
-      </aside>
-
-      <aside
-        class="bodi-replay bodi-replay--dispatch"
-        aria-label="Reliability Story: Durable Dispatch"
-      >
-        <p class="bodi-block-kicker">Durable Dispatch / Recovery</p>
-        <ol class="bodi-replay-steps">
-          <li>
-            <span>Identify</span>
-          </li>
-          <li>
-            <span>Harden</span>
-          </li>
-          <li>
-            <span>Verify</span>
-          </li>
-        </ol>
-        <p class="hr-only">{dispatchReplayHr}</p>
-        <p class="engineering-only">{dispatchReplayEngineering}</p>
-      </aside>
-    </div>
+    <p class="bodi-evidence-strip" aria-label="Verdichtete Belege">
+      <span>Persistent State</span>
+      <span class="bodi-evidence-dot" aria-hidden="true">
+        ·
+      </span>
+      <span>Bounded Recovery</span>
+      <span class="bodi-evidence-dot" aria-hidden="true">
+        ·
+      </span>
+      <span>Local Inference</span>
+      <span class="bodi-evidence-dot" aria-hidden="true">
+        ·
+      </span>
+      <span>Regression Tested</span>
+      <span class="bodi-evidence-dot" aria-hidden="true">
+        ·
+      </span>
+      <span>Provenance</span>
+    </p>
   </div>
 </section>
 
@@ -415,6 +208,7 @@ const failureModelText =
   .flagship-section {
     background: var(--surface);
   }
+
   .bodi-wrap {
     width: min(1240px, calc(100vw - 48px));
     margin: 0 auto;
@@ -422,316 +216,386 @@ const failureModelText =
     padding-bottom: clamp(72px, 9vw, 120px);
     border-top: 1px solid var(--hairline);
   }
-  .bodi-wrap .eyebrow {
+
+  .bodi-wrap > .eyebrow {
     margin: 0 0 14px;
   }
+
   .bodi-wrap h2 {
     font-size: clamp(34px, 5vw, 64px);
     line-height: 1.05;
     letter-spacing: -0.035em;
-    margin: 0 0 18px;
+    margin: 0 0 14px;
     font-weight: 600;
   }
+
+  .bodi-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 22px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .bodi-status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: inline-block;
+  }
+
   .bodi-intro {
-    max-width: 60ch;
+    max-width: 64ch;
     font-size: clamp(15px, 1.4vw, 18px);
-    line-height: 1.45;
+    line-height: 1.5;
     color: var(--fg-soft);
     margin: 0 0 48px;
   }
-  .bodi-map {
-    display: block;
-    position: relative;
+
+  .bodi-viz {
+    margin-bottom: clamp(48px, 6vw, 72px);
   }
-  .bodi-map-stage {
+
+  .bodi-viz-row {
     display: grid;
-    grid-template-columns: minmax(0, 0.95fr) 64px minmax(0, 2.6fr) 64px minmax(0, 1.05fr);
-    grid-template-rows: auto auto;
+    grid-template-columns: minmax(0, 0.85fr) 36px minmax(0, 2.8fr) 36px minmax(0, 0.95fr);
     align-items: stretch;
     column-gap: 0;
     row-gap: 0;
-    border-top: 1.5px solid var(--fg);
-    padding-top: 32px;
   }
-  .bodi-node {
-    position: relative;
+
+  .bodi-viz-end {
     display: flex;
     flex-direction: column;
-    gap: 14px;
-    padding: 22px 22px 20px;
-    border: 1px solid var(--rule);
-    background: var(--surface);
-    min-width: 0;
-    min-height: 260px;
+    gap: 8px;
+    padding: 20px 4px 0 0;
+    border-top: 1px solid var(--rule);
   }
-  .bodi-node--core {
-    grid-row: 1;
-    grid-column: 3;
-    border: 1.5px solid var(--accent);
-    background: color-mix(in srgb, var(--accent) 4%, var(--surface));
-    padding: 30px 32px;
-    gap: 16px;
-    min-height: 360px;
+
+  .bodi-viz-end--output {
+    padding: 20px 0 0 4px;
   }
-  .bodi-node--input {
-    grid-row: 1;
-    grid-column: 1;
-  }
-  .bodi-node--output {
-    grid-row: 1;
-    grid-column: 5;
-  }
-  .bodi-node--models {
-    grid-row: 2;
-    grid-column: 3;
-  }
-  .bodi-node-eyebrow {
+
+  .bodi-viz-end-kicker {
     margin: 0;
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: 10.5px;
     letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: var(--accent);
-    font-weight: 500;
+    color: var(--soft);
   }
-  .bodi-node-title {
+
+  .bodi-viz-end-title {
     margin: 0;
-    font-family: var(--font-display);
-    font-size: clamp(22px, 2.4vw, 30px);
-    line-height: 1.05;
-    letter-spacing: -0.02em;
-    color: var(--fg);
+    font-size: 15px;
     font-weight: 600;
-  }
-  .bodi-node--core .bodi-node-title {
-    font-size: clamp(36px, 4.6vw, 56px);
-    font-weight: 600;
-    letter-spacing: -0.035em;
-    line-height: 0.95;
-  }
-  .bodi-node-sub {
-    margin: -4px 0 0;
-    font-size: 14px;
-    color: var(--fg-soft);
-    letter-spacing: -0.005em;
-  }
-  .bodi-node-state {
-    margin: 4px 0 0;
-    display: grid;
-    gap: 6px;
-  }
-  .bodi-state-line {
-    display: block;
-    width: 100%;
-    height: 18px;
-    color: var(--accent);
-  }
-  .bodi-state-line .bodi-state-seg {
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 1.4;
-    vector-effect: non-scaling-stroke;
-  }
-  .bodi-state-line .bodi-state-dot {
-    fill: var(--accent);
-    stroke: var(--surface);
-    stroke-width: 1.5;
-  }
-  .bodi-node-state-label {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
+    letter-spacing: -0.01em;
     color: var(--fg);
   }
-  .bodi-stages {
+
+  .bodi-viz-end-list {
     list-style: none;
-    margin: 8px 0 0;
+    margin: 4px 0 0;
     padding: 0;
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0;
-    border: 1px solid var(--rule);
+    gap: 4px;
+  }
+
+  .bodi-viz-end-list li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--fg-soft);
+  }
+
+  .bodi-viz-check {
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 13px;
+    line-height: 1;
+  }
+
+  .bodi-viz-arrow {
+    display: block;
+    align-self: start;
+    margin-top: 30px;
+    width: 100%;
+    height: 14px;
+    color: var(--rule);
+  }
+
+  .bodi-viz-line {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.2;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .bodi-viz-arrowhead {
+    fill: currentColor;
+    stroke: none;
+  }
+
+  .bodi-viz-core {
+    border: 1.5px solid var(--fg);
+    padding: 26px 28px 22px;
     background: var(--surface);
-  }
-  .bodi-stages li {
     display: grid;
-    grid-template-columns: 28px 1fr;
-    grid-template-rows: auto auto;
-    column-gap: 10px;
-    row-gap: 2px;
-    padding: 12px 14px;
-    border-right: 1px solid var(--rule);
-    border-bottom: 1px solid var(--rule);
+    gap: 22px;
+  }
+
+  .bodi-viz-core-head {
+    display: flex;
     align-items: baseline;
+    gap: 18px;
+    border-bottom: 1px solid var(--hairline);
+    padding-bottom: 14px;
   }
-  .bodi-stages li:nth-child(2n) {
-    border-right: 0;
-  }
-  .bodi-stages li:nth-last-child(-n + 2) {
-    border-bottom: 0;
-  }
-  .bodi-stages li.engineering-only {
-    display: none;
-  }
-  :global(body[data-mode="engineering"]) .bodi-stages li.hr-only {
-    display: none;
-  }
-  :global(body[data-mode="engineering"]) .bodi-stages li.engineering-only {
-    display: grid;
-  }
-  .bodi-stage-num {
-    grid-row: 1;
-    grid-column: 1;
+
+  .bodi-viz-core-eyebrow {
     margin: 0;
     font-family: var(--font-mono);
-    font-size: 13px;
-    letter-spacing: 0.1em;
+    font-size: 10.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--soft);
+    flex-shrink: 0;
+  }
+
+  .bodi-viz-core-title {
+    margin: 0;
+    font-size: clamp(28px, 3.4vw, 42px);
+    font-weight: 600;
+    letter-spacing: -0.035em;
+    line-height: 1;
+    color: var(--fg);
+  }
+
+  .bodi-viz-flow {
+    position: relative;
+    padding-top: 64px;
+  }
+
+  .bodi-viz-stages {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0;
+  }
+
+  .bodi-viz-stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 12px 6px;
+    border-left: 1px solid var(--hairline);
+    position: relative;
+  }
+
+  .bodi-viz-stage:first-child {
+    border-left: 0;
+  }
+
+  .bodi-viz-stage:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    right: -1px;
+    top: 50%;
+    width: 1px;
+    height: 14px;
+    background: var(--surface);
+    transform: translateY(-50%);
+  }
+
+  .bodi-viz-stage:not(:last-child) {
+    background-image: linear-gradient(
+      to right,
+      transparent calc(100% - 1px),
+      var(--hairline) calc(100% - 1px)
+    );
+  }
+
+  .bodi-viz-num {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
     color: var(--accent);
     font-variant-numeric: tabular-nums;
     font-weight: 600;
   }
-  .bodi-stage-name {
-    grid-row: 1;
-    grid-column: 2;
-    margin: 0;
-    font-size: 15px;
-    font-weight: 600;
-    letter-spacing: -0.005em;
-    color: var(--fg);
-  }
-  .bodi-stage-sub {
-    grid-row: 2;
-    grid-column: 1 / -1;
-    margin: 0;
-    font-size: 12.5px;
-    color: var(--muted);
-    line-height: 1.4;
-  }
-  .bodi-node-lines {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    gap: 6px;
-  }
-  .bodi-node-lines li {
-    font-size: 13px;
-    color: var(--fg-soft);
-    line-height: 1.4;
-    letter-spacing: -0.005em;
-  }
-  .bodi-node-lines--results li {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+
+  .bodi-viz-name {
     font-size: 14px;
-  }
-  .bodi-check {
-    color: var(--accent);
-    font-weight: 700;
-    font-size: 15px;
-    line-height: 1;
-  }
-  .bodi-node-lines--models {
-    gap: 10px;
-  }
-  .bodi-node-lines--models li {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid var(--hairline);
-  }
-  .bodi-node-lines--models li:last-child {
-    border-bottom: 0;
-    padding-bottom: 0;
-  }
-  .bodi-model-name {
-    font-family: var(--font-mono);
-    font-size: 12.5px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--fg);
     font-weight: 600;
+    letter-spacing: -0.005em;
+    color: var(--fg);
   }
-  .bodi-model-role {
-    font-size: 12px;
-    color: var(--muted);
-    font-style: italic;
-  }
-  .bodi-node-foot {
-    margin: auto 0 0;
-    padding-top: 10px;
-    border-top: 1px solid var(--hairline);
-    font-family: var(--font-mono);
-    font-size: 10.5px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--soft);
-    line-height: 1.4;
-  }
-  .bodi-arrow {
-    display: block;
-    align-self: center;
-    width: 100%;
-    height: 14px;
-    min-height: 14px;
-    color: var(--rule);
-    grid-row: 1;
-  }
-  .bodi-arrow--down {
-    grid-row: 2;
-    grid-column: 3;
-    height: 28px;
-    min-height: 28px;
-    justify-self: center;
-    width: 28px;
-  }
-  .bodi-line {
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 1.4;
-    vector-effect: non-scaling-stroke;
-  }
-  .bodi-arrowhead {
-    fill: currentColor;
-    stroke: none;
-  }
-  .bodi-recovery {
-    display: block;
+
+  .bodi-viz-recovery {
     position: absolute;
-    top: 220px;
-    right: 0;
-    width: min(420px, 38%);
-    height: 140px;
+    top: 6px;
+    left: 28%;
+    right: 28%;
+    height: 50px;
     color: var(--accent);
     pointer-events: none;
   }
-  .bodi-recovery-line {
+
+  .bodi-viz-recovery-line {
     fill: none;
     stroke: currentColor;
-    stroke-width: 1.5;
-    stroke-dasharray: 5 4;
+    stroke-width: 1.2;
+    stroke-dasharray: 4 4;
     vector-effect: non-scaling-stroke;
     opacity: 0.85;
   }
-  .bodi-recovery-arrow {
+
+  .bodi-viz-recovery-arrow {
     fill: currentColor;
     stroke: none;
   }
-  .bodi-recovery-label {
+
+  .bodi-viz-recovery-label {
     position: absolute;
-    top: 248px;
+    top: 0;
+    left: 0;
     right: 0;
+    margin: 0;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .bodi-viz-inference {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    border-top: 1px solid var(--hairline);
+    padding-top: 14px;
+  }
+
+  .bodi-viz-inference-key {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--soft);
+    flex-shrink: 0;
+  }
+
+  .bodi-viz-inference-names {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--fg);
+    font-weight: 500;
+  }
+
+  .bodi-points {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0;
+    border-top: 1.5px solid var(--fg);
+    margin-bottom: clamp(36px, 4vw, 48px);
+  }
+
+  .bodi-point {
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    gap: 16px;
+    padding: 18px 24px 20px 0;
+    border-right: 1px solid var(--hairline);
+  }
+
+  .bodi-point:last-child {
+    border-right: 0;
+  }
+
+  .bodi-point-num {
     margin: 0;
     font-family: var(--font-mono);
     font-size: 11px;
     letter-spacing: 0.14em;
-    text-transform: uppercase;
     color: var(--accent);
     font-weight: 600;
+    padding-top: 2px;
   }
+
+  .bodi-point-body {
+    display: grid;
+    gap: 6px;
+  }
+
+  .bodi-point-title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--fg);
+  }
+
+  .bodi-point-text {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--fg-soft);
+  }
+
+  .bodi-role-line {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+    margin: 0 0 18px;
+    padding-top: 14px;
+    border-top: 1px solid var(--hairline);
+    font-size: 13px;
+    color: var(--fg);
+  }
+
+  .bodi-role-key {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--soft);
+  }
+
+  .bodi-role-value {
+    color: var(--fg);
+    letter-spacing: -0.005em;
+  }
+
+  .bodi-evidence-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 10px;
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .bodi-evidence-dot {
+    color: var(--soft);
+  }
+
   .sr-only {
     position: absolute;
     width: 1px;
@@ -743,290 +607,113 @@ const failureModelText =
     white-space: nowrap;
     border: 0;
   }
-  .case-grid {
-    margin-top: 42px;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 28px;
-  }
-  .case-point {
-    border-top: 1px solid var(--rule);
-    padding-top: 16px;
-  }
-  .case-point > span {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--accent);
-  }
-  .case-point p {
-    margin: 12px 0 0;
-    color: var(--fg-soft);
-    line-height: 1.55;
-  }
-  .bodi-engineering-ownership,
-  .bodi-reliability-engineering {
-    margin-top: 32px;
-    border-top: 1.5px solid var(--fg);
-    padding-top: 18px;
-  }
-  .bodi-engineering-ownership p:not(.bodi-block-kicker),
-  .bodi-reliability-engineering p:not(.bodi-block-kicker):not(.bodi-failure-model) {
-    margin: 0;
-    color: var(--fg-soft);
-    font-size: 15px;
-    line-height: 1.6;
-    max-width: 72ch;
-  }
-  .bodi-failure-model {
-    display: flex;
-    align-items: baseline;
-    flex-wrap: wrap;
-    gap: 6px 14px;
-    margin: 14px 0 0;
-    padding: 10px 0 0;
-    border-top: 1px solid var(--hairline);
-    font-family: var(--font-mono);
-    font-size: 10.5px;
-    letter-spacing: 0.04em;
-    color: var(--muted);
-  }
-  .bodi-failure-model-label {
-    color: var(--soft);
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-    font-size: 10px;
-    flex-shrink: 0;
-  }
-  .bodi-failure-model-value {
-    color: var(--fg);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-  }
-  .bodi-extra {
-    margin-top: 42px;
-    display: grid;
-    grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
-    gap: 36px;
-    align-items: start;
-  }
-  .bodi-block-kicker {
-    margin: 0 0 14px;
-    font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--accent);
-  }
-  .bodi-evidence {
-    border-top: 1.5px solid var(--fg);
-    padding-top: 18px;
-  }
-  .bodi-evidence-list {
-    margin: 0;
-    padding: 0;
-    display: grid;
-    gap: 0;
-  }
-  .bodi-evidence-list > div {
-    display: grid;
-    grid-template-columns: 160px 1fr;
-    gap: 24px;
-    padding: 10px 0;
-    border-top: 1px solid var(--hairline);
-  }
-  .bodi-evidence-list dt {
-    font-family: var(--font-mono);
-    font-size: 10.5px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--soft);
-  }
-  .bodi-evidence-list dd {
-    margin: 0;
-    color: var(--fg);
-    font-size: 14px;
-    letter-spacing: -0.005em;
-  }
-  .bodi-evidence-note {
-    margin: 14px 0 0;
-    padding-top: 12px;
-    border-top: 1px solid var(--hairline);
-    color: var(--muted);
-    font-size: 13px;
-    line-height: 1.5;
-  }
-  .bodi-incidents {
-    display: grid;
-    gap: 16px;
-    align-content: start;
-  }
-  .bodi-replay {
-    border-top: 1.5px solid var(--fg);
-    padding-top: 18px;
-  }
-  .bodi-replay--dispatch {
-    border-top: 1px solid var(--hairline);
-    padding-top: 14px;
-  }
-  .bodi-replay-steps {
-    list-style: none;
-    margin: 0 0 14px;
-    padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0;
-  }
-  .bodi-replay-steps li {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-family: var(--font-mono);
-    font-size: 10.5px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--fg);
-    padding: 7px 12px;
-    border: 1px solid var(--rule);
-    margin-right: -1px;
-  }
-  .bodi-replay-steps li:first-child {
-    border-color: var(--accent);
-  }
-  .bodi-replay p {
-    margin: 0;
-    color: var(--fg-soft);
-    font-size: 14px;
-    line-height: 1.55;
-  }
-  .bodi-provenance {
-    list-style: none;
-    margin: 16px 0 0;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 0;
-    font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--soft);
-  }
-  .bodi-provenance li {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 0;
-    border: 0;
-  }
-  .bodi-provenance li.is-verified {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 4px 8px;
-    border: 1px solid var(--hairline);
-    color: var(--fg-soft);
-    background: var(--surface);
-  }
-  .bodi-provenance li.is-verified .bodi-prov-step {
-    color: var(--fg);
-  }
-  .bodi-prov-mark {
-    display: inline-grid;
-    place-items: center;
-    width: 12px;
-    height: 12px;
-    font-size: 9px;
-    color: var(--accent);
-    line-height: 1;
-  }
-  .bodi-prov-arrow {
-    display: inline-block;
-    width: 16px;
-    height: 1px;
-    background: var(--hairline);
-    position: relative;
-    margin: 0 2px;
-  }
-  .bodi-prov-arrow::after {
-    content: "";
-    position: absolute;
-    right: -1px;
-    top: -2px;
-    width: 5px;
-    height: 5px;
-    border-top: 1px solid var(--hairline);
-    border-right: 1px solid var(--hairline);
-    transform: rotate(45deg);
-  }
 
   @media (max-width: 900px) {
-    .bodi-extra {
+    .bodi-viz-row {
       grid-template-columns: 1fr;
-      gap: 28px;
+      gap: 0;
     }
-    .bodi-map-stage {
-      grid-template-columns: 1fr;
-      grid-template-rows: auto auto auto auto auto auto auto;
-      row-gap: 0;
+
+    .bodi-viz-end,
+    .bodi-viz-end--output {
+      padding: 0;
+      border-top: 1px solid var(--hairline);
     }
-    .bodi-node--input,
-    .bodi-node--core,
-    .bodi-node--output,
-    .bodi-node--models {
-      grid-row: auto;
-      grid-column: 1;
-      min-height: 0;
-    }
-    .bodi-arrow {
+
+    .bodi-viz-arrow {
       display: none;
     }
-    .bodi-arrow--down {
-      display: block;
-      grid-row: auto;
-      grid-column: 1;
-      width: 28px;
-      height: 28px;
+
+    .bodi-viz-core {
+      border: 1.5px solid var(--fg);
+      padding: 22px 22px 18px;
     }
-    .bodi-recovery {
-      position: static;
-      width: 100%;
-      height: 40px;
-      margin-top: 16px;
+
+    .bodi-viz-flow {
+      padding-top: 0;
     }
-    .bodi-recovery-label {
-      position: static;
-      text-align: center;
+
+    .bodi-viz-recovery,
+    .bodi-viz-recovery-label {
+      display: none;
     }
-    .case-grid {
-      grid-template-columns: 1fr 1fr;
+
+    .bodi-viz-stages {
+      grid-template-columns: 1fr;
+    }
+
+    .bodi-viz-stage {
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 16px;
+      border-left: 0;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--hairline);
+    }
+
+    .bodi-viz-stage:last-child {
+      border-bottom: 0;
+    }
+
+    .bodi-viz-stage:not(:last-child) {
+      background-image: none;
+    }
+
+    .bodi-viz-stage:not(:last-child)::before {
+      content: "↓";
+      position: absolute;
+      left: 50%;
+      bottom: -10px;
+      transform: translateX(-50%);
+      color: var(--soft);
+      font-size: 11px;
+      line-height: 1;
+      background: var(--surface);
+      padding: 0 4px;
+      z-index: 1;
+    }
+
+    .bodi-points {
+      grid-template-columns: 1fr;
+    }
+
+    .bodi-point {
+      border-right: 0;
+      border-bottom: 1px solid var(--hairline);
+      padding: 18px 0;
+    }
+
+    .bodi-point:last-child {
+      border-bottom: 0;
     }
   }
 
   @media (max-width: 560px) {
-    .bodi-evidence-list > div {
-      grid-template-columns: 1fr;
-      gap: 2px;
+    .bodi-wrap {
+      padding-top: 56px;
+      padding-bottom: 56px;
     }
-    .bodi-replay-steps {
+
+    .bodi-viz-core {
+      padding: 18px 16px 16px;
+    }
+
+    .bodi-viz-core-head {
       flex-direction: column;
-      align-items: stretch;
+      align-items: flex-start;
+      gap: 6px;
     }
-    .bodi-replay-steps li {
-      margin-right: 0;
-      margin-bottom: -1px;
+
+    .bodi-point-text {
+      font-size: 13.5px;
     }
-    .bodi-provenance {
-      font-size: 9px;
-    }
-    .bodi-prov-arrow {
-      width: 10px;
-      margin: 0 1px;
-    }
-    .case-grid {
-      grid-template-columns: 1fr;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bodi-viz * {
+      animation: none !important;
+      transition: none !important;
     }
   }
 </style>

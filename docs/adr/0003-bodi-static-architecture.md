@@ -17,7 +17,7 @@ system architecture diagram**: a 5-cell grid (`input → core → output` +
 case-study section beneath it. No animation, no controller, no state
 machine.
 
-Two reasons justify the change:
+Two reasons justified that change:
 
 1. The flagship reads more cleanly as a **system description** than as
    a runtime demo. The diagram and the Production Evidence panel
@@ -28,33 +28,49 @@ Two reasons justify the change:
    MutationObserver, reduced-motion handler). The flagship component is
    pure Astro: HTML, scoped CSS, and one inline SVG.
 
-## Decision
+## Decision (2026-10-08, revised)
 
-Replace the BODI runtime visualization with a static architecture
-diagram rendered by `src/components/bodi/BodiFlagship.astro`. The
-diagram mirrors the OpenDesign reference exactly: input, core (with
-state line and four stages), output, models, recovery curve, case-grid,
-Engineering Ownership, Reliability Engineering, Production Evidence,
-provenance chain, and two reliability stories (Queue Replay + Durable
-Dispatch).
+The flagship is rendered by `src/components/bodi/BodiFlagship.astro`
+and uses a **focused editorial system map**:
+
+- a short intro paragraph (HR + Engineering variant) next to the
+  title, plus a restrained mono "In aktiver Entwicklung" status,
+- one wide composition: `Task → BODI → Verified Result`,
+- inside the BODI block: the five-stage execution loop (`01 Plan →
+02 Execute → 03 Verify → 04 Persist → 05 Continue`), a static
+  recovery arc returning from `Verify` into `Execute`, and a compact
+  `Local Inference · Ornith · Qwen · Decision` row,
+- three short engineering points (`Durable Execution`,
+  `Recovery & Verification`, `Local AI Infrastructure`),
+- one compact `Role` line and one restrained evidence strip.
+
+The earlier copy-rich case-study surface (the `Problem / System /
+Reliability` case-grid, the `Engineering Ownership` block, the
+`Reliability Engineering` block, the production-evidence definition
+list with provenance chain, and the `Queue Replay` and
+`Durable Dispatch` reliability stories) has been **removed** to
+shorten the section and let BODI dominate the visual hierarchy. The
+canonical concepts are now carried by the visualization itself and by
+the three engineering points.
 
 ### Module layout
 
 ```
 src/components/bodi/
-└── BodiFlagship.astro   # static architecture + case-study surface
+└── BodiFlagship.astro   # static editorial system map
 ```
 
-The old `src/features/bodi-runtime/` directory is removed in this
-change. The previous `machine.ts`, `geometry.ts`, `labels.ts`,
-`types.ts`, `controller.ts`, `runtime.css`, and the previous
-`BodiRuntimeVisualization.astro` no longer exist.
+The old `src/features/bodi-runtime/` directory is removed. The previous
+`machine.ts`, `geometry.ts`, `labels.ts`, `types.ts`, `controller.ts`,
+`runtime.css`, and the previous `BodiRuntimeVisualization.astro` no
+longer exist.
 
 ### Mode switch
 
-The HR / Engineering labels inside the four-stage core cell are split
-via the standard `[data-view]` CSS mechanism used elsewhere in the
-portfolio. No JavaScript is involved in the flagship.
+The HR / Engineering intros split via the standard `[data-view]` CSS
+mechanism used elsewhere in the portfolio. The visualization itself is
+shared across modes — the five execution stages and the recovery
+concept are universal. No JavaScript is involved in the flagship.
 
 ### What is excluded
 
@@ -62,11 +78,18 @@ portfolio. No JavaScript is involved in the flagship.
 - No runtime animation, no token, no recovery animation.
 - No timers, no `IntersectionObserver`, no `MutationObserver`.
 - No client-side script for the flagship.
+- No `Problem / System / Reliability` case-grid, no `Engineering
+Ownership` block, no `Reliability Engineering` block, no
+  production-evidence definition list, no provenance chain, no
+  reliability stories (`Queue Replay`, `Durable Dispatch`).
 
 ## Consequences
 
 - The flagship can be rendered server-side and printed with full
   fidelity.
+- The section is materially shorter — the visualization plus the three
+  engineering points fit in roughly half the vertical footprint of the
+  previous long-form surface.
 - The portfolio no longer ships the runtime visualization, the
   deterministic state machine, or any BODI feature script.
 - Anyone reading the portfolio sees the same static diagram whether
