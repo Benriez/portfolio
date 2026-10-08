@@ -66,6 +66,11 @@
   --space-7: 48px;
   --space-8: 64px;
 
+  /* --- Section rhythm --- */
+  /* Major vertical separation between major page chapters.
+     Mobile: ~64-88px, tablet: ~88-120px, desktop: ~112-152px. */
+  --space-section-y: clamp(64px, 11vw, 152px);
+
   /* --- Color helpers used by mono labels --- */
   --mono-label: var(--accent);
   --mono-meta: var(--muted);

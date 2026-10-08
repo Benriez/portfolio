@@ -120,6 +120,11 @@ body[data-mode="engineering"] [data-view="engineering"] {
   border-top: 1px solid var(--hairline);
 }
 
+/* --- Section rhythm (major page chapters) --- */
+.section {
+  padding-block: var(--space-section-y);
+}
+
 /* --- Container (mirrors reference `.container` width) --- */
 .container {
   width: min(var(--max), calc(100vw - 48px));
