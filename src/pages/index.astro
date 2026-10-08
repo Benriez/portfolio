@@ -31,6 +31,12 @@ const contactItems: ContactItem[] = [
     visible: true,
   },
 ];
+const approach_1 =
+  "Keine Skill-Level, keine Prozentwerte. Nur belastbare Kompetenzfelder aus den Projekten.";
+const approach_2 =
+  "Ich arbeite an der Schnittstelle zwischen Produktanforderung, Softwarearchitektur und laufendem Betrieb. Wichtig ist nicht nur, dass ein Feature funktioniert, sondern wie es sich bei Fehlern, Deployments, Zustandswechseln und echten Nutzungsbedingungen verhält.";
+const approach_3 =
+  "Meine Arbeit verbindet Requirements Engineering, Root-Cause Analysis, Recovery Thinking und Production Ownership. Konzept, Implementierung und Betrieb gehören dabei zusammen.";
 ---
 
 <BaseLayout
@@ -70,9 +76,11 @@ const contactItems: ContactItem[] = [
           <span class="hr-only">Was ich abdecke</span>
           <span class="engineering-only">Engineering Surface</span>
         </h2>
-        <p class="section-note">
-          Keine Skill-Level, keine Prozentwerte. Nur belastbare Kompetenzfelder aus den Projekten.
-        </p>
+        <!-- prettier-ignore-start -->
+        <!-- prettier-ignore-start -->
+        <p class="section-note">{approach_1}</p>
+        <!-- prettier-ignore-end -->
+        <!-- prettier-ignore-end -->
       </div>
       <Capabilities />
       <WorkingApproach title={{ hr: "Technischer Stack", engineering: "Technischer Stack" }} />
@@ -84,15 +92,12 @@ const contactItems: ContactItem[] = [
       <p class="section-kicker">Arbeitsweise</p>
       <h2>Systemisch denken, präzise bauen, zuverlässig betreiben.</h2>
       <div class="approach-list">
-        <p>
-          Ich arbeite an der Schnittstelle zwischen Produktanforderung, Softwarearchitektur und
-          laufendem Betrieb. Wichtig ist nicht nur, dass ein Feature funktioniert, sondern wie es
-          sich bei Fehlern, Deployments, Zustandswechseln und echten Nutzungsbedingungen verhält.
-        </p>
-        <p>
-          Meine Arbeit verbindet Requirements Engineering, Root-Cause Analysis, Recovery Thinking
-          und Production Ownership. Konzept, Implementierung und Betrieb gehören dabei zusammen.
-        </p>
+        <!-- prettier-ignore-start -->
+        <p>{approach_2}</p>
+        <!-- prettier-ignore-end -->
+        <!-- prettier-ignore-start -->
+        <p>{approach_3}</p>
+        <!-- prettier-ignore-end -->
       </div>
     </div>
   </section>

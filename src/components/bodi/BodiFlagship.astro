@@ -95,32 +95,55 @@ const models = {
     { name: "Decision", role: "Steuerung & Planung" },
   ],
 } as const;
+const bodiIntroHr =
+  "BODI ist eine selbst betriebene AI Operator Platform für langlebige, zustandsbehaftete KI-Workflows mit Recovery, lokalen Modellen und nachvollziehbarer Verifikation.";
+const bodiIntroEngineering =
+  "BODI orchestriert Durable Agent Execution auf einer selbst betriebenen Inference-Infrastruktur. Persistente Execution Graphs, session- und modellbezogene Authority, Delivery Safety mit Idempotency, kontrollierte Verifikation und Provenance verbinden Engineering- und Production-Ownership.";
+const bodiDiagramSr =
+  "BODI ist eine AI Operator Platform. Eingaben sind Aufgaben, Projektkontext, Workflow-Zustand und Agent-Sessions. BODI orchestriert einen Workflow Engine mit persistenter Zustandsmaschine, AI-Ausführung, Modell-Prüfung und Verifikation. BODI ruft lokale KI-Modelle (Ornith, Qwen) und Decision-Komponenten über einen Inference Gateway auf. Die Modelle sind eine eigene Infrastruktur-Schicht. Ausgaben umfassen abgeschlossene Aufgaben, geprüfte Artefakte, Recovery bei Störung und nachvollziehbare Provenance.";
+const hr_only =
+  "Längere KI-Workflows scheitern nicht nur an der Qualität eines Modells. Zustand kann verloren gehen, Ausführungen können abbrechen und mehrere Modellanfragen können sich gegenseitig blockieren oder unkontrolliert Ressourcen verbrauchen. Auch Modell-Runtimes selbst können unter Last unzuverlässig reagieren.";
+const engineering_only =
+  "Long-running agent execution introduces failure modes across workflow state, context continuity, interrupted turns, concurrent inference, retries, scheduler contention between multiple self-hosted models, model-worker instability and runtime provenance. Self-hosted LLMs are not a managed service — the platform has to enforce the reliability boundaries that a hosted provider would otherwise guarantee.";
+const reliabilityHr =
+  "BODI behandelt Workflow-Steuerung und KI-Infrastruktur als gemeinsames System. Aufgaben werden persistent geplant und ausgeführt, während eine zentrale API den Zugriff auf lokal betriebene Modelle kontrolliert.";
+const reliabilityEngineering =
+  "Durable Execution Graphs, Message- und Memory-Gates, Managed OpenCode Execution und ein OpenAI-kompatibler Inference Gateway bilden eine gemeinsame Runtime. Der Gateway authentifiziert und trennt Tenants, plant Modellzugriffe über eine Queue mit reproduzierbarem Replay-Verhalten und ordnet Anfragen Worker-Slots auf `gpu0` unter `exclusive_model`-Ownership zu — Ornith und Qwen sind die aktuellen self-hosted Modelle, jeweils mit zwei Inference-Slots. Die Worker bleiben intern und werden nicht als öffentliche OpenCode-Provider exponiert.";
+const engineeringOwnershipHr =
+  "Zustand wird gespeichert, Fehlerpfade werden kontrolliert behandelt und Modellzugriffe zentral abgesichert. Änderungen werden mit Tests, Runtime-Prüfungen und nachvollziehbarer Produktions-Provenienz abgenommen.";
+const engineeringOwnershipEngineering =
+  "Persisted workflow state, bounded recovery, tenant-isolated API access, localhost-only model workers, scheduler-controlled concurrency, queue replay, regression testing and immutable release provenance create explicit reliability boundaries from source code to production runtime.";
+const reliabilityEngineeringBlockHr =
+  "Konzeption und technische Verantwortung für persistente KI-Workflows, Recovery-Pfade, Runtime-Betrieb und die Absicherung produktiver Änderungen durch Tests und Produktionsnachweise.";
+const reliabilityEngineeringBlockEngineering =
+  "Architecture and implementation ownership across the Durable Execution Graph, cross-host execution, session and model authority, recovery semantics, deployment provenance, deterministic failure reproduction and production acceptance gates — designed, implemented, and operated rather than only reviewed.";
+const queueReplayHr =
+  "BODI wird nicht nur gegen den Normalfall entwickelt. Zustandsverlust, doppelte Ausführung, unklare Zustellung, fehlerhafte Wiederaufnahme und Runtime-Abweichungen werden als eigene Systemzustände behandelt und technisch abgesichert.";
+const queueReplayEngineering =
+  "Durable dispatch identity · idempotency · ambiguous-delivery reconciliation · stale-result fencing · session and model authority · restart-safe recovery · source-to-runtime provenance. The system is engineered around the failure modes that would otherwise break a long-running AI workflow.";
+const bodi_evidence_note =
+  "Production work is accepted against runtime evidence, not only source-level tests.";
+const durableDispatchHr =
+  "Ein Fehler im Zusammenspiel gleichzeitig angefragter KI-Modelle wurde reproduzierbar gemacht, durch automatisierte Tests abgesichert und anschließend unter realen Produktionsbedingungen verifiziert.";
+const durableDispatchEngineering =
+  "A mixed-model queue replay defect was reproduced deterministically, covered by regression tests, fixed in the Gateway, shipped in an immutable release and verified against real concurrent queued production requests — both queued model requests completed with HTTP 200 after the fix (HTTP 400 missing-or-invalid-model pre-fix).";
+const dispatchReplayHr =
+  "Bei mehrdeutigen Zustellungsfehlern wurde verhindert, dass KI-Aufgaben unkontrolliert erneut ausgeführt werden. Zustellung, Wiederaufnahme und Ergebnisannahme wurden dafür mit persistenten Identitäten und eindeutigen Recovery-Regeln abgesichert.";
+const dispatchReplayEngineering =
+  "Ambiguous 204/429/502 delivery states exposed duplicate-dispatch risk. The dispatch path was redesigned around business-dispatch identity, durable idempotency, sticky UNKNOWN semantics and stale-result fencing before recovery or redispatch is allowed — production-runtime acceptance in progress.";
+const failureModelText =
+  "duplicate dispatch · ambiguous delivery · stale result · runtime drift · model drift · interrupted execution · restart recovery";
 ---
 
 <section class="section flagship-section" id="flagship">
   <div class="bodi-wrap">
     <p class="eyebrow">Flagship Engineering System</p>
     <h2>agent-garden / BODI</h2>
-    <p class="bodi-intro hr-only">
-      BODI ist eine selbst betriebene AI Operator Platform für langlebige, zustandsbehaftete
-      KI-Workflows mit Recovery, lokalen Modellen und nachvollziehbarer Verifikation.
-    </p>
-    <p class="bodi-intro engineering-only">
-      BODI orchestriert Durable Agent Execution auf einer selbst betriebenen
-      Inference-Infrastruktur. Persistente Execution Graphs, session- und modellbezogene Authority,
-      Delivery Safety mit Idempotency, kontrollierte Verifikation und Provenance verbinden
-      Engineering- und Production-Ownership.
-    </p>
+    <p class="bodi-intro hr-only">{bodiIntroHr}</p>
+    <p class="bodi-intro engineering-only">{bodiIntroEngineering}</p>
 
     <div class="bodi-map" aria-label="BODI System-Architektur">
-      <p class="sr-only">
-        BODI ist eine AI Operator Platform. Eingaben sind Aufgaben, Projektkontext, Workflow-Zustand
-        und Agent-Sessions. BODI orchestriert einen Workflow Engine mit persistenter
-        Zustandsmaschine, AI-Ausführung, Modell-Prüfung und Verifikation. BODI ruft lokale
-        KI-Modelle (Ornith, Qwen) und Decision-Komponenten über einen Inference Gateway auf. Die
-        Modelle sind eine eigene Infrastruktur-Schicht. Ausgaben umfassen abgeschlossene Aufgaben,
-        geprüfte Artefakte, Recovery bei Störung und nachvollziehbare Provenance.
-      </p>
+      <p class="sr-only">{bodiDiagramSr}</p>
 
       <div class="bodi-map-stage">
         <div class="bodi-node bodi-node--input">
@@ -241,87 +264,34 @@ const models = {
   <div class="container case-grid" aria-label="BODI Systemstory">
     <div class="case-point">
       <span>01 Problem</span>
-      <p class="hr-only">
-        Längere KI-Workflows scheitern nicht nur an der Qualität eines Modells. Zustand kann
-        verloren gehen, Ausführungen können abbrechen und mehrere Modellanfragen können sich
-        gegenseitig blockieren oder unkontrolliert Ressourcen verbrauchen. Auch Modell-Runtimes
-        selbst können unter Last unzuverlässig reagieren.
-      </p>
-      <p class="engineering-only">
-        Long-running agent execution introduces failure modes across workflow state, context
-        continuity, interrupted turns, concurrent inference, retries, scheduler contention between
-        multiple self-hosted models, model-worker instability and runtime provenance. Self-hosted
-        LLMs are not a managed service — the platform has to enforce the reliability boundaries that
-        a hosted provider would otherwise guarantee.
-      </p>
+      <p class="hr-only">{hr_only}</p>
+      <p class="engineering-only">{engineering_only}</p>
     </div>
     <div class="case-point">
       <span>02 System</span>
-      <p class="hr-only">
-        BODI behandelt Workflow-Steuerung und KI-Infrastruktur als gemeinsames System. Aufgaben
-        werden persistent geplant und ausgeführt, während eine zentrale API den Zugriff auf lokal
-        betriebene Modelle kontrolliert.
-      </p>
-      <p class="engineering-only">
-        Durable Execution Graphs, Message- und Memory-Gates, Managed OpenCode Execution und ein
-        OpenAI-kompatibler Inference Gateway bilden eine gemeinsame Runtime. Der Gateway
-        authentifiziert und trennt Tenants, plant Modellzugriffe über eine Queue mit
-        reproduzierbarem Replay-Verhalten und ordnet Anfragen Worker-Slots auf `gpu0` unter
-        `exclusive_model`-Ownership zu — Ornith und Qwen sind die aktuellen self-hosted Modelle,
-        jeweils mit zwei Inference-Slots. Die Worker bleiben intern und werden nicht als öffentliche
-        OpenCode-Provider exponiert.
-      </p>
+      <p class="hr-only">{reliabilityHr}</p>
+      <p class="engineering-only">{reliabilityEngineering}</p>
     </div>
     <div class="case-point">
       <span>03 Reliability</span>
-      <p class="hr-only">
-        Zustand wird gespeichert, Fehlerpfade werden kontrolliert behandelt und Modellzugriffe
-        zentral abgesichert. Änderungen werden mit Tests, Runtime-Prüfungen und nachvollziehbarer
-        Produktions-Provenienz abgenommen.
-      </p>
-      <p class="engineering-only">
-        Persisted workflow state, bounded recovery, tenant-isolated API access, localhost-only model
-        workers, scheduler-controlled concurrency, queue replay, regression testing and immutable
-        release provenance create explicit reliability boundaries from source code to production
-        runtime.
-      </p>
+      <p class="hr-only">{engineeringOwnershipHr}</p>
+      <p class="engineering-only">{engineeringOwnershipEngineering}</p>
     </div>
   </div>
 
   <div class="container bodi-engineering-ownership" aria-label="Engineering Ownership">
     <p class="bodi-block-kicker">Engineering Ownership</p>
-    <p class="hr-only">
-      Konzeption und technische Verantwortung für persistente KI-Workflows, Recovery-Pfade,
-      Runtime-Betrieb und die Absicherung produktiver Änderungen durch Tests und
-      Produktionsnachweise.
-    </p>
-    <p class="engineering-only">
-      Architecture and implementation ownership across the Durable Execution Graph, cross-host
-      execution, session and model authority, recovery semantics, deployment provenance,
-      deterministic failure reproduction and production acceptance gates — designed, implemented,
-      and operated rather than only reviewed.
-    </p>
+    <p class="hr-only">{reliabilityEngineeringBlockHr}</p>
+    <p class="engineering-only">{reliabilityEngineeringBlockEngineering}</p>
   </div>
 
   <div class="container bodi-reliability-engineering" aria-label="Reliability Engineering">
     <p class="bodi-block-kicker">Reliability Engineering</p>
-    <p class="hr-only">
-      BODI wird nicht nur gegen den Normalfall entwickelt. Zustandsverlust, doppelte Ausführung,
-      unklare Zustellung, fehlerhafte Wiederaufnahme und Runtime-Abweichungen werden als eigene
-      Systemzustände behandelt und technisch abgesichert.
-    </p>
-    <p class="engineering-only">
-      Durable dispatch identity · idempotency · ambiguous-delivery reconciliation · stale-result
-      fencing · session and model authority · restart-safe recovery · source-to-runtime provenance.
-      The system is engineered around the failure modes that would otherwise break a long-running AI
-      workflow.
-    </p>
+    <p class="hr-only">{queueReplayHr}</p>
+    <p class="engineering-only">{queueReplayEngineering}</p>
     <p class="bodi-failure-model">
       <span class="bodi-failure-model-label">Failure model</span>
-      <span class="bodi-failure-model-value">
-        duplicate dispatch · ambiguous delivery · stale result · runtime drift · model drift ·
-        interrupted execution · restart recovery
-      </span>
+      <span class="bodi-failure-model-value">{failureModelText}</span>
     </p>
   </div>
 
@@ -391,9 +361,7 @@ const models = {
           </span>
         </li>
       </ol>
-      <p class="bodi-evidence-note">
-        Production work is accepted against runtime evidence, not only source-level tests.
-      </p>
+      <p class="bodi-evidence-note">{bodi_evidence_note}</p>
     </div>
 
     <div class="bodi-incidents">
@@ -416,17 +384,8 @@ const models = {
             <span>Production verification</span>
           </li>
         </ol>
-        <p class="hr-only">
-          Ein Fehler im Zusammenspiel gleichzeitig angefragter KI-Modelle wurde reproduzierbar
-          gemacht, durch automatisierte Tests abgesichert und anschließend unter realen
-          Produktionsbedingungen verifiziert.
-        </p>
-        <p class="engineering-only">
-          A mixed-model queue replay defect was reproduced deterministically, covered by regression
-          tests, fixed in the Gateway, shipped in an immutable release and verified against real
-          concurrent queued production requests — both queued model requests completed with HTTP 200
-          after the fix (HTTP 400 missing-or-invalid-model pre-fix).
-        </p>
+        <p class="hr-only">{durableDispatchHr}</p>
+        <p class="engineering-only">{durableDispatchEngineering}</p>
       </aside>
 
       <aside
@@ -445,17 +404,8 @@ const models = {
             <span>Verify</span>
           </li>
         </ol>
-        <p class="hr-only">
-          Bei mehrdeutigen Zustellungsfehlern wurde verhindert, dass KI-Aufgaben unkontrolliert
-          erneut ausgeführt werden. Zustellung, Wiederaufnahme und Ergebnisannahme wurden dafür mit
-          persistenten Identitäten und eindeutigen Recovery-Regeln abgesichert.
-        </p>
-        <p class="engineering-only">
-          Ambiguous 204/429/502 delivery states exposed duplicate-dispatch risk. The dispatch path
-          was redesigned around business-dispatch identity, durable idempotency, sticky UNKNOWN
-          semantics and stale-result fencing before recovery or redispatch is allowed —
-          production-runtime acceptance in progress.
-        </p>
+        <p class="hr-only">{dispatchReplayHr}</p>
+        <p class="engineering-only">{dispatchReplayEngineering}</p>
       </aside>
     </div>
   </div>

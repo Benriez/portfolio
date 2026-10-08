@@ -5,9 +5,9 @@
  * Mirrors the OpenDesign reference `.hero` structure:
  *   .hero > .container > .hero-grid > .hero-main + .hero-panel
  *
- * The hero-lead is shown in both modes — same copy in HR and Engineering,
+ * The heroLead is shown in both modes — same copy in HR and Engineering,
  * matching the reference which renders the same lead paragraph regardless
- * of mode (the reference does not split hero-lead).
+ * of mode (the reference does not split heroLead).
  */
 interface HeroPanelItem {
   readonly keyLabel: string;
@@ -58,6 +58,8 @@ const stack = [
 
 const githubUrl = "https://github.com/Benriez?tab=repositories";
 const email = "bennyriezler@gmail.com";
+const heroLeadText =
+  "Ich entwickle und betreibe Softwaresysteme von Produktanforderung und Architektur bis Production, Reliability und langlebigen AI-Agent-Runtimes.";
 ---
 
 <section class="hero" id="top">
@@ -66,10 +68,7 @@ const email = "bennyriezler@gmail.com";
       <p class="eyebrow">Engineering Bewerbung</p>
       <h1>Benjamin Riezler</h1>
       <p class="role">Full-Stack &amp; Applied AI Engineer</p>
-      <p class="hero-lead">
-        Ich entwickle und betreibe Softwaresysteme von Produktanforderung und Architektur bis
-        Production, Reliability und langlebigen AI-Agent-Runtimes.
-      </p>
+      <p class="heroLead">{heroLeadText}</p>
 
       <div class="hero-stack" aria-label="Kerntechnologien">
         {stack.map((item) => (
@@ -140,7 +139,7 @@ const email = "bennyriezler@gmail.com";
     letter-spacing: -0.025em;
     font-weight: 560;
   }
-  .hero-lead {
+  .heroLead {
     margin: 22px 0 0;
     max-width: 760px;
     font-size: clamp(20px, 2.4vw, 30px);
@@ -241,7 +240,7 @@ const email = "bennyriezler@gmail.com";
     .hero h1 {
       font-size: 48px;
     }
-    .hero-lead {
+    .heroLead {
       font-size: 22px;
     }
     .hero-stack span:not(:last-child)::after {
