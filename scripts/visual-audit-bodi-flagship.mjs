@@ -7,7 +7,7 @@ import { chromium, devices } from "@playwright/test";
 import fs from "node:fs";
 import path from "node:path";
 
-const PORTFOLIO = "http://127.0.0.1:4321/portfolio/";
+const PORTFOLIO = process.env.PLAYWRIGHT_BASE_URL ?? "http://127.0.0.1:4321/portfolio/";
 
 const VIEWPORTS = [
   { name: "desktop-1440", width: 1440, height: 1000 },
@@ -27,10 +27,10 @@ async function main() {
   const browser = await chromium.launch();
   for (const vp of VIEWPORTS) {
     const context = await browser.newContext({
-      viewport: { width: vp.width, height: vp.height },
       ...(vp.name === "mobile-390" ? devices["Pixel 7"] : {}),
       ...(vp.name === "tablet-768" ? devices["iPad Mini"] : {}),
       ...(vp.name === "desktop-1440" ? devices["Desktop Chrome"] : {}),
+      viewport: { width: vp.width, height: vp.height },
     });
     for (const mode of MODES) {
       const page = await context.newPage();
@@ -39,7 +39,11 @@ async function main() {
       const el = page.locator("#flagship");
       const box = await el.boundingBox();
       const file = path.join(OUT_DIR, `${vp.name}-${mode.name}.png`);
-      await el.screenshot({ path: file });
+      await el.screenshot({ path: file, style: "header { visibility: hidden !important; }" });
+      await page.locator(".bodi-viz").screenshot({
+        path: path.join(OUT_DIR, `${vp.name}-${mode.name}-diagram.png`),
+        style: "header { visibility: hidden !important; }",
+      });
       console.warn(`  ${vp.name}/${mode.name}: ${box?.width}x${box?.height} → ${file}`);
       await page.close();
     }

@@ -50,12 +50,12 @@ test.describe("BODI flagship — editorial system map", () => {
     await expect(stages.nth(4)).toHaveText("Continue");
   });
 
-  test("renders the recovery arc returning into execution", async ({ page }) => {
+  test("renders the failure branch returning into execution", async ({ page }) => {
     await page.goto("./?mode=hr#flagship");
     const flagship = page.locator("#flagship");
-    // The static recovery SVG is part of the desktop visualization.
+    // Desktop and mobile geometries preserve the same recovery topology.
     await expect(flagship.locator(".bodi-viz-recovery")).toBeAttached();
-    await expect(flagship.locator(".bodi-viz-recovery-line")).toHaveCount(1);
+    await expect(flagship.locator(".bodi-viz-recovery-line")).toHaveCount(2);
     await expect(flagship.locator(".bodi-viz-recovery-label")).toContainText("Recovery");
   });
 
@@ -139,9 +139,13 @@ test.describe("BODI flagship — editorial system map", () => {
     await page.goto("./?mode=hr#flagship");
     const flagship = page.locator("#flagship");
     await expect(flagship.locator(".bodi-viz-stages")).toBeVisible();
-    // On mobile, the recovery SVG overlay is hidden (the down arrows between
-    // stages imply the flow) but the recovery label is still present as part
-    // of the static document, so the structure remains meaningful.
+    await expect(flagship.locator(".bodi-viz-mobile")).toBeVisible();
+    await expect(flagship.locator(".bodi-viz-desktop")).toBeHidden();
+    await expect(flagship.locator(".bodi-viz-recovery-label")).toBeVisible();
+    await expect(flagship.locator(".bodi-viz-retry")).toBeVisible();
+    const geometry = await flagship.locator(".bodi-viz-core").boundingBox();
+    expect(geometry?.width).toBeLessThanOrEqual(390);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(390);
     const stages = flagship.locator(".bodi-viz-stage");
     await expect(stages).toHaveCount(5);
   });
