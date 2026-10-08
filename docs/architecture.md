@@ -7,8 +7,7 @@ JavaScript island for the body content.
 ## Principles
 
 1. **Static where the domain is static.** Portfolio content stays static
-   HTML; only the navigation mode-switch and the print button ship
-   minimal inline JavaScript.
+   HTML; only the navigation mode-switch ships minimal inline JavaScript.
 2. **The static HTML carries both views.** Both `hr` and `engineering`
    variants of every dual-content field ship in the rendered HTML. The mode
    is a CSS-only visibility switch.
@@ -39,7 +38,6 @@ The portfolio ships **no client JS** for the body content. The only
 JavaScript on the page is:
 
 - the mode-switch handler in `SiteHeader.astro`,
-- the print-button handler in `Hero.astro`,
 - the URL-query `?mode=` applier in `BaseLayout.astro`.
 
 There is no SPA navigation, no router, no client-side data fetching.

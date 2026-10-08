@@ -51,6 +51,42 @@ test.describe("Portfolio shell", () => {
     await expect(page.locator(".flagship-section")).toHaveCount(0);
   });
 
+  test("renders BODI with '2026' as the left meta and no 'Flagship' label", async ({ page }) => {
+    await page.goto("./?mode=hr#work");
+    const bodi = page.locator("article", {
+      has: page.getByRole("heading", { name: "BODI / agent-garden" }),
+    });
+    await expect(bodi.locator(".work-index")).toHaveText("2026");
+    await expect(bodi.locator(".work-index")).not.toContainText("Flagship");
+    await expect(bodi.locator(".work-meta [data-view='hr']")).toContainText(
+      "Self-hosted AI Operator Platform",
+    );
+  });
+
+  test("renders Shopping-Pong as ongoing with '2025 – heute' and live status", async ({ page }) => {
+    await page.goto("./?mode=hr#work");
+    const shoppingPong = page.locator("article", {
+      has: page.getByRole("heading", { name: "Shopping-Pong" }),
+    });
+    await expect(shoppingPong.locator(".work-index")).toHaveText("2025 – heute");
+    await expect(shoppingPong.locator(".work-meta [data-view='hr']")).toContainText("2025 – heute");
+    await expect(shoppingPong.locator(".work-meta [data-view='hr']")).not.toContainText(
+      "In aktiver Entwicklung",
+    );
+    await expect(shoppingPong.locator(".work-meta [data-view='hr']")).not.toContainText(
+      "Live / Production",
+    );
+    // No stale "2026" date on Shopping-Pong anywhere in the project card.
+    await expect(shoppingPong).not.toContainText("2026");
+  });
+
+  test("does not render any CV / Print button in Hero or Contact", async ({ page }) => {
+    await page.goto("./?mode=hr");
+    const allButtons = page.getByRole("button", { name: /cv.*print|print/i });
+    await expect(allButtons).toHaveCount(0);
+    await expect(page.locator("[data-print]")).toHaveCount(0);
+  });
+
   test("project meta carries period and tagline without an extra status label", async ({
     page,
   }) => {
@@ -62,16 +98,6 @@ test.describe("Portfolio shell", () => {
     await expect(fahrschule360.locator(".work-meta [data-view='hr']")).toContainText("2020-2026");
     await expect(fahrschule360.locator(".work-meta [data-view='hr']")).not.toContainText(
       "In aktiver Entwicklung",
-    );
-
-    const shoppingPong = page.locator("article", {
-      has: page.getByRole("heading", { name: "Shopping-Pong" }),
-    });
-    await expect(shoppingPong.locator(".work-meta [data-view='hr']")).not.toContainText(
-      "In aktiver Entwicklung",
-    );
-    await expect(shoppingPong.locator(".work-meta [data-view='hr']")).not.toContainText(
-      "Live / Production",
     );
 
     const bodi = page.locator("article", {

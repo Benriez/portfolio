@@ -6,16 +6,16 @@ import type { ProjectEntry } from "~/types/content";
  * Five projects, in reference order, with all bilingual fields captured
  * exactly as the reference HTML defines them:
  *
- *   1. BODI / agent-garden  (Flagship)
+ *   1. BODI / agent-garden  (2026)
  *   2. Fahrschule360         (2020-2026)
- *   3. Shopping-Pong         (2026)
+ *   3. Shopping-Pong         (2025 – heute)
  *   4. Production Web Platform Migration (2025-2026, compact)
  *   5. Odoo Add-on Suite     (2026, compact)
  */
 
 const Flagship: ProjectEntry = {
   id: "bodi-agent-garden",
-  index: "Flagship",
+  index: "2026",
   title: "BODI / agent-garden",
   meta: {
     hr: "Self-hosted AI Operator Platform · seit 2026",
@@ -88,11 +88,11 @@ const Fahrschule360: ProjectEntry = {
 
 const ShoppingPong: ProjectEntry = {
   id: "shopping-pong",
-  index: "2026",
+  index: "2025 – heute",
   title: "Shopping-Pong",
   meta: {
-    hr: "2026 · Zwei-Personen-Team",
-    engineering: "2026 · Zwei-Personen-Team",
+    hr: "2025 – heute · Zwei-Personen-Team",
+    engineering: "2025 – heute · Zwei-Personen-Team",
   },
   sub: {
     hr: "Automatisierte Laden- & Spielinfrastruktur",
@@ -129,7 +129,7 @@ const ShoppingPong: ProjectEntry = {
   ],
   integration: ["Web / Payment ↔ Netzwerk ↔ Raspberry Pi ↔ ESP32 / Smart Home ↔ Android Kiosk"],
   status: "live",
-  period: { start: "2026" },
+  period: { start: "2025" },
 };
 
 const ProductionWebPlatform: ProjectEntry = {

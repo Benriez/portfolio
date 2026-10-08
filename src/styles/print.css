@@ -2,7 +2,7 @@
  * Print stylesheet.
  *
  * Mirrors the OpenDesign reference. When the page is printed:
- *   - The header / hero-actions / skip-link / contact print button disappear
+ *   - The header / hero-actions / skip-link disappear
  *   - The body switches to print-friendly colours
  *   - Sections keep their hairlines but only between content blocks
  *   - Both mode variants become visible so a reviewer can compare

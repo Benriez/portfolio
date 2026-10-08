@@ -7,8 +7,8 @@
  *   - `.contact-actions` is a flex row of button-style links (mono-uppercase,
  *     40px min-height, 1px rule border).
  *
- * Items that the call site marks `visible: false` are simply omitted from
- * the rendered list. The `href` is shown without its protocol prefix.
+ * Items that the call site marks `visible: false` are simply omitted from the
+ * rendered list. The `href` is shown without its protocol prefix.
  *
  * Items here mirror the reference's action set, but the reference uses
  * redacted placeholder values in every link and button. We render only the items the operator has
@@ -19,10 +19,9 @@ import type { ContactItem } from "~/types/content";
 interface Props {
   readonly items: ContactItem[];
   readonly heading: { hr: string; engineering: string };
-  readonly printLabel?: string;
 }
 
-const { items, heading, printLabel = "CV / Print" } = Astro.props as Props;
+const { items, heading } = Astro.props as Props;
 const visible = items.filter((item) => item.visible);
 ---
 
@@ -38,18 +37,9 @@ const visible = items.filter((item) => item.visible);
           {item.href.replace(/^(?:mailto|tel|https?):(?:\/\/)?(?:www\.)?/, "")}
         </a>
       ))}
-      <button type="button" data-print>
-        {printLabel}
-      </button>
     </div>
   </div>
 </section>
-
-<script>
-  document.querySelectorAll<HTMLButtonElement>("[data-print]").forEach((b) => {
-    b.addEventListener("click", () => window.print());
-  });
-</script>
 
 <style>
   .contact-region {
@@ -73,8 +63,7 @@ const visible = items.filter((item) => item.visible);
     gap: 10px;
     align-items: flex-start;
   }
-  .contact-actions a,
-  .contact-actions button {
+  .contact-actions a {
     min-height: 40px;
     display: inline-flex;
     align-items: center;
@@ -82,15 +71,13 @@ const visible = items.filter((item) => item.visible);
     padding: 10px 13px;
     background: transparent;
     color: var(--fg-soft);
-    cursor: pointer;
     font-family: var(--font-mono);
     font-size: 11px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     text-decoration: none;
   }
-  .contact-actions a:hover,
-  .contact-actions button:hover {
+  .contact-actions a:hover {
     border-color: var(--fg);
     color: var(--fg);
     text-decoration: none;
