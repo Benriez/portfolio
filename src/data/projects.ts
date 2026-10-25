@@ -139,6 +139,13 @@ const ShoppingPong: ProjectEntry = {
   integration: ["Web / Payment ↔ Netzwerk ↔ Raspberry Pi ↔ ESP32 / Smart Home ↔ Android Kiosk"],
   status: "live",
   period: { start: "2025" },
+  caseLinks: [
+    { href: "https://shoppingpong.shop/", label: "Website" },
+    {
+      href: "https://merkurist.de/mainz/shoppingpong-tischtennis-spielen-jetzt-auch-bei-schlechtem-wetter-in-mainz-mombach_kzXI",
+      label: "Presseartikel",
+    },
+  ],
 };
 
 const ProductionWebPlatform: ProjectEntry = {

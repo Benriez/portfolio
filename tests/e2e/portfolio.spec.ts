@@ -128,6 +128,44 @@ test.describe("Portfolio shell", () => {
     await expect(shoppingPong).not.toContainText("2026");
   });
 
+  test("renders Shopping-Pong with website and press links exactly once", async ({ page }) => {
+    await page.goto("./?mode=hr#work");
+    const shoppingPong = page.locator("article", {
+      has: page.getByRole("heading", { name: "Shopping-Pong" }),
+    });
+    const website = shoppingPong.getByRole("link", { name: "Website" });
+    const press = shoppingPong.getByRole("link", { name: "Presseartikel" });
+    await expect(website).toHaveCount(1);
+    await expect(press).toHaveCount(1);
+    await expect(website).toHaveAttribute("href", "https://shoppingpong.shop/");
+    await expect(press).toHaveAttribute(
+      "href",
+      "https://merkurist.de/mainz/shoppingpong-tischtennis-spielen-jetzt-auch-bei-schlechtem-wetter-in-mainz-mombach_kzXI",
+    );
+    // No duplicated rendering of either reference.
+    await expect(shoppingPong.locator('a[href="https://shoppingpong.shop/"]')).toHaveCount(1);
+    await expect(
+      shoppingPong.locator(
+        'a[href="https://merkurist.de/mainz/shoppingpong-tischtennis-spielen-jetzt-auch-bei-schlechtem-wetter-in-mainz-mombach_kzXI"]',
+      ),
+    ).toHaveCount(1);
+    // The links stay part of the project card, not a separate CTA block.
+    await expect(shoppingPong.locator(".case-links .case-link")).toHaveCount(2);
+  });
+
+  test("Shopping-Pong external links are rendered in both modes", async ({ page }) => {
+    for (const mode of ["hr", "engineering"]) {
+      await page.goto(`./?mode=${mode}#work`);
+      const shoppingPong = page.locator("article", {
+        has: page.getByRole("heading", { name: "Shopping-Pong" }),
+      });
+      await expect(shoppingPong.getByRole("link", { name: "Website" })).toBeVisible();
+      await expect(shoppingPong.getByRole("link", { name: "Presseartikel" })).toBeVisible();
+      // The period stays open-ended in both modes.
+      await expect(shoppingPong.locator(".work-index")).toHaveText("2025 – heute");
+    }
+  });
+
   test("does not render any CV / Print button in Hero or Contact", async ({ page }) => {
     await page.goto("./?mode=hr");
     const allButtons = page.getByRole("button", { name: /cv.*print|print/i });

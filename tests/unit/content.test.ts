@@ -230,3 +230,81 @@ describe("UScreen selected-work entry", () => {
     expect(text).not.toMatch(/läuft mit 55 FPS|runs at 55 FPS/);
   });
 });
+
+const SHOPPING_PONG_WEBSITE = "https://shoppingpong.shop/";
+const SHOPPING_PONG_PRESS =
+  "https://merkurist.de/mainz/shoppingpong-tischtennis-spielen-jetzt-auch-bei-schlechtem-wetter-in-mainz-mombach_kzXI";
+
+describe("Shopping-Pong selected-work entry", () => {
+  const shoppingPong = projects.find((p) => p.id === "shopping-pong");
+
+  it("links the public website as the primary external reference", () => {
+    expect(shoppingPong, "Shopping-Pong project entry must exist").toBeDefined();
+    expect(shoppingPong!.caseLinks?.[0]?.href).toBe(SHOPPING_PONG_WEBSITE);
+    expect(shoppingPong!.caseLinks?.[0]?.label).toBe("Website");
+  });
+
+  it("links the external editorial coverage as a secondary reference", () => {
+    expect(shoppingPong!.caseLinks?.[1]?.href).toBe(SHOPPING_PONG_PRESS);
+    expect(shoppingPong!.caseLinks?.[1]?.label).toBe("Presseartikel");
+  });
+
+  it("renders each external link exactly once", () => {
+    const links = shoppingPong!.caseLinks ?? [];
+    expect(links).toHaveLength(2);
+    expect(links.filter((l) => l.href === SHOPPING_PONG_WEBSITE)).toHaveLength(1);
+    expect(links.filter((l) => l.href === SHOPPING_PONG_PRESS)).toHaveLength(1);
+    // The press article must not double as the website reference.
+    expect(links[0]?.href).not.toBe(links[1]?.href);
+  });
+
+  it("keeps the canonical ongoing period", () => {
+    expect(shoppingPong!.index).toBe("2025 – heute");
+    expect(shoppingPong!.period.start).toBe("2025");
+    // Still ongoing: no end date is set.
+    expect(shoppingPong!.period.end).toBeUndefined();
+    expect(shoppingPong!.meta.hr).toContain("2025 – heute");
+    expect(shoppingPong!.meta.engineering).toContain("2025 – heute");
+  });
+
+  it("is live in production", () => {
+    expect(shoppingPong!.status).toBe("live");
+  });
+
+  it("is presented as actively developed", () => {
+    // The open-ended "heute" period is the portfolio's signal for an
+    // ongoing, still-developed project — the project is never closed out.
+    expect(shoppingPong!.index).toMatch(/heute/i);
+    expect(shoppingPong!.period.end).toBeUndefined();
+  });
+
+  it("keeps the two-person team and the physical-system scope", () => {
+    expect(shoppingPong!.meta.hr).toContain("Zwei-Personen-Team");
+    expect(shoppingPong!.roleLine).toContain("Zwei-Personen-Team");
+    const text = `${shoppingPong!.lead.hr} ${shoppingPong!.lead.engineering} ${shoppingPong!.integration?.join(" ")}`;
+    expect(text).toMatch(/Payment|Buchung/i);
+    expect(text).toMatch(/Venue|Infrastruktur|Netzwerk/i);
+  });
+
+  it("does not carry exaggerated press claims", () => {
+    const text = [
+      shoppingPong!.meta.hr,
+      shoppingPong!.meta.engineering,
+      shoppingPong!.lead.hr,
+      shoppingPong!.lead.engineering,
+      shoppingPong!.roleLine ?? "",
+      ...(shoppingPong!.pointsHr ?? []),
+      ...(shoppingPong!.pointsEngineering ?? []),
+      ...(shoppingPong!.caseLinks ?? []).map((l) => l.label),
+    ].join(" ");
+    for (const overclaim of [
+      /national press/i,
+      /major media/i,
+      /award[- ]winning/i,
+      /medienberichterstattung/i,
+      /bundesweit/i,
+    ]) {
+      expect(text, `unsupported overclaim: ${overclaim}`).not.toMatch(overclaim);
+    }
+  });
+});
