@@ -91,7 +91,7 @@ describe("Public content data", () => {
       Fahrschule360: "live",
       "Shopping-Pong": "live",
       "Production Web Platform Migration": "live",
-      "Odoo Add-on Suite": "live",
+      UScreen: "active-development",
     });
   });
 
@@ -131,5 +131,102 @@ describe("Public content data", () => {
     ]) {
       expect(text, `unsupported overclaim: ${overclaim}`).not.toMatch(overclaim);
     }
+  });
+});
+
+const USCREEN_PRIMARY_LINK = "https://benriez.github.io/uscreen/";
+const USCREEN_HARDWARE_TESTED_RELEASE = "v0.2.0-preview.3";
+const USCREEN_DEVELOPMENT_RELEASE = "v0.3.0-dev.1";
+
+describe("UScreen selected-work entry", () => {
+  const uscreen = projects.find((p) => p.id === "uscreen");
+
+  it("is exactly one primary Selected Work project", () => {
+    expect(projects.filter((p) => p.title === "UScreen")).toHaveLength(1);
+    expect(uscreen, "UScreen project entry must exist").toBeDefined();
+  });
+
+  it("keeps the Selected Work set at exactly five primary projects", () => {
+    expect(projects).toHaveLength(5);
+  });
+
+  it("leaves no Odoo project entry behind", () => {
+    expect(projects.filter((p) => /odoo/i.test(p.title))).toHaveLength(0);
+    expect(projects.filter((p) => /odoo/i.test(p.id))).toHaveLength(0);
+    expect(projects.filter((p) => /base_automation/i.test(JSON.stringify(p)))).toHaveLength(0);
+  });
+
+  it("is dated 2026 and flagged as active development", () => {
+    expect(uscreen!.index).toBe("2026");
+    expect(uscreen!.period.start).toBe("2026");
+    expect(uscreen!.status).toBe("active-development");
+    expect(uscreen!.meta.hr).toMatch(/Aktive Entwicklung/i);
+    expect(uscreen!.meta.engineering).toMatch(/Aktive Entwicklung/i);
+  });
+
+  it("surfaces the core cross-platform technology stack", () => {
+    for (const token of ["Rust", "Swift", "Kotlin"]) {
+      expect(uscreen!.stack, `stack must contain ${token}`).toContain(token);
+    }
+    expect(uscreen!.stack.join(" ")).toMatch(/macOS/);
+    expect(uscreen!.stack.join(" ")).toMatch(/Android/);
+    expect(uscreen!.stack.join(" ")).toMatch(/USB \/ ADB/);
+  });
+
+  it("links the project website as the primary CTA", () => {
+    expect(uscreen!.caseLinks?.[0]?.href).toBe(USCREEN_PRIMARY_LINK);
+  });
+
+  it("separates the hardware-tested release from the development release", () => {
+    const meta = uscreen!.meta.engineering;
+    // Both release identifiers are named so the distinction is visible.
+    expect(meta).toContain(USCREEN_HARDWARE_TESTED_RELEASE);
+    expect(meta).toContain(USCREEN_DEVELOPMENT_RELEASE);
+    // The hardware-tested release is stated as hardware accepted.
+    expect(meta).toMatch(/v0\.2\.0-preview\.3 hardware-abgenommen/);
+    // The development release is explicitly stated as NOT hardware accepted.
+    expect(meta).toMatch(/v0\.3\.0-dev\.1 ohne Hardware-Abnahme/);
+    // It must never be labelled stable or production ready.
+    for (const overclaim of [
+      /stabil/i,
+      /stable/i,
+      /production[- ]ready/i,
+      /hardware[- ]verified/i,
+    ]) {
+      expect(meta, `unsupported overclaim: ${overclaim}`).not.toMatch(overclaim);
+    }
+  });
+
+  it("never presents the project as finished or fully hardware verified", () => {
+    const text = [
+      uscreen!.meta.hr,
+      uscreen!.meta.engineering,
+      uscreen!.lead.hr,
+      uscreen!.lead.engineering,
+      uscreen!.roleLine ?? "",
+      ...(uscreen!.pointsHr ?? []),
+      ...(uscreen!.pointsEngineering ?? []),
+    ].join(" ");
+    for (const overclaim of [
+      /fully hardware[- ]verified/i,
+      /hardware[- ]vollständig/i,
+      /production complete/i,
+      /production[- ]fertig/i,
+      /stable release/i,
+      /fertiggestellt/i,
+      /abgeschlossen und/i,
+    ]) {
+      expect(text, `unsupported overclaim: ${overclaim}`).not.toMatch(overclaim);
+    }
+  });
+
+  it("scopes the performance figures to their benchmark", () => {
+    const text = (uscreen!.pointsEngineering ?? []).join(" ");
+    // The headline figure must stay attached to the controlled benchmark.
+    expect(text).toMatch(/54[–-]55,6 FPS im kontrollierten Bewegungsbenchmark/);
+    // The live-session capture rate must be preserved as a separate figure.
+    expect(text).toMatch(/28,8[–-]43 FPS/);
+    // A blanket "runs at 55 FPS" claim is not allowed.
+    expect(text).not.toMatch(/läuft mit 55 FPS|runs at 55 FPS/);
   });
 });

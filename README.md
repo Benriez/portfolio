@@ -145,4 +145,6 @@ MIT + CC BY 4.0 so it can be reused with attribution.
 
 - [Agent Garden](https://github.com/Benriez/agent-garden) — the canonical
   BODI runtime this portfolio describes.
+- [UScreen](https://github.com/Benriez/uscreen) — the macOS extended-display
+  project described in Selected Work.
 - OpenDesign — the design reference used for editorial layout decisions.

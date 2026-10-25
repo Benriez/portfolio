@@ -10,7 +10,12 @@ import type { ProjectEntry } from "~/types/content";
  *   2. Fahrschule360         (2020-2026)
  *   3. Shopping-Pong         (2025 – heute)
  *   4. Production Web Platform Migration (2025-2026, compact)
- *   5. Odoo Add-on Suite     (2026, compact)
+ *   5. UScreen               (2026, compact)
+ *
+ * Entry 5 was intentionally replaced: the former Odoo Add-on Suite
+ * project was retired in favour of UScreen. The set stays at five
+ * primary Selected Work projects; UScreen takes the freed slot
+ * in place and keeps the established order.
  */
 
 const Flagship: ProjectEntry = {
@@ -163,32 +168,61 @@ const ProductionWebPlatform: ProjectEntry = {
   compact: true,
 };
 
-const OdooAddonSuite: ProjectEntry = {
-  id: "odoo-addon-suite",
+const UScreen: ProjectEntry = {
+  id: "uscreen",
   index: "2026",
-  title: "Odoo Add-on Suite",
-  meta: { hr: "", engineering: "" },
+  title: "UScreen",
+  meta: {
+    hr: "2026 · Aktive Entwicklung",
+    engineering:
+      "2026 · Aktive Entwicklung · v0.2.0-preview.3 hardware-abgenommen · v0.3.0-dev.1 ohne Hardware-Abnahme",
+  },
   sub: {
-    hr: "ERP-Erweiterung für Geschäftsprozesse",
-    engineering: "Odoo-19-Suite mit 16 verzahnten Modulen",
+    hr: "Nativer macOS-Zweitbildschirm für Android-Tablets",
+    engineering: "Native macOS Extended Display for Android Tablets",
   },
   lead: {
-    hr: "ERP-Erweiterung zur Digitalisierung und Verbindung von CRM, Kunden-Onboarding, Dokumentenfluss und operativen Geschäftsprozessen.",
-    engineering: "",
+    hr: "Cross-Platform-Systementwicklung für einen nativen macOS-Zweitbildschirm auf Android-Tablets: Display-Integration, USB-Streaming, Android-Receiver und Touch-Rückkanal mit Rust, Swift und Kotlin.",
+    engineering:
+      "Native macOS-/Android-System, das ein Android-Tablet als echten erweiterten macOS-Desktop einbindet. Rust-Backend, native Swift-Integration, hardwarebeschleunigter Android-Receiver und lokale USB/ADB-Übertragung.",
   },
   roleLine:
-    "Konzipiert und implementiert als modulare Suite mit Workflow-Logik, Security-Modell und CRM-Integration",
-  pointsEngineering: [
-    "Modellierung realer Kanzlei- und Geschäftsprozesse über Workflow-Steps und explizite Zustandsübergänge.",
-    "Activities und base_automation für automatisierte Folgeaktionen und operative Prozesssteuerung.",
-    "Rollen-, Berechtigungs- und Record-Rule-Modell für saubere Zugriffstrennung.",
-    "Dokumentanforderungen und CRM-/Kundenintegration über die modulare Suite hinweg.",
-    "Analyse von Persistenz-, Session- und Workflow-Problemen sowie E2E-Verifikation produktiver Abläufe.",
+    "Eigenständige Systementwicklung über macOS, Android, Streaming, Gerätekommunikation und Runtime-Lifecycle",
+  pointsHr: [
+    "Android-Tablet als echter erweiterter macOS-Desktop – kein Mirroring, sondern ein registriertes virtuelles Display.",
+    "Lokale USB/ADB-Übertragung ohne Cloud-Dienst; Touch-Eingaben des Tablets werden zu Zeiger- und Scroll-Events auf dem Mac.",
+    "Schwerpunkte: Systems Engineering, Performance-Optimierung, Hardware-Tests und zuverlässige Release-Prozesse.",
   ],
-  stack: ["Python", "Odoo", "PostgreSQL", "XML", "base_automation"],
-  status: "live",
+  pointsEngineering: [
+    "Rust-Backend für USB-Kommunikation, Session-Lifecycle, Supervisor und Sicherheitsmechanismen.",
+    "Native Swift-Integration für virtuelle Displays, Screen Capture und Eingabesteuerung unter macOS – inklusive WindowServer-/ColorSync-Lifecycle und nicht offiziell unterstützter Display-Schnittstellen.",
+    "Kotlin-/MediaCodec-Receiver auf Android mit Touch-Rückkanal zum Mac, adaptiert aus dem MIT-lizenzierten UScreen-Projekt; erweiterter Desktop sowie Tippen und Ziehen auf M1 Pro mit DOOGEE U12 verifiziert.",
+    "Capture-/Streaming-Pipeline optimiert bis auf ca. 54–55,6 FPS im kontrollierten Bewegungsbenchmark; 28,8–43 FPS Capture bei normaler Fensterbewegung, dokumentiert stabile Session über 3 h.",
+    "Stable-/Development-Trennung mit Installationsschutz, Rollback und Hardware-Abnahmeprozess nach Problemen mit experimentellen Releases; 988 von 990 Rust-Tests je Konfiguration und 20 Android-JVM-Tests zum Entwicklungsabschluss bestanden.",
+  ],
+  stack: [
+    "Rust",
+    "Swift",
+    "Kotlin",
+    "macOS",
+    "Android",
+    "USB / ADB",
+    "MediaCodec",
+    "Systems Engineering",
+  ],
+  integration: [
+    "macOS Virtual Display ↔ Screen Capture ↔ Encode ↔ USB / ADB ↔ Android Receiver ↔ Touch Input ↔ Mac",
+  ],
+  status: "active-development",
   period: { start: "2026" },
   compact: true,
+  caseLinks: [
+    { href: "https://benriez.github.io/uscreen/", label: "Projektseite" },
+    {
+      href: "https://github.com/Benriez/uscreen/releases/tag/v0.2.0-preview.3",
+      label: "Release v0.2.0-preview.3",
+    },
+  ],
 };
 
 export const projects: ProjectEntry[] = [
@@ -196,5 +230,5 @@ export const projects: ProjectEntry[] = [
   Fahrschule360,
   ShoppingPong,
   ProductionWebPlatform,
-  OdooAddonSuite,
+  UScreen,
 ];

@@ -46,7 +46,7 @@ export interface ProjectEntry {
    * the HR and Engineering text are identical in those cases. */
   meta: DualCopy;
   /** 1-line italic sub-title. For most projects single-language; Steuerkompass
-   * and Odoo split HR/Engineering with distinct wording. */
+   * and UScreen split HR/Engineering with distinct wording. */
   sub: DualCopy;
   /** Lead paragraph: 1-2 sentences. Reference splits into hr-only /
    * engineering-only <p> for most projects. */
@@ -68,8 +68,9 @@ export interface ProjectEntry {
   index: string;
   /** True for compact entries; reduced padding. */
   compact?: boolean;
-  /** Optional case-study link. Reference label is single-language. */
-  caseLink?: { href: string; label: string };
+  /** Optional public project links. The first entry is the primary CTA;
+   * further entries are secondary technical / release links. */
+  caseLinks?: ReadonlyArray<{ href: string; label: string }>;
 }
 
 export interface ExperienceEntry {

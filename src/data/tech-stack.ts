@@ -8,7 +8,7 @@ import type { DualCopy, TechStackGroup } from "~/types/content";
  *   Primary       · TypeScript · Python · JavaScript · Angular · Django / DRF · Node.js / Express
  *   AI / Systems  · Agent Orchestration · Durable Execution · Memory Systems · Managed OpenCode · Self-hosted LLMs · Inference Gateway · Multi-tenant API · Model Scheduling / Queueing · MCP · Evaluation / Reliability
  *   Infrastructure · Docker · CapRover · Linux · Windows Server 2022 · RDS · PowerShell · NTFS / ACL · Microsoft 365 · Exchange Online · PostgreSQL · nginx · DigitalOcean · AWS EC2 / S3
- *   Additional    · Electron · Odoo · WordPress / PHP · FastAPI · Playwright · Raspberry Pi · ESP32 / ESP-IDF · MQTT · OpenWrt · FFmpeg
+ *   Additional    · Electron · Odoo · Rust · Swift · Kotlin · macOS · Android · WordPress / PHP · FastAPI · Playwright · Raspberry Pi · ESP32 / ESP-IDF · MQTT · OpenWrt · FFmpeg
  *
  * The reference renders these as a definition list: a 150px mono-uppercase
  * label column beside a comma-separated items column.
@@ -79,6 +79,11 @@ const REFERENCE: ReadonlyArray<ReferenceTechStackGroup> = [
     items: [
       "Electron",
       "Odoo",
+      "Rust",
+      "Swift",
+      "Kotlin",
+      "macOS",
+      "Android",
       "WordPress / PHP",
       "FastAPI",
       "Playwright",

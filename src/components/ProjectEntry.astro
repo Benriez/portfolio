@@ -12,7 +12,7 @@
  *   .role-line    (1 line, optional)
  *   .work-points  (3+ bullet list, HR or Eng, optional)
  *   .stack-line   (Stack · items)
- *   .case-link    (optional)
+ *   .case-links   (optional, first entry is the primary CTA)
  */
 import type { ProjectEntry as ProjectEntryData } from "~/types/content";
 import { formatProjectMeta } from "~/data/project-status";
@@ -72,10 +72,14 @@ const meta = formatProjectMeta(project.meta, project.status);
         <span class="stack-items">{project.integration.join(" · ")}</span>
       </p>
     )}
-    {project.caseLink && (
-      <a class="case-link" href={project.caseLink.href}>
-        {project.caseLink.label}
-      </a>
+    {project.caseLinks && project.caseLinks.length > 0 && (
+      <div class="case-links">
+        {project.caseLinks.map((link) => (
+          <a class="case-link" href={link.href} rel="noopener">
+            {link.label}
+          </a>
+        ))}
+      </div>
     )}
   </div>
 </article>
@@ -179,9 +183,15 @@ const meta = formatProjectMeta(project.meta, project.status);
   .stack-items {
     color: var(--fg-soft);
   }
+  .case-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 10px 26px;
+    margin-top: 20px;
+  }
   .case-link {
     display: inline-flex;
-    margin-top: 20px;
     font-family: var(--font-mono);
     font-size: 11px;
     letter-spacing: 0.1em;
@@ -197,6 +207,9 @@ const meta = formatProjectMeta(project.meta, project.status);
     margin-left: 10px;
     align-self: center;
     background: currentColor;
+  }
+  .case-link:last-child::after {
+    display: none;
   }
 
   @media (max-width: 900px) {

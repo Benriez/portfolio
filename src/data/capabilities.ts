@@ -43,9 +43,9 @@ const REFERENCE: ReadonlyArray<ReferenceCapability> = [
       engineering: "Full-Stack & Systems Integration",
     },
     body: {
-      hr: "TypeScript · Angular · Node.js / Express · Python · Django / DRF · APIs · Authentication · WebSockets · Systems Integration · Device Integration",
+      hr: "TypeScript · Angular · Node.js / Express · Python · Django / DRF · Rust · Swift / Kotlin · APIs · Authentication · WebSockets · Systems Integration · Device Integration",
       engineering:
-        "TypeScript · Angular · Node.js / Express · Python · Django / DRF · APIs · Authentication · WebSockets · Systems Integration · Device Integration",
+        "TypeScript · Angular · Node.js / Express · Python · Django / DRF · Rust · Swift / Kotlin · APIs · Authentication · WebSockets · Systems Integration · Device Integration",
     },
   },
   {
@@ -56,9 +56,9 @@ const REFERENCE: ReadonlyArray<ReferenceCapability> = [
       engineering: "Production Engineering",
     },
     body: {
-      hr: "Docker · CapRover · Linux · Windows Server / RDS · CI/CD · Identity & Access · Production Debugging · Root-Cause Analysis · Reliability Engineering",
+      hr: "Docker · CapRover · Linux · Windows Server / RDS · CI/CD · Identity & Access · Production Debugging · Root-Cause Analysis · Reliability Engineering · Release Engineering",
       engineering:
-        "Docker · CapRover · Linux · Windows Server / RDS · CI/CD · Identity & Access · Production Debugging · Root-Cause Analysis · Reliability Engineering",
+        "Docker · CapRover · Linux · Windows Server / RDS · CI/CD · Identity & Access · Production Debugging · Root-Cause Analysis · Reliability Engineering · Release Engineering",
     },
   },
   {

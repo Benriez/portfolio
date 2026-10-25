@@ -1,7 +1,13 @@
 // tests/unit/content-manifest.test.ts
 //
-// CONTENT MANIFEST — must match OpenDesign reference exactly.
-// Any drift here is a blocking defect for P3 closure.
+// CONTENT MANIFEST — the public content contract.
+//
+// The set originally mirrored the OpenDesign reference exactly. Entry 5
+// ("Odoo Add-on Suite") was intentionally replaced by UScreen: the Odoo
+// project was retired and UScreen took its slot in place, keeping the
+// Selected Work set at five primary projects. Every other reference
+// contract below is unchanged. Any further drift here is a blocking
+// defect for P3 closure.
 
 import { describe, expect, it } from "vitest";
 import { projects } from "~/data/projects";
@@ -11,17 +17,17 @@ import { capabilities } from "~/data/capabilities";
 import { techStack } from "~/data/tech-stack";
 
 // ---------------------------------------------------------------
-// OpenDesign content contract — what the reference promises
+// Public content contract — what the site promises
 // ---------------------------------------------------------------
 
-// EXACT reference project titles, in EXACT reference order.
+// EXACT project titles, in EXACT order.
 // Flagship is first, then the four "regular / compact" entries.
 const REFERENCE_PROJECT_TITLES = [
   "BODI / agent-garden",
   "Fahrschule360",
   "Shopping-Pong",
   "Production Web Platform Migration",
-  "Odoo Add-on Suite",
+  "UScreen",
 ] as const;
 
 // EXACT reference experience entry titles, in reference order.
@@ -75,6 +81,11 @@ describe("OpenDesign content parity (P3 contract)", () => {
 
     it("projects appear in the exact reference order", () => {
       expect(projects.map((p) => p.title)).toEqual([...REFERENCE_PROJECT_TITLES]);
+    });
+
+    it("keeps exactly one UScreen project and no Odoo project", () => {
+      expect(projects.filter((p) => p.title === "UScreen")).toHaveLength(1);
+      expect(projects.filter((p) => /odoo/i.test(p.title) || /odoo/i.test(p.id))).toHaveLength(0);
     });
   });
 

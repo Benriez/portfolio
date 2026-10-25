@@ -36,7 +36,55 @@ test.describe("Portfolio shell", () => {
     await expect(headings.nth(1)).toHaveText("Fahrschule360");
     await expect(headings.nth(2)).toHaveText("Shopping-Pong");
     await expect(headings.nth(3)).toHaveText("Production Web Platform Migration");
-    await expect(headings.nth(4)).toHaveText("Odoo Add-on Suite");
+    await expect(headings.nth(4)).toHaveText("UScreen");
+  });
+
+  test("renders UScreen with active-development status, stack and public links", async ({
+    page,
+  }) => {
+    await page.goto("./?mode=hr#work");
+    const uscreen = page.locator("article", {
+      has: page.getByRole("heading", { name: "UScreen", exact: true }),
+    });
+    await expect(uscreen).toHaveCount(1);
+    await expect(uscreen.locator(".work-index")).toHaveText("2026");
+    await expect(uscreen.locator(".work-meta [data-view='hr']")).toContainText(
+      "Aktive Entwicklung",
+    );
+    const stackLine = uscreen.locator(".stack-items").first();
+    await expect(stackLine).toContainText("Rust");
+    await expect(stackLine).toContainText("Swift");
+    await expect(stackLine).toContainText("Kotlin");
+    // The project website is the primary CTA.
+    await expect(uscreen.getByRole("link", { name: "Projektseite" })).toHaveAttribute(
+      "href",
+      "https://benriez.github.io/uscreen/",
+    );
+  });
+
+  test("does not render the retired Odoo project anywhere in Selected Work", async ({ page }) => {
+    await page.goto("./?mode=hr#work");
+    await expect(page.getByRole("heading", { name: "Odoo Add-on Suite" })).toHaveCount(0);
+    await expect(page.locator("#work")).not.toContainText("Odoo");
+    await expect(page.locator("#work")).not.toContainText("base_automation");
+    // No dead Odoo anchor or CTA is left behind.
+    await expect(page.locator("#odoo-addon-suite")).toHaveCount(0);
+    await expect(page.getByRole("link", { name: /odoo/i })).toHaveCount(0);
+  });
+
+  test("UScreen Engineering mode keeps the release distinction intact", async ({ page }) => {
+    await page.goto("./?mode=engineering#work");
+    const uscreen = page.locator("article", {
+      has: page.getByRole("heading", { name: "UScreen", exact: true }),
+    });
+    const meta = uscreen.locator(".work-meta [data-view='engineering']");
+    await expect(meta).toContainText("Aktive Entwicklung");
+    await expect(meta).toContainText("v0.2.0-preview.3");
+    await expect(meta).toContainText("v0.3.0-dev.1");
+    await expect(meta).toContainText("ohne Hardware-Abnahme");
+    // The development release is never claimed as hardware verified.
+    await expect(uscreen).not.toContainText("v0.3.0-dev.1 ist hardware");
+    await expect(uscreen).not.toContainText("stable release");
   });
 
   test("does not render the removed BODI flagship case-study link", async ({ page }) => {
