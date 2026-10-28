@@ -15,6 +15,8 @@ both an HR view and an Engineering view (CSS-driven visibility).
 - **TypeScript 7** (strict)
 - **pnpm 12** workspace
 - **ESLint 9** flat config + **Prettier 3**
+- **GSAP 3 + ScrollTrigger** (staged scroll experience, page-local chunk,
+  progressive enhancement)
 - **Vitest 5** (unit) and **Playwright 1.63** (E2E + axe-core)
 - **Node 22 LTS** runtime (declared in `engines` and CI)
 - **GitHub Pages** (`/portfolio` base path)
@@ -74,13 +76,19 @@ the Node 22 LTS provided by Homebrew.
 - **E2E** — Playwright spins up three real viewports (390, 768, 1440) and
   runs both modes (HR / Engineering). The `pnpm preview` server is started
   automatically.
-- **Accessibility** — `@axe-core/playwright` smoke against both modes.
+- **Accessibility** — `@axe-core/playwright` full rule set against both modes.
+- **Motion** — `tests/e2e/motion.spec.ts` covers the staged scroll
+  experience (fast / reverse scroll, anchors, deep links, mode switch,
+  reduced motion, failure path, native scrolling).
 
 ## Accessibility
 
 - Skip link, labelled section landmarks, focus-visible rings.
 - Contrast-checked text tokens (≥ 4.5:1), WCAG 2.2 target sizes (≥ 24px),
-  `prefers-reduced-motion` respected, external links marked.
+  `prefers-reduced-motion` respected (no motion chunk is even loaded),
+  external links marked.
+- Scroll-staged content is never hidden from keyboard users: focus reveals
+  it immediately; with JavaScript off or failing, everything is visible.
 - Sticky-header-aware anchor navigation with active-section indication.
 - Dual rendering of HR / Engineering views in static HTML; the mode is
   applied before first paint for `?mode=` deep links.

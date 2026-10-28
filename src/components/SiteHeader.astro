@@ -75,6 +75,7 @@ const githubUrl = "https://github.com/Benriez";
       </button>
     </div>
   </nav>
+  <div class="scroll-progress" aria-hidden="true"></div>
 </header>
 
 <script>
@@ -134,6 +135,7 @@ const githubUrl = "https://github.com/Benriez";
     }
     root.style.overflowAnchor = previousAnchoring;
     updateActive();
+    root.dispatchEvent(new CustomEvent("modechange", { detail: { mode: next } }));
   }
 
   document.querySelectorAll<HTMLButtonElement>("[data-set-mode]").forEach((button) => {
@@ -197,6 +199,8 @@ const githubUrl = "https://github.com/Benriez";
     position: sticky;
     top: 0;
     z-index: 10;
+    /* anchors the progress line */
+    isolation: isolate;
     background: color-mix(in oklch, var(--bg) 90%, transparent);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
@@ -260,6 +264,24 @@ const githubUrl = "https://github.com/Benriez";
   .nav-links a[aria-current="true"] {
     color: var(--fg);
     text-decoration-color: var(--fg);
+  }
+
+  /* Reading progress: a 2px line along the header's bottom edge. Only
+     rendered once the scroll experience is live; scaled by scroll. */
+  .scroll-progress {
+    display: none;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 2px;
+    background: var(--accent);
+    transform-origin: left center;
+    transform: scaleX(0);
+    pointer-events: none;
+  }
+  :global(html[data-motion="ready"]) .scroll-progress {
+    display: block;
   }
 
   /* Mode switch: compact segmented control, visually secondary. */

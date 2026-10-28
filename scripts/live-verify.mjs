@@ -116,7 +116,9 @@ async function main() {
           approach.includes("Root-Cause Analysis") &&
           approach.includes("Recovery Thinking"),
       );
-      const aboutHeading = await page.locator("#about h2").innerText();
+      const aboutHeading = (await page.locator("#about h2").innerText())
+        .replace(/\s+/g, " ")
+        .trim();
       check(
         "working approach headline unchanged",
         aboutHeading === "Systemisch denken, präzise bauen, zuverlässig betreiben.",

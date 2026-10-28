@@ -11,8 +11,13 @@ html {
   background: var(--bg);
 }
 
+/* Smooth scrolling for in-page navigation only. During load the root
+   carries `data-loading` (set and cleared by the head script) so a deep
+   link's fragment scroll and history restoration jump instantly instead
+   of animating from the top. Without JavaScript the attribute never
+   exists and native smooth anchors still apply. */
 @media (prefers-reduced-motion: no-preference) {
-  html {
+  html:not([data-loading]) {
     scroll-behavior: smooth;
   }
 }
@@ -113,6 +118,16 @@ html[data-mode="hr"] [data-view="hr"] {
 
 html[data-mode="engineering"] [data-view="engineering"] {
   display: revert;
+}
+
+/* --- Motion gate (progressive enhancement) ---
+   Only the hero is held back by CSS, and only while <html data-motion>
+   is "pending" (set by the head script when motion is wanted). The
+   scroll-experience module stages everything else itself; if it never
+   runs, the head script's fallback timer clears "pending". */
+html[data-motion="pending"] .hero-main > *,
+html[data-motion="pending"] .hero-panel {
+  opacity: 0;
 }
 
 /* --- Skip link --- */

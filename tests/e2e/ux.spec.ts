@@ -81,6 +81,8 @@ test.describe("Navigation", () => {
       await page.evaluate(() => getComputedStyle(document.documentElement).scrollBehavior),
     ).toBe("auto");
     await page.emulateMedia({ reducedMotion: "no-preference" });
+    // Smooth scrolling is enabled once loading is over (deep links jump).
+    await expect(page.locator("html:not([data-loading])")).toHaveCount(1);
     expect(
       await page.evaluate(() => getComputedStyle(document.documentElement).scrollBehavior),
     ).toBe("smooth");

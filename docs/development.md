@@ -129,6 +129,21 @@ navigation never hides a section kicker under the sticky bar, and a
 scroll listener sets `aria-current="true"` on the nav link of the section
 currently in view. Both behaviours degrade gracefully without JavaScript.
 
+## Scroll experience
+
+`src/scripts/scroll-experience.ts` is the only place that touches GSAP /
+ScrollTrigger (`initializeScrollExperience()` → `setupHero`,
+`setupSectionReveals`, `setupProjectReveals`, `setupWorkingApproach`,
+`setupScrollProgress`; it returns a cleanup). Do not add ScrollTrigger
+setup inside components. Motion profiles differ for `≤ 620px` (shorter
+distances and durations, no scrubbed cues) and respond to
+`prefers-reduced-motion` at runtime via `gsap.matchMedia()`.
+
+The `html[data-motion]` attribute is the state machine: `pending`
+(head script, hero held by CSS) → `ready` (module staged everything) or
+`off` (reduced motion, data saver, load failure, 2.5 s fallback). Base
+CSS hides nothing, so the page is complete without JavaScript.
+
 ## Feature boundaries
 
 There is **no dedicated BODI flagship section** on the page. BODI /

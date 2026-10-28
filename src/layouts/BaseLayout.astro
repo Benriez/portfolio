@@ -57,6 +57,33 @@ const { title, description, mode } = Astro.props as Props;
           /* no-op: server-rendered default mode stays in place */
         }
       })();
+      // Motion gate (progressive enhancement). "pending" lets the CSS hold
+      // the hero back until src/scripts/scroll-experience.ts stages it in.
+      // If that module never reports "ready" (blocked, failed, slow), the
+      // fallback timer releases the content unchanged.
+      (function motionGate() {
+        try {
+          const root = document.documentElement;
+          // Instant fragment scroll / scroll restoration while loading.
+          root.dataset.loading = "";
+          window.addEventListener(
+            "load",
+            () => window.setTimeout(() => delete root.dataset.loading, 50),
+            { once: true },
+          );
+          const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+          const connection = navigator.connection;
+          const slow =
+            Boolean(connection && connection.saveData) ||
+            /(^|[^0-9])2g/.test((connection && connection.effectiveType) || "");
+          root.dataset.motion = reduce || slow ? "off" : "pending";
+          window.setTimeout(() => {
+            if (root.dataset.motion === "pending") root.dataset.motion = "off";
+          }, 2500);
+        } catch {
+          /* no-op: content is visible by default */
+        }
+      })();
     </script>
   </head>
   <body data-mode={mode}>
@@ -73,6 +100,30 @@ const { title, description, mode } = Astro.props as Props;
     <script is:inline>
       // Mirror the pre-paint mode onto <body> (public contract).
       document.body.dataset.mode = document.documentElement.dataset.mode || "hr";
+    </script>
+    <script>
+      // The scroll experience (GSAP + ScrollTrigger) is a separate chunk
+      // that is only requested when motion is wanted, so reduced-motion
+      // and data-saver visitors never download it.
+      const root = document.documentElement;
+      if (root.dataset["motion"] === "pending") {
+        // Start the download now, but initialise only after `load`: the
+        // browser's fragment scroll (deep links) and scroll restoration
+        // happen around load and are cancelled by any programmatic scroll
+        // activity before that.
+        const loaded = new Promise<void>((resolve) => {
+          if (document.readyState === "complete") resolve();
+          else window.addEventListener("load", () => resolve(), { once: true });
+        });
+        Promise.all([import("~/scripts/scroll-experience"), loaded])
+          .then(([mod]) => {
+            window.requestAnimationFrame(() => mod.initializeScrollExperience());
+          })
+          .catch((error: unknown) => {
+            root.dataset["motion"] = "off";
+            console.error("scroll experience disabled:", error);
+          });
+      }
     </script>
   </body>
 </html>

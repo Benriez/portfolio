@@ -59,6 +59,16 @@
     text-decoration: none;
   }
 
+  /* Scroll-experience states must not reach paper */
+  main [style],
+  .hero [style] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .scroll-progress {
+    display: none !important;
+  }
+
   /* Render both modes in print */
   [data-view],
   .hr-only,

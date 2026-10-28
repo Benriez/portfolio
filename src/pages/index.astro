@@ -81,7 +81,11 @@ const pageDescription =
     <div class="container">
       <header class="section-head">
         <p class="section-kicker">Arbeitsweise</p>
-        <h2 id="about-title">Systemisch denken, präzise bauen, zuverlässig betreiben.</h2>
+        <h2 id="about-title">
+          <span class="line">Systemisch denken,</span>
+          <span class="line">präzise bauen,</span>
+          <span class="line">zuverlässig betreiben.</span>
+        </h2>
       </header>
       <div class="approach-list">
         {approachParagraphs.map((paragraph) => (
@@ -112,6 +116,13 @@ const pageDescription =
   }
   .about {
     background: var(--surface);
+  }
+  /* The headline's three clauses are its three staged lines. */
+  .about h2 {
+    max-width: 22ch;
+  }
+  .about h2 .line {
+    display: block;
   }
   .approach-list {
     display: grid;
