@@ -7,7 +7,7 @@
  * Where the reference uses `oklch()` directly, we keep it. Where it falls
  * back to a hex pair, we keep the hex (it is the source of truth for the
  * CI screenshots). Variables that the reference does not declare (motion,
- * shadow, radius) are portfolio additions and do not affect parity.
+ * header height, spacing roles) are portfolio additions.
  */
 
 :root {
@@ -15,10 +15,13 @@
   --bg: oklch(98% 0.004 80);
   --surface: oklch(100% 0 0);
 
-  /* --- Ink --- */
+  /* --- Ink ---
+     `--muted` is the lightest colour used for readable text (≥ 5.5:1 on
+     both surfaces). `--soft` is reserved for decorative separators and
+     hairline-adjacent marks and must not be used for text. */
   --fg: oklch(20% 0.012 260);
   --fg-soft: oklch(38% 0.014 260);
-  --muted: oklch(55% 0.01 260);
+  --muted: oklch(50% 0.01 260);
   --soft: oklch(70% 0.008 260);
 
   /* --- Lines --- */
@@ -30,6 +33,11 @@
 
   /* --- Layout --- */
   --max: 1240px;
+  --gutter: 24px;
+  /* Sticky header height. Anchor navigation offsets by this value so a
+     section's kicker is never hidden under the bar. Updated per
+     breakpoint in SiteHeader.astro's media queries. */
+  --header-h: 64px;
 
   /* --- Fonts --- */
   --font-display:
@@ -55,8 +63,9 @@
   /* --- Tracking --- */
   --tracking-display: -0.04em;
   --tracking-h2: -0.02em;
+  --tracking-label: 0.1em;
 
-  /* --- Spacing --- */
+  /* --- Spacing scale --- */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -66,19 +75,22 @@
   --space-7: 48px;
   --space-8: 64px;
 
-  /* --- Section rhythm --- */
-  /* Major vertical separation between major page chapters.
-     Mobile: ~64-88px, tablet: ~88-120px, desktop: ~112-152px. */
-  --space-section-y: clamp(64px, 11vw, 152px);
+  /* --- Spacing roles ---
+     BETWEEN sections:   --space-section-y
+     section head → body: --space-head
+     WITHIN a list:       --space-item (padding of one list entry)
+     WITHIN a component:  --space-1 … --space-5 */
+  --space-section-y: clamp(64px, 10vw, 128px);
+  --space-head: clamp(32px, 4vw, 48px);
+  --space-item: clamp(24px, 3vw, 36px);
 
-  /* --- Color helpers used by mono labels --- */
-  --mono-label: var(--accent);
-  --mono-meta: var(--muted);
-  --mono-soft: var(--soft);
+  /* --- Interaction --- */
+  --control-h: 40px;
+  --control-h-sm: 28px;
+  --focus-ring: 2px solid var(--accent);
 
-  /* --- Motion (portfolio additions, not parity-relevant) --- */
+  /* --- Motion --- */
   --motion-fast: 160ms;
   --motion-base: 220ms;
-  --motion-slow: 380ms;
   --easing-soft: ease;
 }

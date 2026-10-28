@@ -257,11 +257,11 @@ test.describe("Portfolio shell", () => {
     await expect(engineeringButton).toBeVisible();
     await expect(hrButton).toHaveAttribute("aria-pressed", "true");
     await expect(engineeringButton).toHaveAttribute("aria-pressed", "false");
-    // The mobile header is compact: the bounding box of the header is
-    // well under 200px tall (was 219px before the redesign).
+    // The mobile header is compact: two rows (brand + mode switch, links)
+    // with real tap targets stay within 112px (was 219px → 106px → 102px).
     const headerBox = await header.boundingBox();
     expect(headerBox).not.toBeNull();
-    expect(headerBox!.height).toBeLessThan(180);
+    expect(headerBox!.height).toBeLessThanOrEqual(112);
     // No horizontal page overflow.
     const overflow = await page.evaluate(
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
@@ -306,9 +306,9 @@ test.describe("Portfolio shell", () => {
     ]);
     // Full "Engineering" label (not "Eng") on desktop.
     await expect(page.getByRole("button", { name: "Engineering", exact: true })).toBeVisible();
-    // Desktop header is the original 69px-ish row.
+    // Desktop header is a single 64px row (+ hairline).
     const headerBox = await page.locator(".site-header").boundingBox();
-    expect(headerBox!.height).toBeLessThan(80);
+    expect(headerBox!.height).toBeLessThanOrEqual(68);
   });
 
   test("project meta carries period and tagline without an extra status label", async ({

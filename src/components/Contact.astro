@@ -3,18 +3,17 @@
  * Contact
  *
  * Mirrors the OpenDesign reference's `.contact-section`:
- *   - `.contact-grid` (2 columns: section-head + contact-actions)
- *   - `.contact-actions` is a flex row of button-style links (mono-uppercase,
- *     40px min-height, 1px rule border).
+ *   - `.contact-grid` (2 columns: section-head + contact list)
+ *   - `.contact-list`: one full-width row per destination. The row shows
+ *     the destination label (E-Mail / GitHub / LinkedIn) first and the
+ *     address as secondary text, so a visitor knows what each link does
+ *     before reading the URL.
  *
- * Items that the call site marks `visible: false` are simply omitted from the
- * rendered list. The `href` is shown without its protocol prefix.
- *
- * Items here mirror the reference's action set, but the reference uses
- * redacted placeholder values in every link and button. We render only the items the operator has
- * resolved; unresolved items are omitted.
+ * Items that the call site marks `visible: false` are omitted. The `href`
+ * is shown without its protocol prefix.
  */
 import type { ContactItem } from "~/types/content";
+import ExtIcon from "~/components/ExtIcon.astro";
 
 interface Props {
   readonly items: ContactItem[];
@@ -23,27 +22,40 @@ interface Props {
 
 const { items, heading } = Astro.props as Props;
 const visible = items.filter((item) => item.visible);
+const isExternal = (href: string) => /^https?:/.test(href);
+const display = (href: string) =>
+  href.replace(/^(?:mailto|tel|https?):(?:\/\/)?(?:www\.)?/, "").replace(/\/$/, "");
 ---
 
 <section class="contact-region section" id="contact" aria-labelledby="contact-region-title">
   <div class="container contact-grid">
-    <div>
+    <header class="section-head">
       <p class="section-kicker">Kontakt</p>
       <h2 id="contact-region-title">{heading.hr}</h2>
-    </div>
-    <div class="contact-actions">
+    </header>
+    <ul class="contact-list">
       {visible.map((item) => (
-        <a href={item.href} rel="noopener">
-          {item.href.replace(/^(?:mailto|tel|https?):(?:\/\/)?(?:www\.)?/, "")}
-        </a>
+        <li>
+          <a
+            href={item.href}
+            rel={isExternal(item.href) ? "noopener noreferrer external" : undefined}
+          >
+            <span class="contact-label">
+              {item.label}
+              {isExternal(item.href) && <ExtIcon />}
+            </span>
+            <span class="contact-value">{display(item.href)}</span>
+          </a>
+        </li>
       ))}
-    </div>
+    </ul>
   </div>
 </section>
 
 <style>
   .contact-region {
     background: var(--surface);
+    border-top: 1px solid var(--hairline);
   }
   .contact-grid {
     display: grid;
@@ -51,40 +63,59 @@ const visible = items.filter((item) => item.visible);
     gap: clamp(34px, 7vw, 90px);
     align-items: start;
   }
-  .contact-region h2 {
-    font-size: clamp(34px, 5vw, 64px);
-    line-height: 1.02;
-    letter-spacing: -0.04em;
-    font-weight: 600;
+  .contact-grid .section-head {
+    margin-bottom: 0;
   }
-  .contact-actions {
+  .contact-list {
+    border-top: 1.5px solid var(--fg);
+  }
+  .contact-list a {
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    align-items: flex-start;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-4);
+    min-height: 56px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--hairline);
+    color: var(--fg);
   }
-  .contact-actions a {
-    min-height: 40px;
+  .contact-list a:hover .contact-label {
+    color: var(--accent);
+  }
+  .contact-list a:hover .contact-value {
+    color: var(--fg);
+  }
+  .contact-label {
     display: inline-flex;
     align-items: center;
-    border: 1px solid var(--rule);
-    padding: 10px 13px;
-    background: transparent;
-    color: var(--fg-soft);
-    font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    text-decoration: none;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    flex: none;
   }
-  .contact-actions a:hover {
-    border-color: var(--fg);
-    color: var(--fg);
-    text-decoration: none;
+  .contact-value {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--muted);
+    text-align: right;
+    overflow-wrap: anywhere;
+    min-width: 0;
   }
   @media (max-width: 900px) {
     .contact-grid {
       grid-template-columns: 1fr;
+      gap: var(--space-7);
+    }
+  }
+  @media (max-width: 560px) {
+    .contact-list a {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+    }
+    .contact-value {
+      text-align: left;
     }
   }
 </style>

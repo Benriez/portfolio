@@ -31,7 +31,7 @@ const contactItems: ContactItem[] = [
     visible: true,
   },
 ];
-const approach_1 =
+const capabilitiesNote =
   "Keine Skill-Level, keine Prozentwerte. Nur belastbare Kompetenzfelder aus den Projekten.";
 
 const pageTitle = "Benjamin Riezler · Software & AI Systems Engineer";
@@ -42,11 +42,11 @@ const pageDescription =
 <BaseLayout title={pageTitle} description={pageDescription} mode="hr">
   <Hero />
 
-  <section class="section" id="work">
+  <section class="section" id="work" aria-labelledby="work-title">
     <div class="container">
       <header class="section-head">
         <p class="section-kicker">Ausgewählte Projekte</p>
-        <h2>Systeme, die Produkt, Betrieb und technische Tiefe verbinden.</h2>
+        <h2 id="work-title">Systeme, die Produkt, Betrieb und technische Tiefe verbinden.</h2>
       </header>
       <div class="work-list">
         {projects.map((project) => (
@@ -56,35 +56,33 @@ const pageDescription =
     </div>
   </section>
 
-  <section class="section" id="experience">
+  <section class="section" id="experience" aria-labelledby="experience-title">
     <div class="container">
       <ExperienceTimeline entries={experience} />
     </div>
   </section>
 
-  <section class="section" id="capabilities">
+  <section class="section" id="capabilities" aria-labelledby="capabilities-title">
     <div class="container">
-      <div class="section-head capability-head">
+      <header class="section-head capability-head">
         <p class="section-kicker">Kompetenzen</p>
-        <h2>
+        <h2 id="capabilities-title">
           <span class="hr-only">Was ich abdecke</span>
           <span class="engineering-only">Engineering Surface</span>
         </h2>
-        <!-- prettier-ignore-start -->
-        <!-- prettier-ignore-start -->
-        <p class="section-note">{approach_1}</p>
-        <!-- prettier-ignore-end -->
-        <!-- prettier-ignore-end -->
-      </div>
+        <p class="section-note">{capabilitiesNote}</p>
+      </header>
       <Capabilities />
       <WorkingApproach title={{ hr: "Technischer Stack", engineering: "Technischer Stack" }} />
     </div>
   </section>
 
-  <section class="section about" id="about">
+  <section class="section about" id="about" aria-labelledby="about-title">
     <div class="container">
-      <p class="section-kicker">Arbeitsweise</p>
-      <h2>Systemisch denken, präzise bauen, zuverlässig betreiben.</h2>
+      <header class="section-head">
+        <p class="section-kicker">Arbeitsweise</p>
+        <h2 id="about-title">Systemisch denken, präzise bauen, zuverlässig betreiben.</h2>
+      </header>
       <div class="approach-list">
         {approachParagraphs.map((paragraph) => (
           <p>{paragraph}</p>
@@ -103,74 +101,33 @@ const pageDescription =
 </BaseLayout>
 
 <style>
-  .section-head {
-    display: grid;
-    grid-template-columns: minmax(0, 0.82fr) minmax(0, 1fr);
-    gap: clamp(28px, 6vw, 80px);
-    align-items: end;
-    margin-bottom: 42px;
-  }
-  .section-head .section-kicker {
-    grid-column: 1 / -1;
-    margin-bottom: -18px;
-  }
-  .section-head h2 {
-    font-size: clamp(34px, 5vw, 64px);
-    line-height: 1.02;
-    letter-spacing: -0.04em;
-    font-weight: 600;
-    max-width: 13ch;
-    margin: 0;
-  }
-  .section-head.capability-head {
-    display: block;
+  .capability-head {
     max-width: 720px;
   }
-  .section-head.capability-head .section-kicker {
-    margin-bottom: 14px;
-  }
-  .section-head.capability-head h2 {
+  .capability-head h2 {
     max-width: none;
-  }
-  .section-note {
-    margin: 18px 0 0;
-    color: var(--fg-soft);
-    font-size: 15px;
-    max-width: 48ch;
   }
   .work-list {
     display: grid;
-    gap: 0;
   }
   .about {
     background: var(--surface);
   }
-  .about h2 {
-    font-size: clamp(34px, 5vw, 64px);
-    line-height: 1.02;
-    letter-spacing: -0.04em;
-    font-weight: 600;
-    max-width: 13ch;
-    margin: 0;
-  }
-  .about .section-kicker {
-    margin-bottom: 14px;
-  }
   .approach-list {
     display: grid;
     gap: 18px;
-    margin-top: 34px;
+    max-width: 62ch;
   }
   .approach-list p {
-    margin: 0;
     font-size: 20px;
     line-height: 1.45;
     letter-spacing: -0.02em;
     color: var(--fg-soft);
+    text-wrap: pretty;
   }
-  @media (max-width: 900px) {
-    .section-head {
-      grid-template-columns: 1fr;
+  @media (max-width: 560px) {
+    .approach-list p {
+      font-size: 18px;
     }
   }
 </style>

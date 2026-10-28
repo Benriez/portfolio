@@ -3,8 +3,12 @@
  * BaseLayout
  *
  * Shared HTML scaffolding for the portfolio. The shell carries a single
- * `body[data-mode]` attribute that drives the entire HR/Engineering mode
+ * `html[data-mode]` attribute that drives the entire HR/Engineering mode
  * toggling, plus the page title, description, fonts, and global stylesheet.
+ *
+ * The mode requested via `?mode=` is applied in <head>, before first paint,
+ * so a deep link to the Engineering view never flashes the HR view first.
+ * `body[data-mode]` is kept in sync as the public contract for tests.
  *
  * The reference does NOT include a footer element; this layout mirrors
  * that exactly — the portfolio ends at the closing `</main>`.
@@ -30,7 +34,7 @@ const { title, description, mode } = Astro.props as Props;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
-    <meta name="theme-color" content="oklch(98% 0.004 80)" />
+    <meta name="theme-color" content="#faf8f5" />
     <meta name="color-scheme" content="light" />
     <link rel="icon" type="image/svg+xml" href="/portfolio/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
@@ -40,6 +44,20 @@ const { title, description, mode } = Astro.props as Props;
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
     />
     <title>{title}</title>
+    <script is:inline>
+      // Apply ?mode= before first paint. Interactive toggling lives in
+      // SiteHeader.astro.
+      (function applyModeFromUrl() {
+        try {
+          const requested = new URL(window.location.href).searchParams.get("mode");
+          if (requested === "hr" || requested === "engineering") {
+            document.documentElement.dataset.mode = requested;
+          }
+        } catch {
+          /* no-op: server-rendered default mode stays in place */
+        }
+      })();
+    </script>
   </head>
   <body data-mode={mode}>
     <a href="#main" class="skip-link">
@@ -52,18 +70,9 @@ const { title, description, mode } = Astro.props as Props;
       <slot />
     </main>
 
-    <script>
-      // Apply ?mode= from URL on initial load. The mode-switch component
-      // (see SiteHeader.astro) handles interactive toggling.
-      (function applyModeFromUrl() {
-        const allowed = new Set(["hr", "engineering"]);
-        const url = new URL(window.location.href);
-        const requested = url.searchParams.get("mode");
-        if (requested && allowed.has(requested)) {
-          document.documentElement.dataset["mode"] = requested;
-          document.body.dataset["mode"] = requested;
-        }
-      })();
+    <script is:inline>
+      // Mirror the pre-paint mode onto <body> (public contract).
+      document.body.dataset.mode = document.documentElement.dataset.mode || "hr";
     </script>
   </body>
 </html>

@@ -61,7 +61,7 @@ async function extractSections(page) {
     }));
 
     // Education
-    out.education = selAll(".education-list > div").map((entry) => ({
+    out.education = selAll(".education-list > li").map((entry) => ({
       title: entry.querySelector("h3")?.textContent?.trim() ?? null,
       institution: entry.querySelector("p")?.textContent?.trim() ?? null,
       periods: Array.from(entry.querySelectorAll("p"))

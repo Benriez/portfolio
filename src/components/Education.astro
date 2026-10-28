@@ -3,42 +3,45 @@
  * Education
  *
  * Renders the reference's `.education-list` block: each entry has an
- * h3 (degree / title), an institution line, and one or two period lines
+ * h4 (degree / title), an institution line, and one or two period lines
  * (the h_da entry has two: "Interactive Media Design …" and "Informatik …").
  * Single-language (HR) per the reference.
+ *
+ * When the institution equals the degree line (the h_da entry) the
+ * institution is not repeated.
  */
 import { referenceEducation } from "~/data/education";
 ---
 
-<dl class="education-list">
-  {referenceEducation.map((entry) => (
-    <div>
-      <dt>
-        <h3>{entry.degree.hr}</h3>
-      </dt>
-      {entry.institution.hr && <dd class="education-institution">{entry.institution.hr}</dd>}
-      {entry.periodLines.map((line) => (
-        <dd class="education-period">{line}</dd>
-      ))}
-    </div>
-  ))}
-</dl>
+<ul class="education-list">
+  {referenceEducation.map((entry) => {
+    const institution =
+      entry.institution.hr && entry.institution.hr !== entry.degree.hr ? entry.institution.hr : "";
+    return (
+      <li>
+        <h4>{entry.degree.hr}</h4>
+        {institution && <p class="education-institution">{institution}</p>}
+        {entry.periodLines.map((line) => (
+          <p class="education-period">{line}</p>
+        ))}
+      </li>
+    );
+  })}
+</ul>
 
 <style>
   .education-list {
     display: grid;
-    gap: 0;
-    margin-top: 34px;
+    margin-top: var(--space-head);
   }
-  .education-list > div {
-    padding: 24px 0;
+  .education-list > li {
+    padding: var(--space-5) 0;
     border-top: 1px solid var(--hairline);
   }
-  .education-list h3 {
-    margin: 8px 0 0;
-    font-size: 22px;
+  .education-list h4 {
+    font-size: var(--type-h2);
     line-height: 1.2;
-    letter-spacing: -0.02em;
+    letter-spacing: var(--tracking-h2);
     font-weight: 600;
   }
   .education-institution {

@@ -78,8 +78,13 @@ the Node 22 LTS provided by Homebrew.
 
 ## Accessibility
 
-- Skip link, semantic landmarks, focus-visible rings.
-- Dual rendering of HR / Engineering views in static HTML.
+- Skip link, labelled section landmarks, focus-visible rings.
+- Contrast-checked text tokens (≥ 4.5:1), WCAG 2.2 target sizes (≥ 24px),
+  `prefers-reduced-motion` respected, external links marked.
+- Sticky-header-aware anchor navigation with active-section indication.
+- Dual rendering of HR / Engineering views in static HTML; the mode is
+  applied before first paint for `?mode=` deep links.
+- The axe-core E2E gate runs the full default rule set (contrast included).
 
 ## Deployment
 

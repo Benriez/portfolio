@@ -20,9 +20,11 @@ const { entries } = Astro.props as Props;
 ---
 
 <div class="two-col">
-  <section class="career-region">
-    <p class="section-kicker">Berufserfahrung</p>
-    <h2>Beruflicher Verlauf</h2>
+  <div class="career-region">
+    <header class="section-head">
+      <p class="section-kicker">Berufserfahrung</p>
+      <h2 id="experience-title">Beruflicher Verlauf</h2>
+    </header>
     <ol class="career-list">
       {referenceExperience.map((r) => {
         const entry = entries.find((e) => e.id === r.id);
@@ -30,34 +32,36 @@ const { entries } = Astro.props as Props;
         const period = entry.end ? `${entry.start} - ${entry.end}` : `${entry.start} - heute`;
         return (
           <li class="career-item">
-            <time>{period}</time>
+            <p class="career-period">{period}</p>
             <h3>{entry.role.hr}</h3>
             <p class="career-employer">{entry.employer.hr}</p>
             {r.highlights.length > 0 && (
               <ul class="career-bullets">
                 {r.highlights.map((h) => (
-                  <li>
-                    <span>{h.hr}</span>
-                  </li>
+                  <li>{h.hr}</li>
                 ))}
               </ul>
             )}
             {r.subroleTitle && (
               <div class="subrole">
                 <h4>{r.subroleTitle}</h4>
-                {r.subroleContext && <p>{r.subroleContext}</p>}
-                {r.subroleLead && <p class="hr-only">{r.subroleLead.hr}</p>}
-                {r.subroleLead && <p class="engineering-only">{r.subroleLead.engineering}</p>}
+                {r.subroleContext && <p class="subrole-context">{r.subroleContext}</p>}
+                {r.subroleLead && <p class="subrole-lead hr-only">{r.subroleLead.hr}</p>}
+                {r.subroleLead && (
+                  <p class="subrole-lead engineering-only">{r.subroleLead.engineering}</p>
+                )}
               </div>
             )}
           </li>
         );
       })}
     </ol>
-  </section>
+  </div>
 
-  <aside class="education-aside">
-    <p class="section-kicker">Ausbildung</p>
+  <aside class="education-aside" aria-labelledby="education-title">
+    <h3 class="section-kicker" id="education-title">
+      Ausbildung
+    </h3>
     <Education />
   </aside>
 </div>
@@ -69,35 +73,28 @@ const { entries } = Astro.props as Props;
     gap: clamp(42px, 7vw, 92px);
     align-items: start;
   }
-  .career-region h2 {
-    margin-top: 0;
-    font-size: clamp(34px, 5vw, 64px);
-    line-height: 1.02;
-    letter-spacing: -0.04em;
-    font-weight: 600;
-    max-width: 13ch;
+  .career-region .section-head {
+    margin-bottom: 0;
   }
   .career-list {
     display: grid;
-    gap: 0;
-    margin-top: 34px;
+    margin-top: var(--space-head);
   }
   .career-item {
-    padding: 24px 0;
+    padding: var(--space-5) 0;
     border-top: 1px solid var(--hairline);
-    list-style: none;
   }
-  .career-item time {
+  .career-period {
     font-family: var(--font-mono);
     font-size: 12px;
     letter-spacing: 0.1em;
     color: var(--accent);
   }
   .career-item h3 {
-    margin: 8px 0 0;
-    font-size: 22px;
+    margin: var(--space-2) 0 0;
+    font-size: var(--type-h2);
     line-height: 1.2;
-    letter-spacing: -0.02em;
+    letter-spacing: var(--tracking-h2);
     font-weight: 600;
   }
   .career-employer {
@@ -105,15 +102,15 @@ const { entries } = Astro.props as Props;
     color: var(--fg-soft);
   }
   .career-bullets {
-    list-style: none;
     margin: 14px 0 0;
-    padding: 0;
     display: grid;
     gap: 6px;
+    max-width: 64ch;
   }
   .career-bullets li {
     position: relative;
     padding-left: 16px;
+    text-wrap: pretty;
   }
   .career-bullets li::before {
     content: "";
@@ -131,15 +128,29 @@ const { entries } = Astro.props as Props;
   }
   .subrole h4 {
     margin: 0;
-    font-size: 18px;
+    font-size: var(--type-h3);
     letter-spacing: -0.015em;
+    line-height: 1.3;
   }
-  .subrole p {
+  .subrole-context {
+    margin-top: 4px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .subrole-lead {
+    margin-top: 10px;
     max-width: 60ch;
+    color: var(--fg-soft);
+    text-wrap: pretty;
+  }
+  .education-aside {
+    /* Align the aside's kicker with the career kicker. */
+    padding-top: 0;
   }
   @media (max-width: 900px) {
     .two-col {
       grid-template-columns: 1fr;
+      gap: var(--space-8);
     }
   }
 </style>

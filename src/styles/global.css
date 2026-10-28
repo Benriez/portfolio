@@ -8,8 +8,13 @@
 }
 
 html {
-  scroll-behavior: smooth;
   background: var(--bg);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 body {
@@ -51,7 +56,9 @@ button {
 }
 
 ul,
-ol {
+ol,
+dl,
+dd {
   margin: 0;
   padding: 0;
   list-style: none;
@@ -71,12 +78,27 @@ pre {
   font-family: var(--font-mono);
 }
 
-/* --- Mode visibility (single source of truth) --- */
-body[data-mode="hr"] .engineering-only {
+/* --- Interaction feedback ---
+   Colour/border transitions only; no entrance or scroll animation. */
+@media (prefers-reduced-motion: no-preference) {
+  a,
+  button {
+    transition:
+      color var(--motion-fast) var(--easing-soft),
+      background-color var(--motion-fast) var(--easing-soft),
+      border-color var(--motion-fast) var(--easing-soft),
+      text-decoration-color var(--motion-fast) var(--easing-soft);
+  }
+}
+
+/* --- Mode visibility (single source of truth) ---
+   `html[data-mode]` is set before first paint (see BaseLayout.astro), so
+   deep links to ?mode=engineering never flash the HR view. */
+html[data-mode="hr"] .engineering-only {
   display: none !important;
 }
 
-body[data-mode="engineering"] .hr-only {
+html[data-mode="engineering"] .hr-only {
   display: none !important;
 }
 
@@ -85,11 +107,11 @@ body[data-mode="engineering"] .hr-only {
   display: none;
 }
 
-body[data-mode="hr"] [data-view="hr"] {
+html[data-mode="hr"] [data-view="hr"] {
   display: revert;
 }
 
-body[data-mode="engineering"] [data-view="engineering"] {
+html[data-mode="engineering"] [data-view="engineering"] {
   display: revert;
 }
 
@@ -111,13 +133,23 @@ body[data-mode="engineering"] [data-view="engineering"] {
 
 /* --- Focus visible --- */
 :focus-visible {
-  outline: 2px solid var(--accent);
+  outline: var(--focus-ring);
   outline-offset: 3px;
+  border-radius: 2px;
 }
 
-/* --- Hairline --- */
-.hairline {
-  border-top: 1px solid var(--hairline);
+/* --- Visually hidden (screen-reader only) --- */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }
 
 /* --- Section rhythm (major page chapters) --- */
@@ -125,12 +157,39 @@ body[data-mode="engineering"] [data-view="engineering"] {
   padding-block: var(--space-section-y);
 }
 
+/* Anchor targets stop below the sticky header. Set on the targets (not as
+   root scroll-padding) so focusing a control inside the sticky header does
+   not scroll the document. */
+.section,
+.hero {
+  scroll-margin-top: calc(var(--header-h) + var(--space-4));
+}
+
 /* --- Container (mirrors reference `.container` width) --- */
 .container {
-  width: min(var(--max), calc(100vw - 48px));
+  width: min(var(--max), calc(100% - 2 * var(--gutter)));
   margin-inline: auto;
 }
 
+/* --- Section heads: kicker + headline + optional note --- */
+.section-head {
+  margin-bottom: var(--space-head);
+}
+.section-head h2 {
+  font-size: var(--type-h1);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-display);
+  font-weight: 600;
+  max-width: 14ch;
+}
+.section-note {
+  margin-top: var(--space-4);
+  color: var(--fg-soft);
+  font-size: var(--type-body-sm);
+  max-width: 48ch;
+}
+
+/* --- Mono micro-labels --- */
 .eyebrow {
   margin: 0 0 18px;
   font-family: var(--font-mono);
@@ -144,16 +203,33 @@ body[data-mode="engineering"] [data-view="engineering"] {
 .section-kicker {
   margin: 0 0 14px;
   font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.1em;
+  font-size: var(--type-caption);
+  letter-spacing: var(--tracking-label);
   text-transform: uppercase;
   color: var(--muted);
   font-weight: 500;
 }
 
-.mono-label {
-  font-family: var(--font-mono);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--accent);
+/* --- Token lists ("A · B · C") ---
+   Each token stays on one line; wrapping happens only at separators. */
+.tokens .tok {
+  white-space: nowrap;
+}
+.tokens .sep {
+  color: var(--soft);
+}
+
+/* --- External-link marker --- */
+.ext-icon {
+  display: inline-block;
+  width: 0.85em;
+  height: 0.85em;
+  margin-left: 0.35em;
+  flex: none;
+  vertical-align: -0.05em;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }

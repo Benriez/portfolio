@@ -104,17 +104,30 @@ The portfolio ships both modes in the static HTML. CSS in
 [data-view="engineering"] {
   display: none;
 }
-body[data-mode="hr"] [data-view="hr"] {
+html[data-mode="hr"] [data-view="hr"] {
   display: revert;
 }
-body[data-mode="engineering"] [data-view="engineering"] {
+html[data-mode="engineering"] [data-view="engineering"] {
   display: revert;
 }
 ```
 
-The default mode is set in `src/pages/index.astro`. The mode toggle is a
-button with `data-set-mode="hr|engineering"`, handled by a small inline
-script in `src/layouts/BaseLayout.astro`.
+The default mode is set in `src/pages/index.astro`. A `?mode=` deep link
+is applied to `<html>` by an inline script in the document `<head>`
+(`src/layouts/BaseLayout.astro`), i.e. before first paint, so the
+Engineering view never flashes the HR view first. `body[data-mode]` is
+mirrored for the test contract. The mode toggle is a pair of
+`aria-pressed` buttons with `data-set-mode="hr|engineering"`, handled in
+`src/components/SiteHeader.astro`; the handler also keeps the section the
+reader is in at the same screen position across the switch.
+
+## Navigation shell
+
+`SiteHeader.astro` publishes its rendered height as the `--header-h`
+custom property. The page sections use it as `scroll-margin-top` so anchor
+navigation never hides a section kicker under the sticky bar, and a
+scroll listener sets `aria-current="true"` on the nav link of the section
+currently in view. Both behaviours degrade gracefully without JavaScript.
 
 ## Feature boundaries
 

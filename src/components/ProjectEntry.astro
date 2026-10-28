@@ -12,10 +12,18 @@
  *   .role-line    (1 line, optional)
  *   .work-points  (3+ bullet list, HR or Eng, optional)
  *   .stack-line   (Stack · items)
+ *   .stack-line   (Integration · items, Engineering mode)
  *   .case-links   (optional, first entry is the primary CTA)
+ *
+ * Presentation rules (no content changes):
+ *   - Below 900px the left rail collapses above the title. When the meta
+ *     line already states the period the rail is hidden there so the date
+ *     is not printed twice in a row.
+ *   - The integration chain is Engineering-mode detail.
  */
 import type { ProjectEntry as ProjectEntryData } from "~/types/content";
 import { formatProjectMeta } from "~/data/project-status";
+import ExtIcon from "~/components/ExtIcon.astro";
 
 interface Props {
   readonly project: ProjectEntryData;
@@ -23,20 +31,25 @@ interface Props {
 
 const { project } = Astro.props as Props;
 const meta = formatProjectMeta(project.meta, project.status);
+const hasMeta = Boolean(meta.hr || meta.engineering);
+const titleId = `project-${project.id}`;
 ---
 
-<article class:list={["work-item", project.compact ? "compact-work" : null]}>
+<article
+  class:list={["work-item", project.compact ? "compact-work" : null, hasMeta ? "has-meta" : null]}
+  aria-labelledby={titleId}
+>
   <div class="work-index">
     <span>{project.index}</span>
   </div>
   <div class="work-body">
-    {(meta.hr || meta.engineering) && (
+    {hasMeta && (
       <p class="work-meta">
         <span data-view="hr">{meta.hr}</span>
         <span data-view="engineering">{meta.engineering}</span>
       </p>
     )}
-    <h3>{project.title}</h3>
+    <h3 id={titleId}>{project.title}</h3>
     <p class="work-sub">
       <span data-view="hr">{project.sub.hr}</span>
       <span data-view="engineering">{project.sub.engineering}</span>
@@ -62,21 +75,29 @@ const meta = formatProjectMeta(project.meta, project.status);
     )}
     {project.stack.length > 0 && (
       <p class="stack-line">
-        <span>Stack</span>
-        <span class="stack-items">{project.stack.join(" · ")}</span>
+        <span class="stack-label">Stack</span>
+        <span class="stack-items tokens">
+          {project.stack.map((item, index) => (
+            <Fragment>
+              {index > 0 && <span class="sep"> · </span>}
+              <span class="tok">{item}</span>
+            </Fragment>
+          ))}
+        </span>
       </p>
     )}
     {project.integration && project.integration.length > 0 && (
-      <p class="stack-line">
-        <span>Integration</span>
+      <p class="stack-line engineering-only">
+        <span class="stack-label">Integration</span>
         <span class="stack-items">{project.integration.join(" · ")}</span>
       </p>
     )}
     {project.caseLinks && project.caseLinks.length > 0 && (
       <div class="case-links">
         {project.caseLinks.map((link) => (
-          <a class="case-link" href={link.href} rel="noopener">
+          <a class="case-link" href={link.href} rel="noopener noreferrer external">
             {link.label}
+            <ExtIcon />
           </a>
         ))}
       </div>
@@ -89,14 +110,14 @@ const meta = formatProjectMeta(project.meta, project.status);
     display: grid;
     grid-template-columns: 160px 1fr;
     gap: clamp(28px, 5vw, 72px);
-    padding: 34px 0;
+    padding: var(--space-item) 0;
     border-top: 1px solid var(--hairline);
   }
   .work-item:first-of-type {
     border-top: 1.5px solid var(--fg);
   }
   .work-item.compact-work {
-    padding: 28px 0;
+    padding: clamp(20px, 2.5vw, 28px) 0;
   }
   .work-index {
     font-family: var(--font-mono);
@@ -104,16 +125,18 @@ const meta = formatProjectMeta(project.meta, project.status);
     letter-spacing: 0.08em;
     color: var(--accent);
     font-weight: 500;
+    padding-top: 2px;
   }
   .work-body {
     max-width: 880px;
+    min-width: 0;
   }
   .work-meta {
-    margin: 0 0 8px;
+    margin: 0 0 var(--space-2);
     font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.02em;
+    line-height: 1.6;
     color: var(--muted);
   }
   .work-body h3 {
@@ -124,10 +147,11 @@ const meta = formatProjectMeta(project.meta, project.status);
     font-weight: 600;
   }
   .work-sub {
-    margin: 8px 0 0;
+    margin: var(--space-2) 0 0;
     color: var(--fg-soft);
     font-size: 18px;
     font-style: italic;
+    text-wrap: pretty;
   }
   .work-lead {
     margin: 18px 0 0;
@@ -135,25 +159,29 @@ const meta = formatProjectMeta(project.meta, project.status);
     max-width: 70ch;
     font-size: 17px;
     line-height: 1.55;
+    text-wrap: pretty;
   }
   .role-line {
-    margin: 14px 0 0;
+    margin: 12px 0 0;
     max-width: 72ch;
-    color: var(--fg);
-    font-size: 15px;
+    color: var(--muted);
+    font-size: 14px;
     line-height: 1.5;
+    text-wrap: pretty;
   }
   .work-points {
-    list-style: none;
     display: grid;
-    gap: 8px;
-    padding: 0;
-    margin: 18px 0 0;
+    gap: 6px;
+    margin: 16px 0 0;
+    max-width: 72ch;
+    font-size: var(--type-body-sm);
+    line-height: 1.5;
   }
   .work-points li {
     position: relative;
     padding-left: 18px;
     color: var(--fg);
+    text-wrap: pretty;
   }
   .work-points li::before {
     content: "";
@@ -168,54 +196,53 @@ const meta = formatProjectMeta(project.meta, project.status);
     margin: 20px 0 0;
     padding-top: 12px;
     border-top: 1px solid var(--hairline);
-    color: var(--muted);
     font-family: var(--font-mono);
     font-size: 12px;
     line-height: 1.7;
+    color: var(--fg-soft);
   }
-  .stack-line > span:first-child {
-    color: var(--soft);
+  .stack-line + .stack-line {
+    margin-top: 12px;
+  }
+  .stack-label {
+    display: inline-block;
+    color: var(--muted);
     text-transform: uppercase;
     letter-spacing: 0.16em;
     font-size: 10px;
     margin-right: 10px;
   }
-  .stack-items {
-    color: var(--fg-soft);
-  }
   .case-links {
     display: flex;
     flex-wrap: wrap;
-    align-items: baseline;
-    gap: 10px 26px;
-    margin-top: 20px;
+    gap: 6px var(--space-5);
+    margin-top: 14px;
   }
   .case-link {
     display: inline-flex;
+    align-items: center;
+    min-height: 32px;
     font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.1em;
+    font-size: var(--type-caption);
+    letter-spacing: var(--tracking-label);
     text-transform: uppercase;
     color: var(--accent);
-    border-bottom: 1px solid color-mix(in oklch, var(--accent) 45%, transparent);
-    padding-bottom: 3px;
+    text-decoration: underline;
+    text-decoration-color: color-mix(in oklch, var(--accent) 45%, transparent);
+    text-underline-offset: 0.45em;
+    text-decoration-thickness: 1px;
   }
-  .case-link::after {
-    content: "";
-    width: 18px;
-    height: 1px;
-    margin-left: 10px;
-    align-self: center;
-    background: currentColor;
-  }
-  .case-link:last-child::after {
-    display: none;
+  .case-link:hover {
+    text-decoration-color: currentColor;
   }
 
   @media (max-width: 900px) {
     .work-item {
       grid-template-columns: 1fr;
-      gap: 12px;
+      gap: 10px;
+    }
+    .work-item.has-meta .work-index {
+      display: none;
     }
   }
 </style>

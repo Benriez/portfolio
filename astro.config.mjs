@@ -21,10 +21,9 @@ export default defineConfig({
     assets: "_astro",
   },
   compressHTML: true,
-  prefetch: {
-    prefetchAll: false,
-    defaultStrategy: "hover",
-  },
+  // Single-page site: no in-site navigation to prefetch, so the prefetch
+  // runtime (≈2.5 kB of client JS) is not shipped.
+  prefetch: false,
   vite: {
     build: {
       cssMinify: "lightningcss",

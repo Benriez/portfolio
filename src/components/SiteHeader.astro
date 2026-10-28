@@ -4,18 +4,25 @@
  *
  * Sticky editorial navigation.
  *
- * Desktop / tablet (>= 901px): 4-column grid
- *   brand · nav-links · nav-github · mode-switch
+ * Desktop / tablet (>= 901px): one row
+ *   brand · section links … GitHub · mode switch
  *
- * Mobile (<= 900px): compact two-row composition
- *   row 1: brand (left) · mode-switch (right)
- *   row 2: nav-links + nav-github, wrapping to 2 cohesive rows
+ * Mobile (<= 900px): two rows
+ *   row 1: brand (left) · mode switch (right)
+ *   row 2: section links + GitHub, wrapping as one block
  *
- * On <= 560px the mode switch label shortens "Engineering" → "Eng" via
- * the data-mode-label-full / data-mode-label-short spans while
- * preserving the aria-label="Engineering" accessible name.
+ * The header height is published as `--header-h` so anchor navigation
+ * (`scroll-padding-top`) and the active-section observer stay aligned
+ * with the real bar.
+ *
+ * Progressive enhancement (script below):
+ *   - mode switch: toggles html/body[data-mode], keeps ?mode= in the URL,
+ *     and preserves the reading position across the switch
+ *   - active section: aria-current="true" on the nav link whose section is
+ *     currently in view
  */
 import type { ViewMode } from "~/types/content";
+import ExtIcon from "~/components/ExtIcon.astro";
 
 interface NavLink {
   href: string;
@@ -28,8 +35,6 @@ interface Props {
 
 const { mode } = Astro.props as Props;
 
-// Reference does NOT have a mode split for nav-link labels: each link
-// shows a single text that does not change with the body mode.
 const links: NavLink[] = [
   { href: "#work", label: "Projekte" },
   { href: "#experience", label: "Berufserfahrung" },
@@ -41,79 +46,150 @@ const links: NavLink[] = [
 const githubUrl = "https://github.com/Benriez";
 ---
 
-<header class="site-header" data-mode={mode}>
+<header class="site-header">
   <nav class="nav" aria-label="Hauptnavigation">
-    <a class="brand" href="#top" aria-label="Startseite">
+    <a class="brand" href="#top" aria-label="Zum Seitenanfang">
       BR
     </a>
 
-    <ul class="nav-links" aria-label="Sektionen und Profil">
+    <ul class="nav-links">
       {links.map((link) => (
         <li>
           <a href={link.href}>{link.label}</a>
         </li>
       ))}
-      <li>
-        <a class="nav-github" href={githubUrl} rel="noopener">
+      <li class="nav-github-item">
+        <a class="nav-github" href={githubUrl} rel="noopener noreferrer external">
           GitHub
+          <ExtIcon />
         </a>
       </li>
     </ul>
 
-    <div class="mode-switch" role="group" aria-label="Lesemodus wählen">
-      <button
-        type="button"
-        data-set-mode="hr"
-        data-mode-link
-        aria-pressed={mode === "hr"}
-        aria-label="HR"
-      >
+    <div class="mode-switch" role="group" aria-label="Lesemodus">
+      <button type="button" data-set-mode="hr" aria-pressed={mode === "hr"}>
         HR
       </button>
-      <span aria-hidden="true">/</span>
-      <button
-        type="button"
-        data-set-mode="engineering"
-        data-mode-link
-        aria-pressed={mode === "engineering"}
-        aria-label="Engineering"
-      >
-        <span class="mode-label mode-label-full">Engineering</span>
-        <span class="mode-label mode-label-short">Eng</span>
+      <button type="button" data-set-mode="engineering" aria-pressed={mode === "engineering"}>
+        Engineering
       </button>
     </div>
   </nav>
 </header>
 
 <script>
-  // Mode switch: handled here as well for clients without the inline
-  // shim in BaseLayout. Both buttons just toggle body[data-mode] and
-  // update ?mode= in history.
-  function applyMode(mode: string) {
-    const html = document.documentElement;
-    const body = document.body;
-    const next: "hr" | "engineering" = mode === "engineering" ? "engineering" : "hr";
-    html.dataset["mode"] = next;
-    body.dataset["mode"] = next;
+  type Mode = "hr" | "engineering";
+
+  const SECTION_IDS = ["work", "experience", "capabilities", "about", "contact"];
+
+  function readHeaderHeight(): number {
+    const header = document.querySelector<HTMLElement>(".site-header");
+    return header ? header.getBoundingClientRect().height : 0;
+  }
+
+  /** Y position (viewport px) below which a section counts as "current". */
+  function probeLine(): number {
+    return readHeaderHeight() + Math.min(window.innerHeight * 0.35, 240);
+  }
+
+  /** The page section the reader is currently looking at. */
+  function currentSection(): HTMLElement | null {
+    const probe = probeLine();
+    let current: HTMLElement | null = null;
+    for (const id of SECTION_IDS) {
+      const el = document.getElementById(id);
+      if (el && el.getBoundingClientRect().top <= probe) current = el;
+    }
+    return current;
+  }
+
+  function applyMode(requested: string) {
+    const next: Mode = requested === "engineering" ? "engineering" : "hr";
+    const anchor = currentSection();
+    const anchorOffset = anchor ? anchor.getBoundingClientRect().top : 0;
+    // The clicked button is focused and sits in the sticky header; the
+    // browser's own scroll anchoring would anchor on it instead of on the
+    // content. Suspend it for the switch and correct explicitly below.
+    const root = document.documentElement;
+    const previousAnchoring = root.style.overflowAnchor;
+    root.style.overflowAnchor = "none";
+
+    root.dataset["mode"] = next;
+    document.body.dataset["mode"] = next;
+
     const url = new URL(window.location.href);
     url.searchParams.set("mode", next);
     window.history.replaceState({}, "", url.toString());
-    document.querySelectorAll<HTMLElement>("[data-mode-link]").forEach((el) => {
-      const target = el.getAttribute("data-set-mode") === "engineering" ? "engineering" : "hr";
-      el.setAttribute("aria-pressed", target === next ? "true" : "false");
+
+    document.querySelectorAll<HTMLButtonElement>("[data-set-mode]").forEach((button) => {
+      const target = button.getAttribute("data-set-mode") === "engineering" ? "engineering" : "hr";
+      button.setAttribute("aria-pressed", target === next ? "true" : "false");
     });
-    document.documentElement.dispatchEvent(
-      new CustomEvent("modechange", { detail: { mode: next } }),
-    );
+
+    // Keep the section the reader is in at the same screen position even
+    // though content above it changed height.
+    if (anchor) {
+      const drift = anchor.getBoundingClientRect().top - anchorOffset;
+      if (drift !== 0) window.scrollBy({ top: drift, behavior: "instant" });
+    }
+    root.style.overflowAnchor = previousAnchoring;
+    updateActive();
   }
 
-  document.querySelectorAll<HTMLElement>("[data-set-mode]").forEach((a) => {
-    a.addEventListener("click", (event) => {
-      event.preventDefault();
-      const m = a.getAttribute("data-set-mode") ?? "hr";
-      applyMode(m);
-    });
+  document.querySelectorAll<HTMLButtonElement>("[data-set-mode]").forEach((button) => {
+    button.addEventListener("click", () => applyMode(button.getAttribute("data-set-mode") ?? "hr"));
   });
+
+  // Active-section indication. One observer, threshold 0, rootMargin that
+  // treats the band just below the header as "current".
+  const navLinks = new Map<string, HTMLAnchorElement>();
+  document.querySelectorAll<HTMLAnchorElement>('.nav-links a[href^="#"]').forEach((a) => {
+    navLinks.set(a.getAttribute("href")!.slice(1), a);
+  });
+
+  function setActive(id: string | null) {
+    navLinks.forEach((a, key) => {
+      if (key === id) a.setAttribute("aria-current", "true");
+      else a.removeAttribute("aria-current");
+    });
+  }
+
+  function updateActive() {
+    let activeId: string | null = currentSection()?.id ?? null;
+    // At the very end of the page the last section counts even if its top
+    // never crosses the probe line.
+    const atBottom = window.innerHeight + window.scrollY >= document.body.scrollHeight - 2;
+    if (atBottom) activeId = SECTION_IDS[SECTION_IDS.length - 1] ?? activeId;
+    setActive(activeId);
+  }
+
+  let ticking = false;
+  function onScroll() {
+    if (ticking) return;
+    ticking = true;
+    window.requestAnimationFrame(() => {
+      ticking = false;
+      updateActive();
+    });
+  }
+  // Publish the real header height so scroll-padding-top matches the bar
+  // exactly (the CSS default is a close approximation per breakpoint).
+  function publishHeaderHeight() {
+    const h = Math.round(readHeaderHeight());
+    if (h > 0) document.documentElement.style.setProperty("--header-h", `${h}px`);
+  }
+
+  window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener(
+    "resize",
+    () => {
+      publishHeaderHeight();
+      onScroll();
+    },
+    { passive: true },
+  );
+  publishHeaderHeight();
+  updateActive();
 </script>
 
 <style>
@@ -121,18 +197,19 @@ const githubUrl = "https://github.com/Benriez";
     position: sticky;
     top: 0;
     z-index: 10;
-    background: color-mix(in oklch, var(--bg) 88%, transparent);
-    backdrop-filter: blur(18px);
+    background: color-mix(in oklch, var(--bg) 90%, transparent);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
     border-bottom: 1px solid var(--hairline);
   }
   .nav {
-    width: min(var(--max), calc(100vw - 48px));
+    width: min(var(--max), calc(100% - 2 * var(--gutter)));
     margin: 0 auto;
-    min-height: 68px;
+    height: var(--header-h);
     display: grid;
-    grid-template-columns: auto 1fr auto auto;
+    grid-template-columns: auto 1fr auto;
     align-items: center;
-    column-gap: 18px;
+    column-gap: var(--space-6);
   }
   .brand {
     font-family: var(--font-display);
@@ -141,125 +218,132 @@ const githubUrl = "https://github.com/Benriez";
     color: var(--fg);
     font-weight: 700;
     line-height: 1;
-    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--control-h);
   }
   .nav-links {
-    list-style: none;
-    margin: 0;
-    padding: 0;
     display: flex;
     align-items: center;
-    gap: 18px;
-    justify-content: center;
+    gap: var(--space-1);
+    min-width: 0;
   }
   .nav-links li {
     display: inline-flex;
     flex-shrink: 0;
   }
+  .nav-github-item {
+    margin-left: auto;
+  }
   .nav-links a,
-  .mode-switch button,
-  .mode-switch span,
-  .nav-github {
+  .mode-switch button {
     font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.1em;
+    font-size: var(--type-caption);
+    letter-spacing: var(--tracking-label);
     text-transform: uppercase;
+    line-height: 1;
   }
   .nav-links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 36px;
+    padding: 0 var(--space-2);
     color: var(--fg-soft);
-    text-decoration: none;
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-underline-offset: 0.55em;
+    text-decoration-thickness: 1px;
   }
-  .nav-links a:hover,
-  .nav-github:hover {
+  .nav-links a:hover {
     color: var(--fg);
   }
-  /* GitHub is a profile destination — push it to the end of the
-     desktop nav so the section links read as a centered group. */
-  .nav-github {
-    margin-left: auto;
-    color: var(--fg-soft);
-    text-decoration: none;
+  .nav-links a[aria-current="true"] {
+    color: var(--fg);
+    text-decoration-color: var(--fg);
   }
+
+  /* Mode switch: compact segmented control, visually secondary. */
   .mode-switch {
     display: inline-flex;
     align-items: center;
     gap: 2px;
+    padding: 2px;
     border: 1px solid var(--rule);
     border-radius: 999px;
-    padding: 4px;
+    background: var(--surface);
   }
   .mode-switch button {
+    display: inline-flex;
+    align-items: center;
+    height: calc(var(--control-h-sm) - 2px);
+    padding: 0 12px;
+    border: 0;
     border-radius: 999px;
     background: transparent;
-    color: var(--muted);
-    padding: 7px 10px;
-    border: 0;
+    color: var(--fg-soft);
     cursor: pointer;
-    font: inherit;
+  }
+  .mode-switch button:hover {
+    color: var(--fg);
   }
   .mode-switch button[aria-pressed="true"] {
     background: var(--fg);
     color: var(--surface);
+    cursor: default;
   }
-  .mode-switch span {
-    color: var(--soft);
-  }
-
-  /* Default mode label: full visible, short hidden.
-     aria-label keeps the accessible name stable across viewports. */
-  .mode-label-short {
-    display: none;
+  .mode-switch button:focus-visible {
+    outline-offset: 2px;
   }
 
-  /* Mobile: compact two-row composition.
-     row 1: brand (left) · mode-switch (right)
-     row 2: nav-links wrapping naturally with GitHub inline */
+  /* Mobile / small tablet: two rows, every destination stays visible. */
   @media (max-width: 900px) {
+    :global(:root) {
+      --header-h: 74px;
+    }
     .nav {
-      width: min(100% - 28px, var(--max));
+      height: auto;
+      min-height: var(--header-h);
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      min-height: 0;
-      padding: 10px 0;
-      column-gap: 12px;
-      row-gap: 6px;
+      padding: 6px 0;
+      column-gap: var(--space-3);
+      row-gap: 0;
     }
     .brand {
       margin-right: auto;
+      min-height: var(--control-h-sm);
     }
-    .mode-switch {
-      padding: 2px;
-    }
-    .mode-switch button {
-      padding: 5px 8px;
-    }
-    /* nav-links takes its own row 2, with all six items wrapping
-       together as a single cohesive navigation block. GitHub is
-       the last list item so it flows inline with the section links. */
     .nav-links {
       order: 2;
       flex: 0 0 100%;
-      min-width: 0;
       flex-wrap: wrap;
-      justify-content: flex-start;
-      gap: 4px 12px;
+      gap: 0 var(--space-2);
+      margin-top: 2px;
     }
-    .nav-github {
+    .nav-links a {
+      min-height: 26px;
+      padding: 0 var(--space-2);
+      margin-left: calc(-1 * var(--space-2));
+      text-underline-offset: 0.4em;
+    }
+    .nav-links a[aria-current="true"] {
+      text-decoration-color: transparent;
+    }
+    .nav-github-item {
       margin-left: 0;
     }
-  }
-
-  /* Narrow mobile: shorten mode label to "Eng" so the mode switch
-     reads as a small utility, not a primary CTA. The aria-label
-     keeps the accessible name "Engineering" so getByRole tests
-     still match. */
-  @media (max-width: 560px) {
-    .mode-label-full {
-      display: none;
+    .nav-github-item a {
+      margin-left: 0;
     }
-    .mode-label-short {
-      display: inline;
+    .mode-switch button {
+      padding: 0 10px;
+    }
+  }
+  /* Narrow phones: the link row wraps to two lines. */
+  @media (max-width: 660px) {
+    :global(:root) {
+      --header-h: 100px;
     }
   }
 </style>

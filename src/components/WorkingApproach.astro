@@ -2,13 +2,12 @@
 /**
  * WorkingApproach
  *
- * Mirrors the OpenDesign reference's `.about` (id="about") and `.tech-stack`
- * definition-list patterns:
- *   - Working approach: kicker + h2 + two long paragraphs
- *   - Tech stack: 150px label column + 1fr content column, hairline dividers
+ * Mirrors the OpenDesign reference's `.tech-stack` definition-list pattern:
+ * a 150px label column + 1fr content column with hairline dividers.
  *
- * The component is split: the .about-grid (heading + paragraphs) is rendered
- * inline in `index.astro`; this component provides only the .tech-stack block.
+ * The component is split: the working-approach prose (heading + paragraphs)
+ * is rendered inline in `index.astro`; this component provides only the
+ * tech-stack block, headed by the `title` passed from the page.
  *
  * Reads from `referenceTechStack` (the authoritative 4-row payload from
  * `src/data/tech-stack.ts`) so the rendered text exactly matches the source.
@@ -19,50 +18,71 @@ interface Props {
   readonly title: { hr: string; engineering: string };
 }
 
-void (Astro.props as Props);
+const { title } = Astro.props as Props;
 ---
 
-<section class="tech-stack" aria-label="Technischer Stack">
-  <div class="tech-stack-list">
+<div class="tech-stack">
+  <h3 class="section-kicker tech-stack-title">
+    <span data-view="hr">{title.hr}</span>
+    <span data-view="engineering">{title.engineering}</span>
+  </h3>
+  <dl class="tech-stack-list">
     {referenceTechStack.map((group) => (
       <div>
-        <strong>
+        <dt>
           <span data-view="hr">{group.heading.hr}</span>
           <span data-view="engineering">{group.heading.engineering}</span>
-        </strong>
-        <span class="tech-stack-items">{group.items.join(" · ")}</span>
+        </dt>
+        <dd class="tech-stack-items tokens">
+          {group.items.map((item, index) => (
+            <Fragment>
+              {index > 0 && <span class="sep"> · </span>}
+              <span class="tok">{item}</span>
+            </Fragment>
+          ))}
+        </dd>
       </div>
     ))}
-  </div>
-</section>
+  </dl>
+</div>
 
 <style>
   .tech-stack {
-    margin-top: 54px;
+    margin-top: clamp(48px, 6vw, 72px);
+  }
+  .tech-stack-title {
+    margin-bottom: var(--space-3);
+  }
+  .tech-stack-list {
     border-top: 1px solid var(--hairline);
   }
   .tech-stack-list > div {
     display: grid;
-    grid-template-columns: 150px 1fr;
-    gap: 24px;
+    grid-template-columns: 150px minmax(0, 1fr);
+    gap: var(--space-5);
     padding: 14px 0;
     border-bottom: 1px solid var(--hairline);
   }
-  .tech-stack-list strong {
+  .tech-stack-list dt {
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: var(--type-caption);
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--soft);
+    color: var(--muted);
     font-weight: 500;
+    padding-top: 4px;
   }
   .tech-stack-items {
     color: var(--fg-soft);
+    line-height: 1.6;
   }
   @media (max-width: 900px) {
     .tech-stack-list > div {
       grid-template-columns: 1fr;
-      gap: 4px;
+      gap: var(--space-1);
+    }
+    .tech-stack-list dt {
+      padding-top: 0;
     }
   }
 </style>

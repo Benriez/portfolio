@@ -22,7 +22,8 @@
 
   .site-header,
   .hero-actions,
-  .skip-link {
+  .skip-link,
+  .ext-icon {
     display: none !important;
   }
 
@@ -38,7 +39,7 @@
 
   .work-item,
   .career-item,
-  .education-list > div,
+  .education-list > li,
   .capability,
   .tech-stack-list > div {
     break-inside: avoid;
@@ -59,7 +60,9 @@
   }
 
   /* Render both modes in print */
-  [data-view] {
+  [data-view],
+  .hr-only,
+  .engineering-only {
     display: revert !important;
   }
 }
