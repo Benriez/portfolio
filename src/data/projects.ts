@@ -27,15 +27,15 @@ const Flagship: ProjectEntry = {
     engineering: "Self-hosted AI Operator Platform · seit 2026",
   },
   sub: {
-    hr: "AI Operator Runtime & Inference Platform",
-    engineering: "AI Operator Runtime & Inference Platform",
+    hr: "Agent Runtime, Harness & Inference Platform",
+    engineering: "Agent Runtime, Harness & Inference Platform",
   },
   lead: {
-    hr: "BODI verbindet langlebige KI-Workflows mit selbst betriebener AI-Infrastruktur. Aufgaben werden als persistente Abläufe ausgeführt, Zustand und Kontext bleiben erhalten und lokale KI-Modelle werden über eine gemeinsame Produktionsschnittstelle kontrolliert bereitgestellt.",
+    hr: "BODI verbindet langlebige KI-Workflows mit selbst betriebener AI-Infrastruktur. Aufgaben werden als persistente, verifizierbare Abläufe ausgeführt, Zustand und Kontext bleiben erhalten, Werkzeuge werden kontrolliert eingesetzt und lokale KI-Modelle werden über eine gemeinsame Produktionsschnittstelle bereitgestellt.",
     engineering:
-      "Production-grade Runtime für agentische Software-Arbeit und self-hosted Inference: Durable Execution Graphs, Memory Governance, Managed OpenCode Execution, Model Scheduling, Queueing, Recovery und nachvollziehbare Runtime-Provenance.",
+      "Production-grade Agent Runtime und Harness für kontrollierte AI-Ausführung: Durable Execution Graphs, Memory / State, Tool Use, Verification, Recovery, Model Routing / Scheduling sowie selbst betriebene und verwaltete Agent-Ausführung mit nachvollziehbarer Runtime-Provenance.",
   },
-  stack: [],
+  stack: ["TypeScript", "Node.js", "Angular", "Rust", "Python", "Self-hosted Inference"],
   status: "active-development",
   period: { start: "2026" },
 };
@@ -70,7 +70,7 @@ const Fahrschule360: ProjectEntry = {
     "WebRTC-Synchronisierung zwischen Pico-G2-VR-Brille und Windows Teacher App inklusive Geräte- und Session-Integration.",
     "Containerisierte GPU-/Media-Pipeline mit Docker API, Topaz Video AI und FFmpeg/ffprobe für automatisierte HLS-/WebM-Ausgabe.",
     "Eigene Job-Orchestrierung mit UUID-basiertem Job-State, Worker-Lifecycle, Preflight, Exit-/Log-Auswertung, kontrolliertem Cleanup und CPU-Fallback.",
-    "Langjähriger Betrieb einer selbst gehosteten Multi-Server-Infrastruktur mit CapRover für Deployment, Service-Betrieb und produktive Wartung über die Projektlaufzeit.",
+    "Langjähriger Betrieb einer selbst gehosteten Multi-Server-Infrastruktur mit CapRover für Deployment, Service-Betrieb, produktives Troubleshooting und Wartung über die Projektlaufzeit.",
     "OTA, Staged Rollouts, Hotfix-Pfade, S3-kompatibler Object Storage, Health Checks, Log-Tail, Container-Inspektion und produktive Runtime-Härtung.",
   ],
   stack: [
@@ -159,7 +159,8 @@ const ProductionWebPlatform: ProjectEntry = {
   },
   lead: {
     hr: "Migration einer bestehenden Unternehmenswebsite auf eine neue produktive Hosting- und Deployment-Infrastruktur mit Git-basierter Content-Pipeline, CMS-Zugriff, Formular-/Mail-Integration und kontrolliertem Production-Cutover.",
-    engineering: "",
+    engineering:
+      "Production migration of an existing company website onto a new hosting and deployment platform: reproducible CI/CD builds, OAuth-protected CMS, controlled cutover with canonical and indexability gates and rollback preparation, business continuity during the transition, and post-cutover production verification.",
   },
   roleLine:
     "Technische Verantwortung für Deployment-Architektur, CMS-Integration, Authentifizierung, Release-Prozess, Produktionsumschaltung und Post-Go-Live-Verifikation",

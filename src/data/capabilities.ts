@@ -12,6 +12,10 @@ import type { CapabilityGroup, DualCopy } from "~/types/content";
  *
  * The reference renders each group's body as a single line of skill tokens
  * separated by " · "; we preserve that in a single SkillItem per group.
+ *
+ * The group headings still mirror the reference verbatim. The bodies were
+ * sharpened for the Software & AI Systems positioning: they now name the
+ * concrete engineering work behind each domain instead of a token wall.
  */
 
 interface ReferenceCapability {
@@ -30,9 +34,9 @@ const REFERENCE: ReadonlyArray<ReferenceCapability> = [
       engineering: "AI & Agent Systems",
     },
     body: {
-      hr: "Agentische Workflows · lokale KI-Infrastruktur · zuverlässige Ausführung · Memory · LLM Integration · Production Reliability",
+      hr: "Agentische Workflows · Agent Runtime · lokale Inferenz · Memory · Tool Use · Verifikation · Recovery · Model Routing · AI-gestützte Entwicklung",
       engineering:
-        "Durable Agent Runtime · Execution Graphs · Memory Governance · Managed OpenCode · Self-hosted LLMs · Inference Gateway · Model Scheduling / Queueing · Multi-tenant API · MCP · Evaluation · Agent Reliability",
+        "Agent Runtime · Durable Execution Graphs · Tool Use · Memory / State · Verification · Recovery · Local Inference · Model Routing / Scheduling · Managed Agent Execution · MCP · AI-assisted Engineering",
     },
   },
   {
@@ -43,9 +47,9 @@ const REFERENCE: ReadonlyArray<ReferenceCapability> = [
       engineering: "Full-Stack & Systems Integration",
     },
     body: {
-      hr: "TypeScript · Angular · Node.js / Express · Python · Django / DRF · Rust · Swift / Kotlin · APIs · Authentication · WebSockets · Systems Integration · Device Integration",
+      hr: "TypeScript · Python · Angular · Django / DRF · Rust · APIs · Authentication · WebSockets / WebRTC · Systems Integration · Geräte-Integration",
       engineering:
-        "TypeScript · Angular · Node.js / Express · Python · Django / DRF · Rust · Swift / Kotlin · APIs · Authentication · WebSockets · Systems Integration · Device Integration",
+        "TypeScript · Python · Rust · Angular · Django / DRF · APIs · Authentication · WebSockets / WebRTC · Native Integration · Cross-Platform Systems · Device Communication · Systems Integration",
     },
   },
   {
@@ -56,9 +60,9 @@ const REFERENCE: ReadonlyArray<ReferenceCapability> = [
       engineering: "Production Engineering",
     },
     body: {
-      hr: "Docker · CapRover · Linux · Windows Server / RDS · CI/CD · Identity & Access · Production Debugging · Root-Cause Analysis · Reliability Engineering · Release Engineering",
+      hr: "Docker · Linux · CapRover · Windows Server / RDS · Self-hosted Infrastructure · CI/CD · Deployment · Production Debugging · Root-Cause Analysis · Reliability Engineering · Release Engineering",
       engineering:
-        "Docker · CapRover · Linux · Windows Server / RDS · CI/CD · Identity & Access · Production Debugging · Root-Cause Analysis · Reliability Engineering · Release Engineering",
+        "Docker · Linux · CapRover · Windows Server / RDS · Self-hosted Infrastructure · CI/CD · Deployment · Production Debugging · Root-Cause Analysis · Reliability Engineering · Release Engineering",
     },
   },
   {
@@ -69,9 +73,9 @@ const REFERENCE: ReadonlyArray<ReferenceCapability> = [
       engineering: "Product Engineering",
     },
     body: {
-      hr: "Architecture · Systems Thinking · Technical Product Management · Requirements Engineering · Lifecycle Ownership",
+      hr: "Architecture · Systems Thinking · Technical Product Engineering · Requirements Engineering · Lifecycle Ownership",
       engineering:
-        "Architecture · Systems Thinking · Technical Product Management · Requirements Engineering · Lifecycle Ownership",
+        "Architecture · Systems Thinking · Technical Product Engineering · Requirements Engineering · Lifecycle Ownership",
     },
   },
 ];

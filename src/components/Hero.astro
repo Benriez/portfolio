@@ -8,58 +8,18 @@
  * The heroLead is shown in both modes — same copy in HR and Engineering,
  * matching the reference which renders the same lead paragraph regardless
  * of mode (the reference does not split heroLead).
+ *
+ * All copy lives in `src/data/hero.ts`; this component only renders it.
  */
-interface HeroPanelItem {
-  readonly keyLabel: string;
-  readonly valueLabel: { hr: string; engineering: string };
-}
-
-const panel: HeroPanelItem[] = [
-  {
-    keyLabel: "Modus",
-    valueLabel: {
-      hr: "HR · Produkt, Rolle &amp; Verantwortung",
-      engineering: "Engineering · Architektur &amp; technische Tiefe",
-    },
-  },
-  {
-    keyLabel: "Fokus",
-    valueLabel: {
-      hr: "Software · AI Systems · Production",
-      engineering: "Software · AI Systems · Production",
-    },
-  },
-  {
-    keyLabel: "Erfahrung",
-    valueLabel: {
-      hr: "Softwareentwicklung seit 2020",
-      engineering: "Softwareentwicklung seit 2020",
-    },
-  },
-  {
-    keyLabel: "Standort",
-    valueLabel: {
-      hr: "Darmstadt · Deutschland",
-      engineering: "Darmstadt · Deutschland",
-    },
-  },
-];
-
-// Stack tags in EXACT reference order, joined by " · " in CSS.
-const stack = [
-  "TypeScript",
-  "Python",
-  "Angular",
-  "Django",
-  "AI Agent Systems",
-  "Production Engineering",
-  "Technical Product Management",
-] as const;
-
-const githubUrl = "https://github.com/Benriez";
-const email = "bennyriezler@gmail.com";
-const heroLeadText =
-  "Ich entwickle und betreibe Softwaresysteme von Produktanforderung und Architektur bis Production, Reliability und langlebigen AI-Agent-Runtimes.";
+import {
+  heroEmail,
+  heroGitHubUrl,
+  heroLead,
+  heroPanel,
+  heroPrimaryRole,
+  heroSpecializationSegments,
+  heroStack,
+} from "~/data/hero";
 ---
 
 <section class="hero" id="top">
@@ -67,11 +27,19 @@ const heroLeadText =
     <div class="hero-main">
       <p class="eyebrow">Portfolio</p>
       <h1>Benjamin Riezler</h1>
-      <p class="role">Full-Stack &amp; Applied AI Engineer</p>
-      <p class="heroLead">{heroLeadText}</p>
+      <p class="role">{heroPrimaryRole}</p>
+      <p class="role-spec">
+        {heroSpecializationSegments.map((segment, index) => (
+          <Fragment>
+            {index > 0 && <span class="spec-sep"> · </span>}
+            <span class="spec-term">{segment}</span>
+          </Fragment>
+        ))}
+      </p>
+      <p class="heroLead">{heroLead}</p>
 
       <div class="hero-stack" aria-label="Kerntechnologien">
-        {stack.map((item) => (
+        {heroStack.map((item) => (
           <span>{item}</span>
         ))}
       </div>
@@ -80,17 +48,17 @@ const heroLeadText =
         <a class="primary-link" href="#work">
           Projekte ansehen
         </a>
-        <a class="text-link" href={githubUrl} rel="noopener">
+        <a class="text-link" href={heroGitHubUrl} rel="noopener">
           GitHub
         </a>
-        <a class="text-link" href={`mailto:${email}`}>
+        <a class="text-link" href={`mailto:${heroEmail}`}>
           Kontakt
         </a>
       </div>
     </div>
 
     <aside class="hero-panel" aria-label="Kurzprofil">
-      {panel.map((item) => (
+      {heroPanel.map((item) => (
         <div>
           <span class="panel-k">{item.keyLabel}</span>
           <span class="panel-v">
@@ -125,6 +93,21 @@ const heroLeadText =
     font-size: clamp(22px, 2.8vw, 34px);
     letter-spacing: -0.025em;
     font-weight: 560;
+  }
+  .role-spec {
+    margin: 12px 0 0;
+    font-family: var(--font-mono);
+    font-size: clamp(11px, 1.15vw, 13px);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .role-spec .spec-term {
+    white-space: nowrap;
+  }
+  .role-spec .spec-sep {
+    color: var(--soft);
   }
   .heroLead {
     margin: 22px 0 0;

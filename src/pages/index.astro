@@ -8,6 +8,7 @@ import WorkingApproach from "~/components/WorkingApproach.astro";
 import Contact from "~/components/Contact.astro";
 import { projects } from "~/data/projects";
 import { experience } from "~/data/experience";
+import { approachParagraphs } from "~/data/approach";
 import type { ContactItem } from "~/types/content";
 
 const contactItems: ContactItem[] = [
@@ -32,17 +33,13 @@ const contactItems: ContactItem[] = [
 ];
 const approach_1 =
   "Keine Skill-Level, keine Prozentwerte. Nur belastbare Kompetenzfelder aus den Projekten.";
-const approach_2 =
-  "Ich arbeite an der Schnittstelle zwischen Produktanforderung, Softwarearchitektur und laufendem Betrieb. Wichtig ist nicht nur, dass ein Feature funktioniert, sondern wie es sich bei Fehlern, Deployments, Zustandswechseln und echten Nutzungsbedingungen verhält.";
-const approach_3 =
-  "Meine Arbeit verbindet Requirements Engineering, Root-Cause Analysis, Recovery Thinking und Production Ownership. Konzept, Implementierung und Betrieb gehören dabei zusammen.";
+
+const pageTitle = "Benjamin Riezler · Software & AI Systems Engineer";
+const pageDescription =
+  "Software- und AI-Systems-Engineering in Darmstadt: Agentic AI, Full-Stack-Entwicklung, AI-Systeme und Production Engineering – von Produktanforderung und Architektur bis zuverlässigem Betrieb.";
 ---
 
-<BaseLayout
-  title="Benjamin Riezler - Full-Stack & Applied AI Engineer"
-  description="Persönliche Engineering-Bewerbungswebsite für einen Full-Stack & Applied AI Engineer mit Fokus auf produktive Softwaresysteme, Production Engineering und AI Agent Systems."
-  mode="hr"
->
+<BaseLayout title={pageTitle} description={pageDescription} mode="hr">
   <Hero />
 
   <section class="section" id="work">
@@ -89,12 +86,9 @@ const approach_3 =
       <p class="section-kicker">Arbeitsweise</p>
       <h2>Systemisch denken, präzise bauen, zuverlässig betreiben.</h2>
       <div class="approach-list">
-        <!-- prettier-ignore-start -->
-        <p>{approach_2}</p>
-        <!-- prettier-ignore-end -->
-        <!-- prettier-ignore-start -->
-        <p>{approach_3}</p>
-        <!-- prettier-ignore-end -->
+        {approachParagraphs.map((paragraph) => (
+          <p>{paragraph}</p>
+        ))}
       </div>
     </div>
   </section>

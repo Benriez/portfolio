@@ -28,6 +28,43 @@ test.describe("Portfolio shell", () => {
     await expect(page.locator("body")).toHaveAttribute("data-mode", "engineering");
   });
 
+  test("renders the canonical primary role and specialization line", async ({ page }) => {
+    for (const mode of ["hr", "engineering"]) {
+      await page.goto(`./?mode=${mode}`);
+      const role = page.locator(".hero .role");
+      await expect(role).toHaveText("Software & AI Systems Engineer");
+      // The superseded top-level label is gone from the hero.
+      await expect(role).not.toContainText("Applied AI");
+      const spec = page.locator(".hero .role-spec");
+      await expect(spec).toContainText("Full-Stack");
+      await expect(spec).toContainText("Agentic AI");
+      await expect(spec).toContainText("Production Engineering");
+      // The lead keeps the full delivery chain in one concise paragraph.
+      const lead = page.locator(".hero .heroLead");
+      await expect(lead).toContainText("Produktanforderung");
+      await expect(lead).toContainText("Architektur");
+      await expect(lead).toContainText("Production");
+      await expect(lead).toContainText("Reliability");
+      await expect(lead).toContainText("AI-Systemen");
+    }
+  });
+
+  test("shows the AI-assisted, verification-driven engineering paragraph in both modes", async ({
+    page,
+  }) => {
+    for (const mode of ["hr", "engineering"]) {
+      await page.goto(`./?mode=${mode}#about`);
+      const approach = page.locator("#about .approach-list");
+      await expect(approach).toContainText("AI-gestützte Entwicklung");
+      await expect(approach).toContainText("Engineering-Werkzeug");
+      await expect(approach).toContainText("Typechecks");
+      await expect(approach).toContainText("E2E-Prüfungen");
+      await expect(approach).toContainText("Runtime-Evidence");
+      await expect(approach).toContainText("Hardware-Abnahmen");
+      await expect(approach).toContainText("Production Ownership");
+    }
+  });
+
   test("renders the exact OpenDesign project set in order", async ({ page }) => {
     await page.goto("./?mode=hr#work");
     const headings = page.locator("#work .work-body h3");
@@ -91,6 +128,27 @@ test.describe("Portfolio shell", () => {
     await page.goto("./?mode=hr#work");
     const caseLink = page.getByRole("link", { name: "Case Study ansehen" });
     await expect(caseLink).toHaveCount(0);
+  });
+
+  test("does not render a Steuerkompass project anywhere in Selected Work", async ({ page }) => {
+    await page.goto("./?mode=hr#work");
+    await expect(page.getByRole("heading", { name: /Steuerkompass/i })).toHaveCount(0);
+    await expect(page.locator("#work")).not.toContainText(/Steuerkompass/i);
+  });
+
+  test("renders BODI as controlled agent execution with an active-development stack", async ({
+    page,
+  }) => {
+    await page.goto("./?mode=engineering#work");
+    const bodi = page.locator("article", {
+      has: page.getByRole("heading", { name: "BODI / agent-garden" }),
+    });
+    await expect(bodi).toHaveCount(1);
+    await expect(bodi.locator(".work-sub")).toContainText("Agent Runtime");
+    await expect(bodi.locator(".work-lead")).toContainText("Tool Use");
+    await expect(bodi.locator(".work-lead")).toContainText("Verification");
+    await expect(bodi.locator(".work-lead")).toContainText("Recovery");
+    await expect(bodi.locator(".stack-items").first()).toContainText("Self-hosted Inference");
   });
 
   test("does not expose a #flagship anchor on the page", async ({ page }) => {
